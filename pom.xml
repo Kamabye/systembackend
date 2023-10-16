@@ -28,7 +28,7 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
 		<!-- Esta dependencia permite reinicio de la app al realizar cambios -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -36,12 +36,14 @@
 			<scope>runtime</scope>
 			<optional>true</optional>
 		</dependency>
-		
+
 		<!-- Esta dependencia permite el uso de @RestController -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
+
+
 	</dependencies>
 
 	<build>
