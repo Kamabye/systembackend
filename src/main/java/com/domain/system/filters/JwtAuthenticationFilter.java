@@ -13,15 +13,15 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import com.domain.system.services.JwtService;
 
+import io.jsonwebtoken.security.SignatureException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
-	
+
 	@Autowired
 	private JwtService jwtService;
 
@@ -39,31 +39,36 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		}
 
 		final String token = authHeader.substring(7);
-		final String username = jwtService.extractUsername(token);
+		try {
+			final String username = jwtService.extractUsername(token);
+			if (username == null) {
+				return;
+			}
 
-		if (username == null) {
-			filterChain.doFilter(request, response);
+			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+				// UserDetails userDetails =
+				// this.userDetailsService.loadUserByUsername(userEmail);
+				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+				if (jwtService.isTokenValid(token, userDetails)) {
+
+					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
+							null, userDetails.getAuthorities());
+					// System.out.println(authToken.toString());
+					authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+					// System.out.println(authToken.toString());
+					SecurityContextHolder.getContext().setAuthentication(authToken);
+
+				}
+			}
+		} catch (SignatureException e) {
+			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+	        response.getWriter().write("Error de autenticación: Firma JWT no válida");
 			return;
 		}
 
-		if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-			// UserDetails userDetails =
-			// this.userDetailsService.loadUserByUsername(userEmail);
-			UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-			if (jwtService.isTokenValid(token, userDetails)) {
-
-				UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
-						null, userDetails.getAuthorities());
-				//System.out.println(authToken.toString());
-				authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-				//System.out.println(authToken.toString());
-				SecurityContextHolder.getContext().setAuthentication(authToken);
-
-			}
-		}
 		filterChain.doFilter(request, response);
-		
+
 	}
 
 }
