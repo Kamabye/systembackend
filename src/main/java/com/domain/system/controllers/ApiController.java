@@ -13,12 +13,22 @@ public class ApiController {
 	
 	@GetMapping
     public String index() {
-        return "Bienvenido a la API de SystemApp";
+        return "Bienvenido a la API de SystemApp sin slash";
+    }
+	
+	@GetMapping("/")
+    public String slash() {
+        return "Bienvenido a la API de SystemApp con slash";
     }
 	
 	@GetMapping("/demo")
     public String demo() {
-        return "Bienvenido al demo de la API SystemApp";
+        return "Bienvenido al demo de la API SystemAppx2";
+    }
+	
+	@GetMapping("/demo/")
+    public String demoslash() {
+        return "Bienvenido al demo con slash de la API SystemApp con slash";
     }
 
 }
