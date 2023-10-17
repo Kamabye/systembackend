@@ -1,14 +1,9 @@
 package com.domain.system.models.postgresql;
 
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
-
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import com.domain.system.models.Auditable;
 
@@ -40,7 +35,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // Genera un constructor sin parámetros
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
 @AllArgsConstructor // Genera un cosntructor para cada parámetro finales o no nulos
-public class Usuario extends Auditable implements UserDetails {
+public class Usuario extends Auditable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY AutoIncrement MYSQL MariaDB
@@ -72,14 +67,9 @@ public class Usuario extends Auditable implements UserDetails {
 	// @JsonManagedReference
 	// @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@JoinTable(name = "UsuariosRoles", // Nombre de la tabla que se creará
-			joinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "idUsuario"), // Nombre
-																													// del
-																													// campo
-																													// de
-																													// la
-																													// tabla
-			inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "idRol"), uniqueConstraints = {
-					@UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
+			joinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "idUsuario"), 
+			inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "idRol"), 
+			uniqueConstraints = {@UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
 	private Set<Rol> roles;
 	// private List<Rol> roles;
 
@@ -102,48 +92,4 @@ public class Usuario extends Auditable implements UserDetails {
 		}
 		return false;
 	}
-
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-
-		Set<Rol> rolesLazy = this.getRoles();
-
-		// List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		Set<SimpleGrantedAuthority> authorities = new HashSet<>();
-
-		for (Rol rol : rolesLazy) {
-			authorities.add(new SimpleGrantedAuthority("ROLE_" + rol.getRol()));
-		}
-		return authorities;
-	}
-
-	@Override
-	public String getUsername() {
-		return this.getEmail();
-	}
-
-	@Override
-	public boolean isEnabled() {
-		return this.getEstatus();
-	}
-
-	@Override
-	public boolean isAccountNonExpired() {
-		// TODO Auto-generated method stub
-		return true;
-
-	}
-
-	@Override
-	public boolean isAccountNonLocked() {
-		return this.getEstatusBloqueo();
-	}
-
-	@Override
-	public boolean isCredentialsNonExpired() {
-		// TODO Auto-generated method stub
-		return true;
-	}
-
-	private static final long serialVersionUID = 1L;
 }
