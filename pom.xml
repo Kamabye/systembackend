@@ -77,6 +77,12 @@
 			<optional>true</optional>
 		</dependency>
 
+		<!-- Esta dependencia permite el uso de UserDetails y GrantedAuthority -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
