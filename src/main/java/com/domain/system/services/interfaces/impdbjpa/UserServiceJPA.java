@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.domain.system.models.postgresql.Usuario;
@@ -24,8 +25,7 @@ public class UserServiceJPA implements IUserService {
 
 	@Override
 	public List<Usuario> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return userRepository.findAll(Sort.by("nombres").ascending());
 	}
 
 	@Override
