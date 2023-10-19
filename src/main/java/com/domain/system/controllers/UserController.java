@@ -19,7 +19,7 @@ import com.domain.system.models.postgresql.Usuario;
 import com.domain.system.services.interfaces.IUserService;
 
 @RestController
-@RequestMapping("apiv1")
+@RequestMapping("apiv1/users")
 @CrossOrigin(origins = "http://localhost:8081", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
 		RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE }, allowedHeaders = "Authorization")
 public class UserController {
@@ -27,8 +27,9 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 
-	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector', 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
-	@GetMapping("/users")
+	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
+	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
+	@GetMapping("")
 	public ResponseEntity<?> users() {
 		Map<String, Object> responseBody = new HashMap<>();
 		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();

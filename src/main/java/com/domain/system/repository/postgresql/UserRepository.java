@@ -20,9 +20,11 @@ public interface UserRepository extends JpaRepository<Usuario, Integer> {
 
 	List<Usuario> findByApellidoPaterno(String apellidoPaterno);
 
+	List<Usuario> findByApellidoMaterno(String apellidoMaterno);
+
 	Optional<Usuario> findByEmail(String email);
 
 	List<Usuario> findByNombresContainingOrApellidoPaternoContainingOrApellidoMaternoContainingOrderByNombresAsc(
-			String nombres, String apellidoPaterno, String apellidoMaterno);
+			String nombres,String apellidoPaterno, String apellidoMaterno);
 
 }

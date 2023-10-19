@@ -2,19 +2,25 @@ package com.domain.system.services.interfaces;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+
 import com.domain.system.models.postgresql.Usuario;
 
 public interface IUserService {
 
 	Usuario save(Usuario usuario);
+	
+	List<Usuario> saveAll(List<Usuario> usuarios);
 
 	List<Usuario> findAll();
+	
+	Page<Usuario> findAllPage(Integer page, Integer size);
+	
+	List<Usuario> findByExample(Usuario usuario);
+	
+	Page<Usuario> findByExampleWithPage(Usuario usuario, Integer page, Integer size);
 
 	void delete(Integer idUsuario);
-
-	List<Usuario> findAll(Integer pagina);
-
-	List<Usuario> findAll(Integer pagina, Integer cantidad);
 
 	Usuario findById(Integer idUsuario);
 

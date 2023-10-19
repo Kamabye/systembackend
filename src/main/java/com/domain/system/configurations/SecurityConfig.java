@@ -22,7 +22,8 @@ public class SecurityConfig {
 	 * No se agrega system a la url porque lo agrega el contextpath del application.properties
 	 */
 	public static final String[] ENDPOINTS_WHITELIST = {
-			"demo/**"
+			"demo/**",
+			"apiv1/users/**"
 			};
 	
 	@Autowired

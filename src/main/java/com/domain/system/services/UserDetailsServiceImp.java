@@ -7,14 +7,14 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.domain.system.models.postgresql.Usuario;
-import com.domain.system.services.interfaces.impdbjpa.UserServiceJPA;
+import com.domain.system.services.interfaces.impdbjpa.UserServiceImpJpa;
 import com.domain.system.userdetails.UserDetailsImp;
 
 @Service
 public class UserDetailsServiceImp implements UserDetailsService {
 
 	@Autowired
-	private UserServiceJPA userService;
+	private UserServiceImpJpa userService;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
