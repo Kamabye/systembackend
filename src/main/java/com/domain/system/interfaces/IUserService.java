@@ -7,6 +7,8 @@ import org.springframework.data.domain.Page;
 import com.domain.system.models.postgresql.Usuario;
 
 public interface IUserService {
+	
+	//Metodos que utilizan Derived Query Methods del repositorio
 
 	Usuario save(Usuario usuario);
 	
@@ -33,5 +35,13 @@ public interface IUserService {
 	List<Usuario> findByApellidoMaterno(String apellidoMaterno);
 
 	List<Usuario> findByNombresOrApellidoPaternoOrApellidoMaterno(String string);
+	
+	
+	//Metodos que utilizan JQPL del repositorio
+	
+	
+	
+	
+	//Métodos que utilizan SQL del repositorio
 
 }

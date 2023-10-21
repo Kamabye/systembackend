@@ -17,6 +17,9 @@ import com.domain.system.models.postgresql.Usuario;
 
 @Repository
 public interface UserRepository extends JpaRepository<Usuario, Integer> {
+	
+	
+	//Derived Query Methods
 
 	List<Usuario> findByNombres(String nombres);
 
@@ -24,9 +27,9 @@ public interface UserRepository extends JpaRepository<Usuario, Integer> {
 
 	List<Usuario> findByNombresOrderByNombresAsc(String nombres, Pageable pageable);
 
-	List<Usuario> findByApellidoPaterno(String apellidoPaterno);
+	List<Usuario> findByApellidoPaternoOrderByNombresAsc(String apellidoPaterno);
 
-	List<Usuario> findByApellidoMaterno(String apellidoMaterno);
+	List<Usuario> findByApellidoMaternoOrderByNombresAsc(String apellidoMaterno);
 
 	Optional<Usuario> findByEmail(String email);
 
@@ -36,25 +39,31 @@ public interface UserRepository extends JpaRepository<Usuario, Integer> {
 	// Métodos @Query JPQL Java Persistence Query Language
 
 	@Query("SELECT u FROM Usuario u")
-	Page<Usuario> obtenerUsuarios(Pageable pageable);
+	List<Usuario> queryObtenerUsuarios();
+	
+	@Query("SELECT u FROM Usuario u")	
+	Page<Usuario> jpqlObtenerUsuarios(Pageable pageable);
 
-	@Query("SELECT new com.example.dto.UsuarioDTO(u.id, u.nombre) FROM Usuario u")
-	List<UsuarioDTO> obtenerUsuariosDTO();
+	@Query("SELECT new com.domain.system.models.dto.UsuarioDTO(u.id, u.nombre) FROM Usuario u")
+	List<UsuarioDTO> jpqlObtenerUsuariosDTO();
 
-	@Query("SELECT new com.example.dto.UsuarioDTO(u.nombre, u.email) FROM Usuario u WHERE u.nombre = :nombre")
-	List<UsuarioDTO> buscarUsuariosPorNombre(@Param("nombre") String nombre);
+	@Query("SELECT new com.domain.system.models.dto.UsuarioDTO(u.nombre, u.email) FROM Usuario u WHERE u.nombre = :nombre")
+	List<UsuarioDTO> jpqlBuscarUsuariosPorNombre(@Param("nombre") String nombre);
 
 	@Query("SELECT u FROM Usuario u WHERE u.nombre = :nombre")
 	List<Usuario> jpqlBuscarPorNombre(@Param("nombre") String nombre);
 
 	@Query("SELECT u FROM Usuario u JOIN u.roles r WHERE r.nombre = :rolNombre")
-	List<Usuario> buscarPorRol(@Param("rolNombre") String rolNombre);
+	List<Usuario> jpqlBuscarPorRol(@Param("rolNombre") String rolNombre);
 
 	@Query("SELECT u FROM Usuario u ORDER BY u.nombre DESC")
-	List<Usuario> obtenerUsuariosOrdenados();
+	List<Usuario> jpqlObtenerUsuariosOrdenados();
 
 	@Query("SELECT u FROM Usuario u WHERE (:nombre IS NULL OR u.nombre = :nombre) AND (:email IS NULL OR u.email = :email)")
-	List<Usuario> buscarUsuariosPorNombreYEmail(@Param("nombre") String nombre, @Param("email") String email);
+	List<Usuario> jpqlBuscarUsuariosPorNombreYEmail(@Param("nombre") String nombre, @Param("email") String email);
+
+	@Query("SELECT u.nombre, r.nombre FROM Usuario u JOIN u.roles r WHERE u.nombre = :nombre")
+	List<Object[]> jpqlBuscarNombreYRol(@Param("nombre") String nombre);
 
 	// Métodos @Query Nativo
 	@Query(value = "SELECT * FROM usuarios u WHERE u.nombre = :nombre", nativeQuery = true)
@@ -65,5 +74,8 @@ public interface UserRepository extends JpaRepository<Usuario, Integer> {
 	List<UsuarioProyeccion> findByNombre(String nombre);
 
 	List<NombreDTO> findByNombre(String nombre, Class<NombreDTO> projection);
+
+	@Query(value = "SELECT nombre, email FROM usuarios WHERE nombre = :nombre", nativeQuery = true)
+	List<Object[]> buscarNombreYEmail(@Param("nombre") String nombre);
 
 }

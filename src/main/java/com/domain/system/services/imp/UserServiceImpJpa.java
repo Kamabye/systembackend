@@ -24,6 +24,10 @@ public class UserServiceImpJpa implements IUserService {
 
 	@Autowired
 	UserRepository userRepository;
+	
+	/**
+	 * Métodos de servicio que utilizan Derived Query Methods del Repositorio
+	 */
 
 	@Transactional
 	@Override
@@ -145,13 +149,13 @@ public class UserServiceImpJpa implements IUserService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<Usuario> findByApellidoPaterno(String apellidoPaterno) {
-		return userRepository.findByApellidoPaterno(apellidoPaterno);
+		return userRepository.findByApellidoPaternoOrderByNombresAsc(apellidoPaterno);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public List<Usuario> findByApellidoMaterno(String apellidoMaterno) {
-		return userRepository.findByApellidoMaterno(apellidoMaterno);
+		return userRepository.findByApellidoMaternoOrderByNombresAsc(apellidoMaterno);
 	}
 
 	@Transactional(readOnly = true)
