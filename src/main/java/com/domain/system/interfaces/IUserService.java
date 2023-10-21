@@ -1,4 +1,4 @@
-package com.domain.system.services.interfaces;
+package com.domain.system.interfaces;
 
 import java.util.List;
 

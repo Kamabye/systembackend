@@ -1,4 +1,4 @@
-package com.domain.system.services;
+package com.domain.system.services.imp;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -7,7 +7,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.domain.system.models.postgresql.Usuario;
-import com.domain.system.services.interfaces.impdbjpa.UserServiceImpJpa;
 import com.domain.system.userdetails.UserDetailsImp;
 
 @Service

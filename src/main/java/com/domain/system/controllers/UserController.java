@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.domain.system.interfaces.IUserService;
 import com.domain.system.models.postgresql.Usuario;
-import com.domain.system.services.interfaces.IUserService;
 
 @RestController
 @RequestMapping("apiv1/users")

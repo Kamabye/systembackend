@@ -1,4 +1,4 @@
-package com.domain.system.services.interfaces.impdbjpa;
+package com.domain.system.services.imp;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,9 +13,9 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.domain.system.interfaces.IUserService;
 import com.domain.system.models.postgresql.Usuario;
 import com.domain.system.repository.postgresql.UserRepository;
-import com.domain.system.services.interfaces.IUserService;
 
 @Service
 //@Transactional

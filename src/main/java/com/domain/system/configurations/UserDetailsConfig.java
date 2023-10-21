@@ -10,7 +10,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import com.domain.system.services.UserDetailsServiceImp;
+import com.domain.system.services.imp.UserDetailsServiceImp;
 
 @Configuration
 public class UserDetailsConfig {
