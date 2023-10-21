@@ -60,8 +60,13 @@ public class UserServiceImpJpa implements IUserService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<Usuario> findByExample(Usuario usuario) {
-		ExampleMatcher matcher = ExampleMatcher.matching().withIgnorePaths("id") // Ignorar el campo "id" durante la
-																					// búsqueda
+		ExampleMatcher matcher = ExampleMatcher.matching()// Cuando se requiere OR
+				// ExampleMatcher matcher = ExampleMatcher.matchingAll() //Cuando se requiere
+				// AND
+				// ExampleMatcher matcher = ExampleMatcher.matchingAny() //Cuando se requiere
+				// almenos un OR
+				.withIgnorePaths("id") // Ignorar el campo "id" durante la
+										// búsqueda
 				// realiza una búsqueda de texto que contiene la cadena proporcionada, ignorando
 				// las mayúsculas y minúsculas.
 				.withMatcher("nombre", ExampleMatcher.GenericPropertyMatchers.contains().ignoreCase())
@@ -116,7 +121,7 @@ public class UserServiceImpJpa implements IUserService {
 
 	@Transactional(readOnly = true)
 	@Override
-	public Usuario findById(Integer idUsuario) {
+	public Usuario findById(Long idUsuario) {
 		// TODO Auto-generated method stub
 		return null;
 	}

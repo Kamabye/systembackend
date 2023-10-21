@@ -22,7 +22,7 @@ public interface IUserService {
 
 	void delete(Integer idUsuario);
 
-	Usuario findById(Integer idUsuario);
+	Usuario findById(Long idUsuario);
 
 	Usuario findByEmail(String email);
 

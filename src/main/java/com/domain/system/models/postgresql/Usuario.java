@@ -1,5 +1,6 @@
 package com.domain.system.models.postgresql;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -35,7 +36,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // Genera un constructor sin parámetros
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
 @AllArgsConstructor // Genera un cosntructor para cada parámetro finales o no nulos
-public class Usuario extends Auditable {
+public class Usuario extends Auditable implements Serializable {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY AutoIncrement MYSQL MariaDB
