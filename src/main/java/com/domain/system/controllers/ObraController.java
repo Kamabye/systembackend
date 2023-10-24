@@ -156,34 +156,4 @@ public class ObraController {
 
 	}
 
-	@GetMapping("/")
-	public ResponseEntity<?> getUsersByIDParamSlash(@RequestParam("idObra") Long idObra) {
-		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-		Map<String, Object> responseBody = new HashMap<>();
-
-		Obra obra = null;
-
-		try {
-			obra = obrasService.findById(idObra);
-			if (obra == null) {
-				responseBody.put("mensaje",
-						"La Obra ID: ".concat(idObra.toString().concat(" no existe en la base de datos!.")));
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
-			}
-
-			return new ResponseEntity<Obra>(obra, null, HttpStatus.OK);
-		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : "));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} finally {
-
-		}
-
-	}
-
 }
