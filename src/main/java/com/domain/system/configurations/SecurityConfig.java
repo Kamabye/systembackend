@@ -12,20 +12,21 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 import com.domain.system.filters.JwtAuthenticationFilter;
 
-
 @Configuration
 @EnableWebSecurity(debug = true)
 @EnableMethodSecurity
 public class SecurityConfig {
-	
+
 	/**
-	 * No se agrega system a la url porque lo agrega el contextpath del application.properties
+	 * No se agrega system a la url porque lo agrega el contextpath del
+	 * application.properties
 	 */
-	public static final String[] ENDPOINTS_WHITELIST = {
-			"demo/**",
-			"apiv1/users/**"
+	public static final String[] ENDPOINTS_WHITELIST = { 
+			"demo/**", 
+			"apiv1/auth/**", 
+			"apiv1/obra/**" 
 			};
-	
+
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthorizationFilter;
 
@@ -36,8 +37,7 @@ public class SecurityConfig {
 				.authorizeHttpRequests(
 						auth -> auth.requestMatchers(ENDPOINTS_WHITELIST).permitAll().anyRequest().authenticated())
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-				.httpBasic();
+				.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class).httpBasic();
 		return http.build();
 	}
 

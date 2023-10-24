@@ -37,7 +37,6 @@ public class Obra extends Auditable implements Serializable {
 	@Column(name = "idObra",updatable = false, nullable = false)
 	private Long id;
 	
-	
 	private String nombre;
 	
 	private String compositor;

@@ -1,16 +1,19 @@
 package com.domain.system.services.imp;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 
 import com.domain.system.interfaces.IObraService;
 import com.domain.system.models.postgresql.Obra;
 import com.domain.system.repository.postgresql.ObraRepository;
 
+@Service
 public class ObraServiceImpJpa implements IObraService {
-	
+
 	@Autowired
 	private ObraRepository obraRepository;
 
@@ -27,8 +30,7 @@ public class ObraServiceImpJpa implements IObraService {
 
 	@Override
 	public List<Obra> findAll() {
-		// TODO Auto-generated method stub
-		return null;
+		return obraRepository.findAll();
 	}
 
 	@Override
@@ -52,12 +54,16 @@ public class ObraServiceImpJpa implements IObraService {
 	@Override
 	public void delete(Integer idObra) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public Obra findById(Long idObra) {
-		// TODO Auto-generated method stub
+		Optional<Obra> obraFind = obraRepository.findById(idObra);
+		if (obraFind.isPresent()) {
+			return obraRepository.findById(idObra).get();
+		}
+
 		return null;
 	}
 
