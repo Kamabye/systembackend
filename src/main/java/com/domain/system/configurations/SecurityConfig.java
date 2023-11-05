@@ -24,7 +24,8 @@ public class SecurityConfig {
 	public static final String[] ENDPOINTS_WHITELIST = { 
 			"demo/**", 
 			"apiv1/auth/**", 
-			"apiv1/obra/**" 
+			"apiv1/obra/**",
+			"apiv1/partitura/**" 
 			};
 
 	@Autowired
