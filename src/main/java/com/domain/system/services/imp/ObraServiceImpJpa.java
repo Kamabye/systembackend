@@ -52,8 +52,8 @@ public class ObraServiceImpJpa implements IObraService {
 	}
 
 	@Override
-	public void delete(Integer idObra) {
-		// TODO Auto-generated method stub
+	public void delete(Long idObra) {
+		obraRepository.deleteById(idObra);
 
 	}
 
@@ -69,32 +69,27 @@ public class ObraServiceImpJpa implements IObraService {
 
 	@Override
 	public List<Obra> findByNombre(String nombre) {
-		// TODO Auto-generated method stub
-		return null;
+		return obraRepository.findByNombreContainingOrderByNombreAsc(nombre);
 	}
 
 	@Override
 	public List<Obra> findByCompositor(String compositor) {
-		// TODO Auto-generated method stub
-		return null;
+		return obraRepository.findByCompositorContainingOrderByNombreAsc(compositor);
 	}
 
 	@Override
 	public List<Obra> findByArreglista(String arreglista) {
-		// TODO Auto-generated method stub
-		return null;
+		return obraRepository.findByArreglistaContainingOrderByNombreAsc(arreglista);
 	}
 
 	@Override
 	public List<Obra> findByLetrista(String letrista) {
-		// TODO Auto-generated method stub
-		return null;
+		return obraRepository.findByLetristaContainingOrderByNombreAsc(letrista);
 	}
 
 	@Override
 	public List<Obra> findByGenero(String genero) {
-		// TODO Auto-generated method stub
-		return null;
+		return obraRepository.findByGeneroContainingOrderByNombreAsc(genero);
 	}
 
 }

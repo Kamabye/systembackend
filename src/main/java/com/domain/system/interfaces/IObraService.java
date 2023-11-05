@@ -20,7 +20,7 @@ public interface IObraService {
 
 	Page<Obra> findByExampleWithPage(Obra obra, Integer page, Integer size);
 
-	void delete(Integer idObra);
+	void delete(Long idObra);
 
 	Obra findById(Long idObra);
 
