@@ -82,8 +82,8 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
 		</dependency>
-		
-		
+
+
 		<!-- Esta dependencia permite el uso de JWT -->
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
@@ -102,6 +102,13 @@
 			<artifactId>jjwt-jackson</artifactId>
 			<version>0.11.5</version>
 			<optional>true</optional>
+		</dependency>
+
+		<!-- Esta dependencia permite el uso de Guava -->
+		<dependency>
+			<groupId>com.google.guava</groupId>
+			<artifactId>guava</artifactId>
+			<version>32.1.3-jre</version>
 		</dependency>
 
 	</dependencies>
