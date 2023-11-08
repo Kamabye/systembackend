@@ -61,7 +61,7 @@ public class ObraServiceImpJpa implements IObraService {
 	public Obra findById(Long idObra) {
 		Optional<Obra> obraFind = obraRepository.findById(idObra);
 		if (obraFind.isPresent()) {
-			return obraRepository.findById(idObra).get();
+			return obraFind.get();
 		}
 
 		return null;
