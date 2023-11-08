@@ -22,7 +22,7 @@ public interface IUserService {
 	
 	Page<Usuario> findByExampleWithPage(Usuario usuario, Integer page, Integer size);
 
-	void delete(Integer idUsuario);
+	void delete(Long idUsuario);
 
 	Usuario findById(Long idUsuario);
 

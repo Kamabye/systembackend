@@ -119,7 +119,7 @@ public class UserServiceImpJpa implements IUserService {
 
 	@Transactional
 	@Override
-	public void delete(Integer idUsuario) {
+	public void delete(Long idUsuario) {
 		userRepository.deleteById(idUsuario);
 	}
 
