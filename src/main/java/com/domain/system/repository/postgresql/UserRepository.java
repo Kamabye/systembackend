@@ -16,7 +16,7 @@ import com.domain.system.models.dto.UsuarioDTO;
 import com.domain.system.models.postgresql.Usuario;
 
 @Repository
-public interface UserRepository extends JpaRepository<Usuario, Integer> {
+public interface UserRepository extends JpaRepository<Usuario, Long> {
 	
 	
 	//Derived Query Methods
