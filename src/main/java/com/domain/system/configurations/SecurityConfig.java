@@ -25,7 +25,8 @@ public class SecurityConfig {
 			"demo/**", 
 			"apiv1/auth/**", 
 			"apiv1/obra/**",
-			"apiv1/partitura/**" 
+			"apiv1/partitura/**",
+			"apiv1/pdf/**" 
 			};
 
 	@Autowired
