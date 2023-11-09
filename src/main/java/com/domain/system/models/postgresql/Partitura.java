@@ -1,9 +1,12 @@
 package com.domain.system.models.postgresql;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 
 import com.domain.system.models.Auditable;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.google.common.io.ByteStreams;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -52,5 +55,9 @@ public class Partitura extends Auditable implements Serializable {
     private Obra obra;
 	
 	private static final long serialVersionUID = 1L;
+	
+	public void setPartituraPDFFromInputStream(InputStream inputStream) throws IOException {
+        this.partituraPDF = ByteStreams.toByteArray(inputStream);
+    }
 
 }
