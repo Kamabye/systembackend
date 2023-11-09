@@ -47,7 +47,7 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
 	@Query("SELECT new com.domain.system.models.dto.UsuarioDTO(u.id, u.nombres) FROM Usuario u")
 	List<UsuarioDTO> jpqlObtenerUsuariosDTO();
 
-	@Query("SELECT new com.domain.system.models.dto.UsuarioDTO(u.nombres, u.email) FROM Usuario u WHERE u.nombres = :nombres")
+	@Query("SELECT new com.domain.system.models.dto.UsuarioDTO(u.id, u.nombres) FROM Usuario u WHERE u.nombres = :nombres")
 	List<UsuarioDTO> jpqlBuscarUsuariosPorNombres(@Param("nombres") String nombres);
 
 	@Query("SELECT u FROM Usuario u WHERE u.nombres = :nombres")
