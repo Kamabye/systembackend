@@ -5,6 +5,7 @@ import java.math.BigDecimal;
 import java.util.List;
 
 import com.domain.system.models.Auditable;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -50,6 +51,7 @@ public class Obra extends Auditable implements Serializable {
 	private String genero;
 	
 	@OneToMany(mappedBy = "obra", cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
+	@JsonManagedReference
     private List<Partitura> partituras;
 	
 

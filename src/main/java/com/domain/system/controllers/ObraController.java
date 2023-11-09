@@ -279,101 +279,108 @@ public class ObraController {
 		}
 
 	}
+	/*
+	 * @GetMapping("") public ResponseEntity<?>
+	 * findObraByNameParam(@RequestParam("nombre") String nombre) { Map<String,
+	 * Object> responseBody = new HashMap<>(); List<Obra> obratemp; try { obratemp =
+	 * obrasService.findByNombre(nombre);
+	 * 
+	 * responseBody.put("mensaje", "La obra : " + nombre +
+	 * " ha sido encontrado con éxito"); responseBody.put("usuario", obratemp);
+	 * return new ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.CREATED); } catch (DataAccessException e) {
+	 * responseBody.put("mensaje",
+	 * "Error al realizar la insercion en la base de datos");
+	 * responseBody.put("error",
+	 * e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+	 * return new ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.INTERNAL_SERVER_ERROR); } catch (Exception e) {
+	 * responseBody.put("mensaje",
+	 * "Error al realizar la consulta en la base de datos");
+	 * responseBody.put("error", e.getMessage().concat(" : ")); return new
+	 * ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.INTERNAL_SERVER_ERROR); } finally {
+	 * 
+	 * }
+	 * 
+	 * }
+	 * 
+	 * @GetMapping("") public ResponseEntity<?>
+	 * findObraByComposerParam(@RequestParam("compositor") String compositor) {
+	 * Map<String, Object> responseBody = new HashMap<>(); List<Obra> obratemp; try
+	 * { obratemp = obrasService.findByCompositor(compositor);
+	 * 
+	 * responseBody.put("mensaje", "La obra : " + compositor +
+	 * " ha sido encontrado con éxito"); responseBody.put("usuario", obratemp);
+	 * return new ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.CREATED); } catch (DataAccessException e) {
+	 * responseBody.put("mensaje",
+	 * "Error al realizar la insercion en la base de datos");
+	 * responseBody.put("error",
+	 * e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+	 * return new ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.INTERNAL_SERVER_ERROR); } catch (Exception e) {
+	 * responseBody.put("mensaje",
+	 * "Error al realizar la consulta en la base de datos");
+	 * responseBody.put("error", e.getMessage().concat(" : ")); return new
+	 * ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.INTERNAL_SERVER_ERROR); } finally {
+	 * 
+	 * }
+	 * 
+	 * }
+	 * 
+	 * @GetMapping("") public ResponseEntity<?>
+	 * findObraByLetristaParam(@RequestParam("letrista") String letrista) {
+	 * Map<String, Object> responseBody = new HashMap<>(); List<Obra> obratemp; try
+	 * { obratemp = obrasService.findByLetrista(letrista);
+	 * 
+	 * responseBody.put("mensaje", "La obra : " + letrista +
+	 * " ha sido encontrado con éxito"); responseBody.put("usuario", obratemp);
+	 * return new ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.CREATED); } catch (DataAccessException e) {
+	 * responseBody.put("mensaje",
+	 * "Error al realizar la insercion en la base de datos");
+	 * responseBody.put("error",
+	 * e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+	 * return new ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.INTERNAL_SERVER_ERROR); } catch (Exception e) {
+	 * responseBody.put("mensaje",
+	 * "Error al realizar la consulta en la base de datos");
+	 * responseBody.put("error", e.getMessage().concat(" : ")); return new
+	 * ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.INTERNAL_SERVER_ERROR); } finally {
+	 * 
+	 * }
+	 * 
+	 * }
+	 */
 	
-	@GetMapping("")
-	public ResponseEntity<?> findObraByNameParam(@RequestParam("nombre") String nombre) {
-		Map<String, Object> responseBody = new HashMap<>();
-		List<Obra> obratemp;
-		try {
-			obratemp = obrasService.findByNombre(nombre);
-
-			responseBody.put("mensaje", "La obra : " + nombre + " ha sido encontrado con éxito");
-			responseBody.put("usuario", obratemp);
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
-		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la insercion en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : "));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} finally {
-
-		}
-
-	}
-	
-	@GetMapping("")
-	public ResponseEntity<?> findObraByComposerParam(@RequestParam("compositor") String compositor) {
-		Map<String, Object> responseBody = new HashMap<>();
-		List<Obra> obratemp;
-		try {
-			obratemp = obrasService.findByCompositor(compositor);
-
-			responseBody.put("mensaje", "La obra : " + compositor + " ha sido encontrado con éxito");
-			responseBody.put("usuario", obratemp);
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
-		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la insercion en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : "));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} finally {
-
-		}
-
-	}
-	
-	@GetMapping("")
-	public ResponseEntity<?> findObraByLetristaParam(@RequestParam("letrista") String letrista) {
-		Map<String, Object> responseBody = new HashMap<>();
-		List<Obra> obratemp;
-		try {
-			obratemp = obrasService.findByLetrista(letrista);
-
-			responseBody.put("mensaje", "La obra : " + letrista + " ha sido encontrado con éxito");
-			responseBody.put("usuario", obratemp);
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
-		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la insercion en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : "));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} finally {
-
-		}
-
-	}
-	
-	@GetMapping("")
-	public ResponseEntity<?> findObraByGeneroParam(@RequestParam("genero") String genero) {
-		Map<String, Object> responseBody = new HashMap<>();
-		List<Obra> obratemp;
-		try {
-			obratemp = obrasService.findByGenero(genero);
-
-			responseBody.put("mensaje", "La obra : " + genero + " ha sido encontrado con éxito");
-			responseBody.put("usuario", obratemp);
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
-		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la insercion en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : "));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} finally {
-
-		}
-
-	}
+	/*
+	 * @GetMapping("") public ResponseEntity<?>
+	 * findObraByGeneroParam(@RequestParam("genero") String genero) { Map<String,
+	 * Object> responseBody = new HashMap<>(); List<Obra> obratemp; try { obratemp =
+	 * obrasService.findByGenero(genero);
+	 * 
+	 * responseBody.put("mensaje", "La obra : " + genero +
+	 * " ha sido encontrado con éxito"); responseBody.put("usuario", obratemp);
+	 * return new ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.CREATED); } catch (DataAccessException e) {
+	 * responseBody.put("mensaje",
+	 * "Error al realizar la insercion en la base de datos");
+	 * responseBody.put("error",
+	 * e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+	 * return new ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.INTERNAL_SERVER_ERROR); } catch (Exception e) {
+	 * responseBody.put("mensaje",
+	 * "Error al realizar la consulta en la base de datos");
+	 * responseBody.put("error", e.getMessage().concat(" : ")); return new
+	 * ResponseEntity<Map<String, Object>>(responseBody, null,
+	 * HttpStatus.INTERNAL_SERVER_ERROR); } finally {
+	 * 
+	 * }
+	 * 
+	 * }
+	 */
 
 }
