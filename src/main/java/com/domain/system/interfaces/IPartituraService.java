@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.domain.system.models.dto.PartituraDTO;
 import com.domain.system.models.postgresql.Partitura;
 
 public interface IPartituraService {
@@ -23,6 +24,12 @@ public interface IPartituraService {
 	void delete(Long idPartitura);
 
 	Partitura findById(Long idPartitura);
+	
+	List<PartituraDTO> jpqlFindAll();
+	
+	//List<PartituraDTO> jpqlFindAll();
+	
+	List<PartituraDTO> jpqlFindByObra(Long idObra);
 
 	List<Partitura> findByInstrumento(String instrumento);
 

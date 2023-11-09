@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import com.domain.system.interfaces.IPartituraService;
+import com.domain.system.models.dto.PartituraDTO;
 import com.domain.system.models.postgresql.Partitura;
 import com.domain.system.repository.postgresql.PartituraRepository;
 
@@ -67,7 +68,18 @@ public class PartituraServiceImpJpa implements IPartituraService {
 
 	@Override
 	public List<Partitura> findByInstrumento(String instrumento) {
-		return partituraRepo.findByInstrumentoContainingOrderByNombreAsc(instrumento);
+		return partituraRepo.findByInstrumentoContainingOrderByInstrumentoAsc(instrumento);
+	}
+
+	@Override
+	public List<PartituraDTO> jpqlFindAll() {
+		return partituraRepo.jpqlfindAll();
+	}
+	
+	@Override
+	public List<PartituraDTO> jpqlFindByObra(Long idObra) {
+		return partituraRepo.jpqlfindByObraId(idObra);
+		
 	}
 
 }

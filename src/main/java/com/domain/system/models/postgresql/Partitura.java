@@ -3,6 +3,7 @@ package com.domain.system.models.postgresql;
 import java.io.Serializable;
 
 import com.domain.system.models.Auditable;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,7 +47,8 @@ public class Partitura extends Auditable implements Serializable {
     private byte[] xml;
 	
 	@ManyToOne
-    @JoinColumn(name = "obra_idObra")
+    @JoinColumn(name = "idObra")
+	@JsonBackReference
     private Obra obra;
 	
 	private static final long serialVersionUID = 1L;
