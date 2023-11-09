@@ -120,7 +120,7 @@ public class PartiturasController {
 	}
 
 	@GetMapping("/download/{idPartitura}")
-	public ResponseEntity<byte[]> findPartituraByIDURL(@PathVariable("idPartitura") Long idPartitura) {
+	public ResponseEntity<?> findPartituraByIDURL(@PathVariable("idPartitura") Long idPartitura) {
 		// Map<String, Object> responseBody = new HashMap<>();
 		Partitura temp;
 
