@@ -14,6 +14,7 @@ import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
@@ -50,14 +51,13 @@ public class Obra extends Auditable implements Serializable {
 	
 	private String genero;
 	
+	@Lob
+    private byte[] audio;
+	
 	@OneToMany(mappedBy = "obra", cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
 	@JsonManagedReference
     private List<Partitura> partituras;
-	
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 1L;
 
 }
