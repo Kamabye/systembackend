@@ -10,6 +10,8 @@ import com.domain.system.models.postgresql.Partitura;
 public interface IPartituraService {
 	
 	Partitura save(Partitura partitura);
+	
+	Partitura guardarConMarcaDeAgua(Partitura partitura);
 
 	List<Partitura> saveAll(List<Partitura> partituras);
 
