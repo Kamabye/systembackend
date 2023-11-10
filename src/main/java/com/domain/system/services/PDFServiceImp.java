@@ -35,8 +35,7 @@ public class PDFServiceImp implements IPDFService {
 			PDDocument documentoPDF = Loader.loadPDF(new RandomAccessReadBuffer(pdfInputStream));
 			// PDFRenderer pdfRenderer = new PDFRenderer(documentoPDF);
 
-			//BufferedImage imagenMarcaDeAgua = javax.imageio.ImageIO.read(marcaDeAguaInputStream);
-			BufferedImage imagenMarcaDeAgua = resourceService.marcaDeAgua();
+			BufferedImage imagenMarcaDeAgua = javax.imageio.ImageIO.read(marcaDeAguaInputStream);
 
 			for (int i = 0; i < documentoPDF.getNumberOfPages(); i++) {
 				PDPage page = documentoPDF.getPage(i);
@@ -90,6 +89,44 @@ public class PDFServiceImp implements IPDFService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public byte[] ponerMarcaAgua(MultipartFile archivoPDF) {
+		try (InputStream pdfInputStream = archivoPDF.getInputStream()) {
+			// PDDocument documentoPDF = Loader.loadPDF(pdfInputStream.readAllBytes());
+			PDDocument documentoPDF = Loader.loadPDF(new RandomAccessReadBuffer(pdfInputStream));
+			// PDFRenderer pdfRenderer = new PDFRenderer(documentoPDF);
+
+			BufferedImage imagenMarcaDeAgua = resourceService.marcaDeAgua();
+
+			for (int i = 0; i < documentoPDF.getNumberOfPages(); i++) {
+				PDPage page = documentoPDF.getPage(i);
+				PDRectangle pageSize = page.getMediaBox();
+				float x = (pageSize.getWidth() - imagenMarcaDeAgua.getWidth()) / 2;
+				float y = (pageSize.getHeight() - imagenMarcaDeAgua.getHeight()) / 2;
+
+				PDPageContentStream contentStream = new PDPageContentStream(documentoPDF, page,
+						PDPageContentStream.AppendMode.APPEND, true);
+				contentStream
+						.drawImage(
+								PDImageXObject.createFromByteArray(documentoPDF,
+										convertirImagenABytes(imagenMarcaDeAgua), "String"),
+								x, y, imagenMarcaDeAgua.getWidth(), imagenMarcaDeAgua.getHeight());
+				contentStream.close();
+			}
+
+			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			documentoPDF.save(outputStream);
+			documentoPDF.close();
+
+			return outputStream.toByteArray();
+			
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
 	}
 
 }
