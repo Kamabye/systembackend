@@ -85,10 +85,17 @@ public class PartiturasController {
 			@RequestParam(name = "partituraPDF", required = true) MultipartFile partituraPDF,
 			@RequestParam(name = "idObra", required = true) Long idObra,
 			@RequestParam(name = "instrumento", required = true) String instrumento) {
-
+		
 		Map<String, Object> responseBody = new HashMap<>();
+		
+		Obra obra = obraService.findById(idObra);
+		
+		if(obra != null) {
+			
+		}
+
+		
 		Partitura partitura = new Partitura();
-		Obra obra = new Obra();
 		obra.setId(idObra);
 
 		try {

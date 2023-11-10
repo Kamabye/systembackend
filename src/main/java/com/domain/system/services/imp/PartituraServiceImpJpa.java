@@ -82,4 +82,10 @@ public class PartituraServiceImpJpa implements IPartituraService {
 		
 	}
 
+	@Override
+	public Partitura guardarConMarcaDeAgua(Partitura partitura) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
