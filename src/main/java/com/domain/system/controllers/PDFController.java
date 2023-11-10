@@ -35,10 +35,10 @@ public class PDFController {
 
 	@PostMapping("/marca")
 	public ResponseEntity<?> uploadPDF(@RequestParam(name = "archivoPDF", required = true) MultipartFile archivoPDF,
-			@RequestParam(name = "marcaDeAgua", required = true) MultipartFile marcaDeAgua) {
+			@RequestParam(name = "marcaDeAgua", required = false) MultipartFile marcaDeAgua) {
 		Map<String, Object> responseBody = new HashMap<>();
 		byte[] archivoconmarca;
-		archivoconmarca = pdfService.ponerMarcaAgua(archivoPDF, marcaDeAgua);
+		archivoconmarca = pdfService.ponerMarcaAgua(archivoPDF);
 
 		Partitura partitura = new Partitura();
 		Obra obra = new Obra();
