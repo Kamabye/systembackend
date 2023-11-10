@@ -14,6 +14,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,6 +22,9 @@ import com.domain.system.interfaces.IPDFService;
 
 @Service
 public class PDFServiceImp implements IPDFService {
+	
+	@Autowired
+	private ResourcesService resourceService;
 
 	@Override
 	public byte[] ponerMarcaAgua(MultipartFile archivoPDF, MultipartFile marcaDeAgua) {
@@ -31,7 +35,8 @@ public class PDFServiceImp implements IPDFService {
 			PDDocument documentoPDF = Loader.loadPDF(new RandomAccessReadBuffer(pdfInputStream));
 			// PDFRenderer pdfRenderer = new PDFRenderer(documentoPDF);
 
-			BufferedImage imagenMarcaDeAgua = javax.imageio.ImageIO.read(marcaDeAguaInputStream);
+			//BufferedImage imagenMarcaDeAgua = javax.imageio.ImageIO.read(marcaDeAguaInputStream);
+			BufferedImage imagenMarcaDeAgua = resourceService.marcaDeAgua();
 
 			for (int i = 0; i < documentoPDF.getNumberOfPages(); i++) {
 				PDPage page = documentoPDF.getPage(i);
