@@ -15,7 +15,7 @@ public class ResourcesService {
 	public BufferedImage marcaDeAgua() {
 		
 		try {
-			Resource resource = new ClassPathResource("marcaDeAgua.png");
+			Resource resource = new ClassPathResource("files/marcaDeAgua.png");
 
             InputStream inputStream = resource.getInputStream();
             
@@ -24,6 +24,7 @@ public class ResourcesService {
             return marcadeagua;
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
