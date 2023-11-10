@@ -6,12 +6,14 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.domain.system.interfaces.IObraService;
 import com.domain.system.models.postgresql.Obra;
 import com.domain.system.repository.postgresql.ObraRepository;
 
 @Service
+@Transactional
 public class ObraServiceImpJpa implements IObraService {
 
 	@Autowired

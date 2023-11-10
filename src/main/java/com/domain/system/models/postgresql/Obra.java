@@ -2,7 +2,9 @@ package com.domain.system.models.postgresql;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.Set;
 
 import com.domain.system.models.Auditable;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -27,11 +29,11 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "Obras")
 @Data
-@EqualsAndHashCode(callSuper = true)
+@EqualsAndHashCode(callSuper = true) //Esta anotación se usa cuando la clase extiende de otra
 @Builder
 @NoArgsConstructor // Genera un constructor sin parámetros
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
-@AllArgsConstructor // Genera un cosntructor para cada parámetro finales o no nulos
+@AllArgsConstructor // Crea un constructor que solicita todos los parámetros de la clase que no son FINAL
 public class Obra extends Auditable implements Serializable {
 	
 	@Id
@@ -56,7 +58,30 @@ public class Obra extends Auditable implements Serializable {
 	
 	@OneToMany(mappedBy = "obra", cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
 	@JsonManagedReference
-    private List<Partitura> partituras;
+    private Set<Partitura> partituras;
+	
+	public void addPartitura(Partitura partitura) {
+		if (partituras == null) {
+			partituras = new HashSet<Partitura>();
+		}
+		
+		if(partituras.stream().noneMatch(existingPartitura -> existingPartitura.equals(partitura))){
+			partituras.add(partitura);
+			partitura.setObra(this);
+		}
+	}
+
+	public boolean hasPartitura(String instrumento) {
+		Iterator<Partitura> iterator = partituras.iterator();
+
+		while (iterator.hasNext()) {
+			Partitura partitura = iterator.next();
+			if (partitura.getInstrumento().equals(instrumento)) {
+				return true;
+			}
+		}
+		return false;
+	}
 
 	private static final long serialVersionUID = 1L;
 
