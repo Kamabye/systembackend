@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +34,15 @@ public class ObraController {
 	@Autowired
 	private IObraService obrasService;
 
+	
+	
+	/**
+	 * 
+	 * @param idObraString
+	 * @return
+	 */
 	@GetMapping("")
-	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
-	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
+	//@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector', 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
 	public ResponseEntity<?> findAllObras(@RequestParam(name = "idObra", required = false) String idObraString) {
 		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
 		Map<String, Object> responseBody = new HashMap<>();
