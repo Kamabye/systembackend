@@ -25,47 +25,48 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
-
 @Entity
 @Table(name = "Obras")
 @Data
-@EqualsAndHashCode(callSuper = true) //Esta anotación se usa cuando la clase extiende de otra
+@EqualsAndHashCode(callSuper = true) // Esta anotación se usa cuando la clase extiende de otra
 @Builder
 @NoArgsConstructor // Genera un constructor sin parámetros
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
-@AllArgsConstructor // Crea un constructor que solicita todos los parámetros de la clase que no son FINAL
+@AllArgsConstructor // Crea un constructor que solicita todos los parámetros de la clase que no son
+					// FINAL
 public class Obra extends Auditable implements Serializable {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY AutoIncrement MYSQL MariaDB
-	@Column(name = "idObra",updatable = false, nullable = false)
+	@Column(name = "idObra", updatable = false, nullable = false)
 	private Long id;
-	
+
 	private String nombre;
-	
+
 	private String compositor;
-	
+
 	private String arreglista;
-	
+
 	private String letrista;
-	
+
 	private BigDecimal precio;
-	
+
 	private String genero;
-	
+
 	@Lob
-    private byte[] audio;
-	
-	@OneToMany(mappedBy = "obra", cascade = CascadeType.ALL ,fetch = FetchType.LAZY)
+	//@Basic(fetch = FetchType.LAZY)
+	private byte[] audio;
+
+	@OneToMany(mappedBy = "obra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonManagedReference
-    private Set<Partitura> partituras;
-	
+	private Set<Partitura> partituras;
+
 	public void addPartitura(Partitura partitura) {
 		if (partituras == null) {
 			partituras = new HashSet<Partitura>();
 		}
-		
-		if(partituras.stream().noneMatch(existingPartitura -> existingPartitura.equals(partitura))){
+
+		if (partituras.stream().noneMatch(existingPartitura -> existingPartitura.equals(partitura))) {
 			partituras.add(partitura);
 			partitura.setObra(this);
 		}
@@ -81,6 +82,21 @@ public class Obra extends Auditable implements Serializable {
 			}
 		}
 		return false;
+	}
+
+	@Override
+	public int hashCode() {
+		int result = super.hashCode(); // Llamar al hashCode de la superclase si es necesario
+
+		// Lógica específica para calcular hashCode de campos de MiClase
+		result = 31 * result + (id != null ? id.hashCode() : 0);
+		result = 31 * result + (nombre != null ? nombre.hashCode() : 0);
+		result = 31 * result + (compositor != null ? compositor.hashCode() : 0);
+		result = 31 * result + (arreglista != null ? arreglista.hashCode() : 0);
+		result = 31 * result + (letrista != null ? letrista.hashCode() : 0);
+		result = 31 * result + (genero != null ? genero.hashCode() : 0);
+
+		return result;
 	}
 
 	private static final long serialVersionUID = 1L;

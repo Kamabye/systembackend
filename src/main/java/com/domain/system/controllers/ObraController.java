@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.domain.system.interfaces.IObraService;
+import com.domain.system.models.dto.ObraDTO;
 import com.domain.system.models.postgresql.Obra;
 
 @RestController
@@ -39,51 +40,40 @@ public class ObraController {
 		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
 		Map<String, Object> responseBody = new HashMap<>();
 		// System.out.println("Id Obra = " +idObra.toString());
-		if (idObra != null) {
-			Obra obra = null;
 
-			try {
-				obra = obrasService.findById(idObra);
+		try {
+			if (idObra != null) {
+				Obra obra = obrasService.findById(idObra);
+
 				if (obra == null) {
 					responseBody.put("mensaje",
 							"La Obra ID: ".concat(idObra.toString().concat(" no existe en la base de datos!.")));
 					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 				}
 
-				return new ResponseEntity<Obra>(obra, null, HttpStatus.OK);
-			} catch (DataAccessException e) {
-				responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-				responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-			} catch (Exception e) {
-				responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-				responseBody.put("error", e.getMessage().concat(" : "));
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-			} finally {
+				System.out.println(obra.toString());
+				responseBody.put("mensaje",
+						"La Obra ID: ".concat(idObra.toString().concat(" si existe en la base de datos!.")));
+				responseBody.put("obra", obra);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
 
 			}
+			// Validar cada uno de los parámetros por separado
 
-		}
-		List<Obra> listaObras;
-
-		try {
-			listaObras = obrasService.findAll();
-			if (listaObras.size() > 0) {
+			// Al final si ningún parámetro existe o es válido, se cargan todas las obras
+			//List<Obra> listaObras = obrasService.findAll();
+			List<ObraDTO> listaObras = obrasService.jpqlfindAll();
+			if (!listaObras.isEmpty()) {
 
 				responseBody.put("mensaje", "Obras encontradas");
 				responseBody.put("obras", listaObras);
-
-				// responseHeaders.add("Accept-Encoding", "compress;q=0.5");
-				// responseHeaders.add("Accept-Encoding", "gzip;q=1.0");
-
-				// return new ResponseEntity<Map<String, Object>>(responseBody, responseHeaders,
-				// HttpStatus.OK);
-
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
 			}
 			responseBody.put("error", "Obras no encontradas");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+
 		} catch (DataAccessException e) {
+			e.printStackTrace();
 			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -107,7 +97,7 @@ public class ObraController {
 		try {
 			obraSave = obrasService.save(obra);
 
-			responseBody.put("mensaje", "Obras encontrados");
+			responseBody.put("mensaje", "Obras guardadas");
 			responseBody.put("obra", obraSave);
 
 			// responseHeaders.add("Accept-Encoding", "compress;q=0.5");
@@ -355,7 +345,7 @@ public class ObraController {
 	 * 
 	 * }
 	 */
-	
+
 	/*
 	 * @GetMapping("") public ResponseEntity<?>
 	 * findObraByGeneroParam(@RequestParam("genero") String genero) { Map<String,
