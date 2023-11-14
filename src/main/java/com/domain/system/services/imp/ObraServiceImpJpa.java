@@ -19,13 +19,12 @@ import com.domain.system.repository.postgresql.ObraRepository;
 @Transactional
 @Primary
 public class ObraServiceImpJpa implements IObraService {
-	
+
 	@Autowired
 	private IPartituraService partituraService;
 
 	@Autowired
 	private ObraRepository obraRepository;
-	
 
 	@Override
 	public Obra save(Obra obra) {
@@ -105,19 +104,23 @@ public class ObraServiceImpJpa implements IObraService {
 	@Override
 	public List<ObraDTO> jpqlfindAll() {
 		List<ObraDTO> obrasdto = obraRepository.jpqlfindAll();
-		
+
 		for (ObraDTO obraDTO : obrasdto) {
-		    obraDTO.setPartituras(partituraService.jpqlFindByObra(obraDTO.getIdObra()));
+			obraDTO.setPartituras(partituraService.jpqlFindByObra(obraDTO.getIdObra()));
 		}
-		
+
 		return obrasdto;
 	}
 
 	@Override
 	public ObraDTO jpqlfindByIdObra(Long idObra) {
-
-		return obraRepository.jpqlfindByIdObra(idObra);
 		
+		ObraDTO obraDTO = obraRepository.jpqlfindByIdObra(idObra);
+		
+		obraDTO.setPartituras(partituraService.jpqlFindByObra(idObra));
+
+		return obraDTO;
+
 	}
 
 }

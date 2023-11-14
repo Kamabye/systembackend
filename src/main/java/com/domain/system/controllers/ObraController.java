@@ -36,24 +36,27 @@ public class ObraController {
 	@GetMapping("")
 	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
 	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
-	public ResponseEntity<?> findAllObras(@RequestParam(name = "idObra", required = false) Long idObra) {
+	public ResponseEntity<?> findAllObras(@RequestParam(name = "idObra", required = false) String idObraString) {
 		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
 		Map<String, Object> responseBody = new HashMap<>();
 		// System.out.println("Id Obra = " +idObra.toString());
 
 		try {
-			if (idObra != null) {
-				Obra obra = obrasService.findById(idObra);
+			if (idObraString != null) {
+				
+				Long idObra = Long.valueOf(idObraString);				
+				
+				ObraDTO obra = obrasService.jpqlfindByIdObra(idObra);
 
 				if (obra == null) {
 					responseBody.put("mensaje",
-							"La Obra ID: ".concat(idObra.toString().concat(" no existe en la base de datos!.")));
+							"La Obra ID: ".concat(idObraString.toString().concat(" no existe en la base de datos!.")));
 					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 				}
 
 				System.out.println(obra.toString());
 				responseBody.put("mensaje",
-						"La Obra ID: ".concat(idObra.toString().concat(" si existe en la base de datos!.")));
+						"La Obra ID: ".concat(idObraString.toString().concat(" si existe en la base de datos!.")));
 				responseBody.put("obra", obra);
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
 
