@@ -2,10 +2,13 @@ package com.domain.system.services.imp;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.domain.system.interfaces.IPartituraService;
 import com.domain.system.models.dto.PartituraDTO;
@@ -13,6 +16,8 @@ import com.domain.system.models.postgresql.Partitura;
 import com.domain.system.repository.postgresql.PartituraRepository;
 
 @Service
+@Transactional
+@Primary
 public class PartituraServiceImpJpa implements IPartituraService {
 
 	@Autowired
@@ -77,7 +82,7 @@ public class PartituraServiceImpJpa implements IPartituraService {
 	}
 	
 	@Override
-	public List<PartituraDTO> jpqlFindByObra(Long idObra) {
+	public Set<PartituraDTO> jpqlFindByObra(Long idObra) {
 		return partituraRepo.jpqlfindByObraId(idObra);
 		
 	}

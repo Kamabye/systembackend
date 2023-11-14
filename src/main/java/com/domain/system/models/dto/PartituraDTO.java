@@ -9,12 +9,9 @@ public class PartituraDTO {
 
 	private String instrumento;
 
-	private Long idObra;
-
-	public PartituraDTO(Long idPartitura, String instrumento, Long idObra) {
+	public PartituraDTO(Long idPartitura, String instrumento) {
 		this.idPartitura = idPartitura;
 		this.instrumento = instrumento;
-		this.idObra = idObra;
 
 	}
 
