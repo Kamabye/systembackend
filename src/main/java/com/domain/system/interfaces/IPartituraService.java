@@ -1,6 +1,7 @@
 package com.domain.system.interfaces;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 
@@ -31,7 +32,7 @@ public interface IPartituraService {
 	
 	//List<PartituraDTO> jpqlFindAll();
 	
-	List<PartituraDTO> jpqlFindByObra(Long idObra);
+	Set<PartituraDTO> jpqlFindByObra(Long idObra);
 
 	List<Partitura> findByInstrumento(String instrumento);
 
