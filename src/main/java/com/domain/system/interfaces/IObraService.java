@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.domain.system.models.dto.ObraDTO;
 import com.domain.system.models.postgresql.Obra;
 
 public interface IObraService {
@@ -33,5 +34,9 @@ public interface IObraService {
 	List<Obra> findByLetrista(String letrista);
 
 	List<Obra> findByGenero(String genero);
+	
+	List<ObraDTO> jpqlfindAll();
+	
+	ObraDTO jpqlfindByIdObra(Long idObra);
 
 }

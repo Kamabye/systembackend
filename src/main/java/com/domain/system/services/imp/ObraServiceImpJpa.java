@@ -4,20 +4,28 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.domain.system.interfaces.IObraService;
+import com.domain.system.interfaces.IPartituraService;
+import com.domain.system.models.dto.ObraDTO;
 import com.domain.system.models.postgresql.Obra;
 import com.domain.system.repository.postgresql.ObraRepository;
 
 @Service
 @Transactional
+@Primary
 public class ObraServiceImpJpa implements IObraService {
+	
+	@Autowired
+	private IPartituraService partituraService;
 
 	@Autowired
 	private ObraRepository obraRepository;
+	
 
 	@Override
 	public Obra save(Obra obra) {
@@ -92,6 +100,24 @@ public class ObraServiceImpJpa implements IObraService {
 	@Override
 	public List<Obra> findByGenero(String genero) {
 		return obraRepository.findByGeneroContainingOrderByNombreAsc(genero);
+	}
+
+	@Override
+	public List<ObraDTO> jpqlfindAll() {
+		List<ObraDTO> obrasdto = obraRepository.jpqlfindAll();
+		
+		for (ObraDTO obraDTO : obrasdto) {
+		    obraDTO.setPartituras(partituraService.jpqlFindByObra(obraDTO.getIdObra()));
+		}
+		
+		return obrasdto;
+	}
+
+	@Override
+	public ObraDTO jpqlfindByIdObra(Long idObra) {
+
+		return obraRepository.jpqlfindByIdObra(idObra);
+		
 	}
 
 }
