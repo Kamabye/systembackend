@@ -1,6 +1,7 @@
 package com.domain.system.interfaces;
 
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.data.domain.Page;
 
@@ -38,5 +39,15 @@ public interface IObraService {
 	List<ObraDTO> jpqlfindAll();
 	
 	ObraDTO jpqlfindByIdObra(Long idObra);
+	
+	Set<ObraDTO> jpqlfindByNombre(String nombre);
+
+	Set<ObraDTO> jpqlfindByCompositor(String compositor);
+
+	Set<ObraDTO> jpqlfindByArreglista(String arreglista);
+
+	Set<ObraDTO> jpqlfindByLetrista(String letrista);
+
+	Set<ObraDTO> jpqlfindByGenero(String genero);
 
 }

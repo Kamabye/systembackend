@@ -3,12 +3,12 @@ package com.domain.system.controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -34,25 +34,29 @@ public class ObraController {
 	@Autowired
 	private IObraService obrasService;
 
-	
-	
 	/**
 	 * 
 	 * @param idObraString
 	 * @return
 	 */
 	@GetMapping("")
-	//@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector', 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
-	public ResponseEntity<?> findAllObras(@RequestParam(name = "idObra", required = false) String idObraString) {
+	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
+	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
+	public ResponseEntity<?> findAllObras(@RequestParam(name = "idObra", required = false) String idObraString,
+			@RequestParam(name = "nombre", required = false) String nombre,
+			@RequestParam(name = "compositor", required = false) String compositor,
+			@RequestParam(name = "arreglsita", required = false) String arreglista,
+			@RequestParam(name = "letrista", required = false) String letrista,
+			@RequestParam(name = "genero", required = false) String genero) {
 		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
 		Map<String, Object> responseBody = new HashMap<>();
 		// System.out.println("Id Obra = " +idObra.toString());
 
 		try {
 			if (idObraString != null) {
-				
-				Long idObra = Long.valueOf(idObraString);				
-				
+
+				Long idObra = Long.valueOf(idObraString);
+
 				ObraDTO obra = obrasService.jpqlfindByIdObra(idObra);
 
 				if (obra == null) {
@@ -69,9 +73,98 @@ public class ObraController {
 
 			}
 			// Validar cada uno de los parámetros por separado
+			if (nombre != null) {
+
+				Set<ObraDTO> obras = obrasService.jpqlfindByNombre(nombre);
+
+				if (obras.isEmpty()) {
+					responseBody.put("mensaje",
+							"La Obra : ".concat(nombre.toString().concat(" no existe en la base de datos!.")));
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				}
+
+				//System.out.println(obras.toString());
+				responseBody.put("mensaje",
+						"La Obra ID: ".concat(nombre.toString().concat(" si existe en la base de datos!.")));
+				responseBody.put("obra", obras);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+
+			}
+			
+			if (compositor != null) {
+
+				Set<ObraDTO> obras = obrasService.jpqlfindByCompositor(compositor);
+
+				if (obras.isEmpty()) {
+					responseBody.put("mensaje",
+							"La Obra : ".concat(compositor.toString().concat(" no existe en la base de datos!.")));
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				}
+
+				//System.out.println(obras.toString());
+				responseBody.put("mensaje",
+						"La Obra ID: ".concat(compositor.toString().concat(" si existe en la base de datos!.")));
+				responseBody.put("obra", obras);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+
+			}
+			
+			if (arreglista != null) {
+
+				Set<ObraDTO> obras = obrasService.jpqlfindByArreglista(arreglista);
+
+				if (obras.isEmpty()) {
+					responseBody.put("mensaje",
+							"La Obra : ".concat(arreglista.toString().concat(" no existe en la base de datos!.")));
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				}
+
+				//System.out.println(obras.toString());
+				responseBody.put("mensaje",
+						"La Obra ID: ".concat(arreglista.toString().concat(" si existe en la base de datos!.")));
+				responseBody.put("obra", obras);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+
+			}
+			
+			if (letrista != null) {
+
+				Set<ObraDTO> obras = obrasService.jpqlfindByLetrista(letrista);
+
+				if (obras.isEmpty()) {
+					responseBody.put("mensaje",
+							"La Obra : ".concat(letrista.toString().concat(" no existe en la base de datos!.")));
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				}
+
+				//System.out.println(obras.toString());
+				responseBody.put("mensaje",
+						"La Obra ID: ".concat(letrista.toString().concat(" si existe en la base de datos!.")));
+				responseBody.put("obra", obras);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+
+			}
+			
+			if (genero != null) {
+
+				Set<ObraDTO> obras = obrasService.jpqlfindByGenero(genero);
+
+				if (obras.isEmpty()) {
+					responseBody.put("mensaje",
+							"La Obra : ".concat(genero.toString().concat(" no existe en la base de datos!.")));
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				}
+
+				//System.out.println(obras.toString());
+				responseBody.put("mensaje",
+						"La Obra ID: ".concat(genero.toString().concat(" si existe en la base de datos!.")));
+				responseBody.put("obra", obras);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+
+			}
 
 			// Al final si ningún parámetro existe o es válido, se cargan todas las obras
-			//List<Obra> listaObras = obrasService.findAll();
+			// List<Obra> listaObras = obrasService.findAll();
 			List<ObraDTO> listaObras = obrasService.jpqlfindAll();
 			if (!listaObras.isEmpty()) {
 

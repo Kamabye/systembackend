@@ -54,7 +54,7 @@ public class Obra extends Auditable implements Serializable {
 	private String genero;
 
 	@Lob
-	//@Basic(fetch = FetchType.LAZY)
+	// @Basic(fetch = FetchType.LAZY)
 	private byte[] audio;
 
 	@OneToMany(mappedBy = "obra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -82,21 +82,6 @@ public class Obra extends Auditable implements Serializable {
 			}
 		}
 		return false;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = super.hashCode(); // Llamar al hashCode de la superclase si es necesario
-
-		// Lógica específica para calcular hashCode de campos de MiClase
-		result = 31 * result + (id != null ? id.hashCode() : 0);
-		result = 31 * result + (nombre != null ? nombre.hashCode() : 0);
-		result = 31 * result + (compositor != null ? compositor.hashCode() : 0);
-		result = 31 * result + (arreglista != null ? arreglista.hashCode() : 0);
-		result = 31 * result + (letrista != null ? letrista.hashCode() : 0);
-		result = 31 * result + (genero != null ? genero.hashCode() : 0);
-
-		return result;
 	}
 
 	private static final long serialVersionUID = 1L;

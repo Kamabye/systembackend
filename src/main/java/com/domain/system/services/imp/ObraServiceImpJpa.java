@@ -2,6 +2,7 @@ package com.domain.system.services.imp;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -121,6 +122,34 @@ public class ObraServiceImpJpa implements IObraService {
 
 		return obraDTO;
 
+	}
+
+	@Override
+	public Set<ObraDTO> jpqlfindByNombre(String nombre) {
+		
+		return obraRepository.jpqlfindByNombreContaining(nombre);
+	}
+
+	@Override
+	public Set<ObraDTO> jpqlfindByCompositor(String compositor) {
+		
+		return obraRepository.jpqlfindByCompositorContaining(compositor);
+	}
+
+	@Override
+	public Set<ObraDTO> jpqlfindByArreglista(String arreglista) {
+		return obraRepository.jpqlfindByArreglistaContaining(arreglista);
+	}
+
+	@Override
+	public Set<ObraDTO> jpqlfindByLetrista(String letrista) {
+		return obraRepository.jpqlfindByLetristaContaining(letrista);
+	}
+
+	@Override
+	public Set<ObraDTO> jpqlfindByGenero(String genero) {
+		// TODO Auto-generated method stub
+		return obraRepository.jpqlfindByGeneroContaining(genero);
 	}
 
 }
