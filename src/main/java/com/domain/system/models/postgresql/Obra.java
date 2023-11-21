@@ -1,5 +1,7 @@
 package com.domain.system.models.postgresql;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.HashSet;
@@ -8,6 +10,7 @@ import java.util.Set;
 
 import com.domain.system.models.Auditable;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.google.common.io.ByteStreams;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -83,7 +86,26 @@ public class Obra extends Auditable implements Serializable {
 		}
 		return false;
 	}
+	
+	public void setAudioFromInputStream(InputStream inputStream) throws IOException {
+		this.audio = ByteStreams.toByteArray(inputStream);
+	}
 
 	private static final long serialVersionUID = 1L;
+	
+	@Override
+    public int hashCode() {
+		int result = super.hashCode();
+        //final int prime = 31; // Número primo para ayudar a evitar colisiones
+        //int result = 1;
+
+        // Combina el código hash de los campos relevantes usando la fórmula recomendada
+        //result = prime * result + ((nombre == null) ? 0 : nombre.hashCode());
+        //result = prime * result + edad;
+		
+		result = result + ((nombre == null) ? 0 : nombre.hashCode());
+
+        return result;
+    }
 
 }

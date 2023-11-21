@@ -70,7 +70,7 @@ public class ObraServiceImpJpa implements IObraService {
 	@Override
 	public Obra findById(Long idObra) {
 		Optional<Obra> obraFind = obraRepository.findById(idObra);
-		if (obraFind.isPresent()) {
+		if (!obraFind.isEmpty()) {
 			return obraFind.get();
 		}
 
@@ -107,7 +107,7 @@ public class ObraServiceImpJpa implements IObraService {
 		List<ObraDTO> obrasdto = obraRepository.jpqlfindAll();
 
 		for (ObraDTO obraDTO : obrasdto) {
-			obraDTO.setPartituras(partituraService.jpqlFindByObra(obraDTO.getIdObra()));
+			obraDTO.setPartituras(partituraService.jpqlFindByObra(obraDTO.getId()));
 		}
 
 		return obrasdto;
@@ -115,24 +115,26 @@ public class ObraServiceImpJpa implements IObraService {
 
 	@Override
 	public ObraDTO jpqlfindByIdObra(Long idObra) {
-		
-		ObraDTO obraDTO = obraRepository.jpqlfindByIdObra(idObra);
-		
-		obraDTO.setPartituras(partituraService.jpqlFindByObra(idObra));
 
-		return obraDTO;
+		Optional<ObraDTO> optional = obraRepository.jpqlfindByIdObra(idObra);
+		if (!optional.isEmpty()) {
+			ObraDTO obraDTO = optional.get();
+			obraDTO.setPartituras(partituraService.jpqlFindByObra(idObra));
+			return obraDTO;
+		}
+		return null;
 
 	}
 
 	@Override
 	public Set<ObraDTO> jpqlfindByNombre(String nombre) {
-		
+
 		return obraRepository.jpqlfindByNombreContaining(nombre);
 	}
 
 	@Override
 	public Set<ObraDTO> jpqlfindByCompositor(String compositor) {
-		
+
 		return obraRepository.jpqlfindByCompositorContaining(compositor);
 	}
 

@@ -1,6 +1,7 @@
 package com.domain.system.repository.postgresql;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -28,7 +29,7 @@ public interface ObraRepository extends JpaRepository<Obra, Long> {
 	List<ObraDTO> jpqlfindAll();
 	
 	@Query("SELECT NEW com.domain.system.models.dto.ObraDTO(o.id, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio) FROM Obra o WHERE o.id = :id")
-	ObraDTO jpqlfindByIdObra(@Param("id") Long id);
+	Optional<ObraDTO> jpqlfindByIdObra(@Param("id") Long id);
 	
 	@Query("SELECT NEW com.domain.system.models.dto.ObraDTO(o.id, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio) FROM Obra o WHERE o.nombre LIKE %:nombre%")
 	Set<ObraDTO> jpqlfindByNombreContaining(@Param("nombre") String nombre);
