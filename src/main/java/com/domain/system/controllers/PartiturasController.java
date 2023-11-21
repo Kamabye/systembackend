@@ -10,7 +10,9 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,11 +61,11 @@ public class PartiturasController {
 			}
 
 			if (idObra != null && idObra > 0) {
-				
+
 				ObraDTO obraDTO = obraService.jpqlfindByIdObra(idObra);
 
 				partiturasDTO = partituraService.jpqlFindByObra(idObra);
-				
+
 				obraDTO.setPartituras(partiturasDTO);
 				// partituras2 = obraService.findById(idObra).getPartituras();
 				responseBody.put("partituras por IPartiturasService son idObra", partiturasDTO);
@@ -75,11 +77,12 @@ public class PartiturasController {
 					"La Obra ID: ".concat(idObra.toString().concat(" no existe en la base de datos!.")));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
 			responseBody.put("error", e.getMessage().concat(" : "));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
@@ -170,44 +173,19 @@ public class PartiturasController {
 
 			temp = partituraService.findById(idPartitura);
 
-			// responseBody.put("mensaje", "Partitura guardada");
-			// responseBody.put("partitura", temp);
+			HttpHeaders headers = new HttpHeaders();
+			headers.setContentType(MediaType.APPLICATION_PDF); // Cambia el tipo de contenido según tu necesidad
+			headers.add(HttpHeaders.CONTENT_DISPOSITION,
+					"inline; filename= " + temp.getObra().getNombre() + "_" + temp.getInstrumento() + ".pdf");
 
-			return ResponseEntity
-					.status(HttpStatus.OK).header("Content-Disposition", "attachment; filename= "
-							+ temp.getObra().getNombre() + "_" + temp.getInstrumento() + ".pdf")
-					.body(temp.getPartituraPDF());
+			return ResponseEntity.status(HttpStatus.OK).headers(headers).body(temp.getPartituraPDF());
 
-			// return ResponseEntity.status(HttpStatus.OK)
-			// .header("Content-Disposition",
-			// "inline; filename= " + temp.getObra().getNombre() + "_" +
-			// temp.getInstrumento() + ".pdf")
-			// .body(temp.getPartituraPDF());
-
-			// return ResponseEntity.ok()
-			// .header("Content-Disposition", "attachment; filename=\"" +
-			// archivo.getInstrumento() + "\"")
-			// .body(archivo.getPartituraPDF());
-			// return new ResponseEntity<Map<String, Object>>(responseBody, null,
-			// HttpStatus.OK);
 		} catch (DataAccessException e) {
 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-
-			// responseBody.put("mensaje", "Error al realizar la consulta en la base de
-			// datos");
-			// responseBody.put("error", e.getMessage().concat(" :
-			// ").concat(e.getMostSpecificCause().getMessage()));
-			// return new ResponseEntity<Map<String, Object>>(responseBody, null,
-			// HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
 
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-			// responseBody.put("mensaje", "Error al realizar la consulta en la base de
-			// datos");
-			// responseBody.put("error", e.getMessage().concat(" : "));
-			// return new ResponseEntity<Map<String, Object>>(responseBody, null,
-			// HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
 
 		}

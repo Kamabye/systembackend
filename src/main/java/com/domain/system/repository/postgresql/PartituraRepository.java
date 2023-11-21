@@ -18,7 +18,7 @@ public interface PartituraRepository extends JpaRepository<Partitura, Long>{
 	
 	List<Partitura> findByObraId(Long idObra);
 	
-	@Query("SELECT new com.domain.system.models.dto.PartituraDTO(u.id, u.instrumento, u.obra.id) FROM Partitura u")
+	@Query("SELECT new com.domain.system.models.dto.PartituraDTO(p.id, p.instrumento) FROM Partitura p")
 	List<PartituraDTO> jpqlfindAll();
 	
 	@Query("SELECT new com.domain.system.models.dto.PartituraDTO(p.id, p.instrumento) FROM Partitura p WHERE p.obra.id = :idObra")
