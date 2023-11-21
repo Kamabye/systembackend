@@ -1,5 +1,8 @@
 package com.domain.system.controllers;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +17,11 @@ public class DemoController {
 
 	@GetMapping
 	public String index() {
+		
+
+		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+		Map<String, Object> responseBody = new HashMap<>();
+		responseBody.put("mensaje", "Usuarios encontrados");
 		return "Bienvenido a la API de SystemApp sin slash";
 	}
 

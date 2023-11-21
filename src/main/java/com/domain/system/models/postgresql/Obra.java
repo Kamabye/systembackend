@@ -55,6 +55,10 @@ public class Obra extends Auditable implements Serializable {
 	private BigDecimal precio;
 
 	private String genero;
+	
+	private String urlVideo;
+	
+	private String urlAudio;
 
 	@Lob
 	// @Basic(fetch = FetchType.LAZY)

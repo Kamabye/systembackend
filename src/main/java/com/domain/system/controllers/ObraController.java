@@ -1,9 +1,11 @@
 package com.domain.system.controllers;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,107 +57,78 @@ public class ObraController {
 			@RequestParam(name = "arreglsita", required = false) String arreglista,
 			@RequestParam(name = "letrista", required = false) String letrista,
 			@RequestParam(name = "genero", required = false) String genero) {
-		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+
 		Map<String, Object> responseBody = new HashMap<>();
-		// System.out.println("Id Obra = " +idObra.toString());
 
 		try {
+			// Si el idObraString no es null se debe validar que sea un número válido
 			if (idObraString != null) {
 
 				Long idObra = Long.valueOf(idObraString);
 
 				ObraDTO obra = obraService.jpqlfindByIdObra(idObra);
 
-				if (obra == null) {
-					responseBody.put("mensaje",
-							"La Obra ID: ".concat(idObraString.toString().concat(" no existe en la base de datos!.")));
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+				if (obra != null) {
+					responseBody.put("obra", obra);
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+
 				}
-				responseBody.put("obra", obra);
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+				responseBody.put("mensaje",
+						"La Obra ID: ".concat(idObraString.toString().concat(" no existe en la base de datos!.")));
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 
-			}
-			// Validar cada uno de los parámetros por separado
-			if (nombre != null) {
+			} else {
 
-				Set<ObraDTO> obras = obraService.jpqlfindByNombre(nombre);
+				Set<ObraDTO> obrasUnidas = new TreeSet<>(Comparator.comparing(ObraDTO::getId));
+				int parametrosNoNulos = 0;
 
-				if (obras.isEmpty()) {
-					responseBody.put("mensaje", "La Obra con nombre : "
-							.concat(nombre.toString().concat(" no existe en la base de datos!.")));
+				if (nombre != null) {
+					parametrosNoNulos++;
+					obrasUnidas.addAll(obraService.jpqlfindByNombre(nombre));
+				}
+
+				if (compositor != null) {
+					parametrosNoNulos++;
+					obrasUnidas.addAll(obraService.jpqlfindByCompositor(compositor));
+				}
+
+				if (arreglista != null) {
+					parametrosNoNulos++;
+					obrasUnidas.addAll(obraService.jpqlfindByArreglista(arreglista));
+				}
+
+				if (letrista != null) {
+					parametrosNoNulos++;
+					obrasUnidas.addAll(obraService.jpqlfindByLetrista(letrista));
+
+				}
+
+				if (genero != null) {
+					parametrosNoNulos++;
+					obrasUnidas.addAll(obraService.jpqlfindByGenero(genero));
+				}
+				if (parametrosNoNulos >= 1) {
+					if (obrasUnidas.size() > 0) {
+						responseBody.put("obrasUnidas", obrasUnidas);
+						return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+					}
+					responseBody.put("Mensaje", "Sin datos encontrados con los parámetros ingresados");
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+
+				} else {
+					// Al final si ningún parámetro existe o es válido, se cargan todas las obras
+					// List<Obra> listaObras = obrasService.findAll();
+					List<ObraDTO> listaObras = obraService.jpqlfindAll();
+					if (!listaObras.isEmpty()) {
+						// responseBody.put("mensaje", "Obras encontradas");
+						responseBody.put("obras", listaObras);
+						return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+					}
+					responseBody.put("mensaje", "Sin datos encontrados");
 					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 				}
-				responseBody.put("obras", obras);
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
 
 			}
-
-			if (compositor != null) {
-
-				Set<ObraDTO> obras = obraService.jpqlfindByCompositor(compositor);
-
-				if (obras.isEmpty()) {
-					responseBody.put("mensaje", "La Obra del compositor : "
-							.concat(compositor.toString().concat(" no existe en la base de datos!.")));
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
-				}
-				responseBody.put("obras", obras);
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
-
-			}
-
-			if (arreglista != null) {
-
-				Set<ObraDTO> obras = obraService.jpqlfindByArreglista(arreglista);
-
-				if (obras.isEmpty()) {
-					responseBody.put("mensaje", "La Obra del arreglista : "
-							.concat(arreglista.toString().concat(" no existe en la base de datos!.")));
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
-				}
-				responseBody.put("obras", obras);
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
-
-			}
-
-			if (letrista != null) {
-
-				Set<ObraDTO> obras = obraService.jpqlfindByLetrista(letrista);
-
-				if (obras.isEmpty()) {
-					responseBody.put("mensaje", "La Obra del letrista : "
-							.concat(letrista.toString().concat(" no existe en la base de datos!.")));
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
-				}
-				responseBody.put("obra", obras);
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
-
-			}
-
-			if (genero != null) {
-
-				Set<ObraDTO> obras = obraService.jpqlfindByGenero(genero);
-
-				if (obras.isEmpty()) {
-					responseBody.put("mensaje", "La Obra del genero : "
-							.concat(genero.toString().concat(" no existe en la base de datos!.")));
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
-				}
-				responseBody.put("obra", obras);
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
-
-			}
-
-			// Al final si ningún parámetro existe o es válido, se cargan todas las obras
-			// List<Obra> listaObras = obrasService.findAll();
-			List<ObraDTO> listaObras = obraService.jpqlfindAll();
-			if (!listaObras.isEmpty()) {
-				// responseBody.put("mensaje", "Obras encontradas");
-				responseBody.put("obras", listaObras);
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
-			}
-			responseBody.put("error", "Sin datos encontrados");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
@@ -299,31 +272,29 @@ public class ObraController {
 	@GetMapping("play/{idObra}")
 	public ResponseEntity<?> playObra(@PathVariable(name = "idObra", required = true) String idObraString) {
 
-		ObraDTO obraSave = null;
+		// Resource resourceAudio = new ClassPathResource("audio/sample.mp3");
 		Map<String, Object> responseBody = new HashMap<>();
 		try {
 
 			if (idObraString != null) {
 				Long idObra = Long.valueOf(idObraString);
-				
-				Obra obra = obraService.findById(idObra);
 
+				Obra obra = obraService.findById(idObra);
 
 				ByteArrayResource resource = new ByteArrayResource(obra.getAudio());
 
-		        // Configura los encabezados de la respuesta
-		        HttpHeaders headers = new HttpHeaders();
-		        headers.add(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=" + obra.getNombre() + ".aac");
-		        headers.add(HttpHeaders.CONTENT_TYPE, MediaType.APPLICATION_OCTET_STREAM_VALUE);
+				// Configura los encabezados de la respuesta
+				HttpHeaders headers = new HttpHeaders();
 
-		        // Devuelve la respuesta con el recurso y los encabezados
-		        return ResponseEntity.ok()
-		                .headers(headers)
-		                .contentLength(resource.contentLength())
-		                .contentType(MediaType.APPLICATION_OCTET_STREAM)
-		                .body(resource);
-		        
-		        
+				headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				headers.setContentLength(resource.contentLength());
+				headers.setContentDispositionFormData("attachment", obra.getNombre() + ".aac");
+
+				// Devuelve la respuesta con el recurso y los encabezados
+				// return ResponseEntity.ok().headers(headers).body(resource);
+
+				return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+
 			}
 
 			responseBody.put("mensaje", "ID : ".concat(idObraString).concat(" inválido"));
