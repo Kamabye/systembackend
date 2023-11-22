@@ -78,7 +78,7 @@ public class ObraController {
 				}
 				responseBody.put("mensaje",
 						"La Obra ID: ".concat(idObraString.toString().concat(" no existe en la base de datos!.")));
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			} else {
 				/**
@@ -178,7 +178,7 @@ public class ObraController {
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			}
 
-			responseBody.put("mensaje", "ID : ".concat(idObraString).concat(" inválido"));
+			responseBody.put("mensaje", "ID : ".concat(idObraString).concat(" requerido"));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
@@ -286,7 +286,7 @@ public class ObraController {
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			}
 			responseBody.put("mensaje", "La obra : " + idObraString + " no se ha especificado");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
@@ -297,7 +297,7 @@ public class ObraController {
 			responseBody.put("error", e.getMessage().concat(" : "));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (MultipartException e) {
-			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos DataAccessException");
+			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos MultipartException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
@@ -367,7 +367,7 @@ public class ObraController {
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			}
 			responseBody.put("mensaje", "La obra : " + idObraString + " no se ha especificado");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
@@ -378,7 +378,7 @@ public class ObraController {
 			responseBody.put("error", e.getMessage().concat(" : "));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (MultipartException e) {
-			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos DataAccessException");
+			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos MultipartException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
@@ -407,10 +407,17 @@ public class ObraController {
 		try {
 			Long idObra = Long.valueOf(idObraString);
 
-			obraService.delete(idObra);
+			ObraDTO obraDelete = obraService.jpqlfindByIdObra(idObra);
+			if (obraDelete != null) {
 
-			responseBody.put("mensaje", "La obra : " + idObra + " ha sido eliminada con éxito");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+				obraService.delete(idObra);
+
+				responseBody.put("mensaje", "La obra : " + idObra + " ha sido eliminada con éxito");
+				responseBody.put("obraDTO", obraDelete);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+			}
+			responseBody.put("mensaje", "La obra : " + idObra + " no existe en la base de datos");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
@@ -437,10 +444,17 @@ public class ObraController {
 		try {
 			Long idObra = Long.valueOf(idObraString);
 
-			obraService.delete(idObra);
+			ObraDTO obraDelete = obraService.jpqlfindByIdObra(idObra);
+			if (obraDelete != null) {
 
-			responseBody.put("mensaje", "La obra : " + idObra + " ha sido eliminado con éxito");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+				obraService.delete(idObra);
+
+				responseBody.put("mensaje", "La obra : " + idObra + " ha sido eliminada con éxito");
+				responseBody.put("obraDTO", obraDelete);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+			}
+			responseBody.put("mensaje", "La obra : " + idObra + " no existe en la base de datos");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
