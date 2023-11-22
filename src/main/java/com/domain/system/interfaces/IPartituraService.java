@@ -5,6 +5,7 @@ import java.util.Set;
 
 import org.springframework.data.domain.Page;
 
+import com.domain.system.models.dto.ObraDTO;
 import com.domain.system.models.dto.PartituraDTO;
 import com.domain.system.models.postgresql.Partitura;
 
@@ -32,8 +33,10 @@ public interface IPartituraService {
 	
 	//List<PartituraDTO> jpqlFindAll();
 	
-	Set<PartituraDTO> jpqlFindByIdObra(Long idObra);
+	Set<PartituraDTO> jpqlfindByIdObra(Long idObra);
 
 	List<Partitura> findByInstrumento(String instrumento);
+
+	ObraDTO jpqlfindObraByIdObra(Long idObra);
 
 }

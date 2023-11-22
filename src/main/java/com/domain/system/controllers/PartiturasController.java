@@ -3,7 +3,6 @@ package com.domain.system.controllers;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -27,12 +26,11 @@ import org.springframework.web.multipart.MultipartFile;
 import com.domain.system.interfaces.IObraService;
 import com.domain.system.interfaces.IPartituraService;
 import com.domain.system.models.dto.ObraDTO;
-import com.domain.system.models.dto.PartituraDTO;
 import com.domain.system.models.postgresql.Obra;
 import com.domain.system.models.postgresql.Partitura;
 
 @RestController
-@RequestMapping("apiv1/partitura")
+@RequestMapping({ "apiv1/partitura", "apiv1/partitura/" })
 @CrossOrigin(origins = "http://localhost:8081", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
 		RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE }, allowedHeaders = "Authorization")
 public class PartiturasController {
@@ -46,36 +44,27 @@ public class PartiturasController {
 	@GetMapping("")
 	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
 	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
-	public ResponseEntity<?> findAllPartituras(@RequestParam(name = "idObra", required = false) Long idObra) {
+	public ResponseEntity<?> findAllPartituras(@RequestParam(name = "idObra", required = false) String idObraString) {
 		Map<String, Object> responseBody = new HashMap<>();
-		List<PartituraDTO> partituras;
-		Set<PartituraDTO> partiturasDTO;
 		// List<Partitura> partituras2;
 
 		try {
-			if (idObra == null) {
-				// partituras = partituraService.findAll();
-				partituras = partituraService.jpqlFindAll();
-				responseBody.put("partituras por IPartiturasService", partituras);
+			if (idObraString != null) {
+				Long idObra = Long.valueOf(idObraString);
+				
+				ObraDTO obraDTO2 = partituraService.jpqlfindObraByIdObra(idObra);
+				
+				responseBody.put("ObraDTO", obraDTO2);
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
 			}
 
-			if (idObra != null && idObra > 0) {
-
-				ObraDTO obraDTO = obraService.jpqlfindByIdObra(idObra);
-
-				partiturasDTO = partituraService.jpqlFindByObra(idObra);
-
-				obraDTO.setPartituras(partiturasDTO);
-				// partituras2 = obraService.findById(idObra).getPartituras();
-				responseBody.put("partituras por IPartiturasService son idObra", partiturasDTO);
-				// responseBody.put("partituras por IObrasService",partituras2);
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
-			}
-
-			responseBody.put("mensaje",
-					"La Obra ID: ".concat(idObra.toString().concat(" no existe en la base de datos!.")));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			responseBody.put("mensaje", "La Obra ID: ".concat("debe ser ingresado"));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
 			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
