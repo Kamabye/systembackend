@@ -18,7 +18,7 @@ import com.domain.system.interfaces.IUserService;
 import com.domain.system.models.postgresql.Usuario;
 
 @RestController
-@RequestMapping("apiv1/user")
+@RequestMapping({ "apiv1/user", "apiv1/user/" })
 @CrossOrigin(origins = "http://localhost:8081", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
 		RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE }, allowedHeaders = "Authorization")
 public class UserController {
@@ -31,26 +31,23 @@ public class UserController {
 	@GetMapping("")
 	public ResponseEntity<?> users() {
 		Map<String, Object> responseBody = new HashMap<>();
-		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
 		List<Usuario> listaUsuarios;
 
 		try {
+			
 			listaUsuarios = userService.findAll();
+			
 			if (listaUsuarios.size() > 0) {
 
 				responseBody.put("mensaje", "Usuarios encontrados");
 				responseBody.put("usuarios", listaUsuarios);
-
-				// responseHeaders.add("Accept-Encoding", "compress;q=0.5");
-				// responseHeaders.add("Accept-Encoding", "gzip;q=1.0");
-
-				// return new ResponseEntity<Map<String, Object>>(responseBody, responseHeaders,
-				// HttpStatus.OK);
-
+				
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
 			}
+			
 			responseBody.put("error", "Usuarios no encontrados");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+			
 		} catch (DataAccessException e) {
 			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
