@@ -36,7 +36,7 @@ public interface IObraService {
 
 	List<Obra> findByGenero(String genero);
 	
-	List<ObraDTO> jpqlfindAll();
+	Set<ObraDTO> jpqlfindAll();
 	
 	ObraDTO jpqlfindByIdObra(Long idObra);
 	

@@ -103,8 +103,8 @@ public class ObraServiceImpJpa implements IObraService {
 	}
 
 	@Override
-	public List<ObraDTO> jpqlfindAll() {
-		List<ObraDTO> obrasdto = obraRepository.jpqlfindAll();
+	public Set<ObraDTO> jpqlfindAll() {
+		Set<ObraDTO> obrasdto = obraRepository.jpqlfindAll();
 
 		for (ObraDTO obraDTO : obrasdto) {
 			obraDTO.setPartituras(partituraService.jpqlFindByObra(obraDTO.getId()));
