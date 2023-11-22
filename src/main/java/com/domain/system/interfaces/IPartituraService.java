@@ -32,7 +32,7 @@ public interface IPartituraService {
 	
 	//List<PartituraDTO> jpqlFindAll();
 	
-	Set<PartituraDTO> jpqlFindByObra(Long idObra);
+	Set<PartituraDTO> jpqlFindByIdObra(Long idObra);
 
 	List<Partitura> findByInstrumento(String instrumento);
 

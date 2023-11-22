@@ -82,8 +82,8 @@ public class PartituraServiceImpJpa implements IPartituraService {
 	}
 	
 	@Override
-	public Set<PartituraDTO> jpqlFindByObra(Long idObra) {
-		return partituraRepo.jpqlfindByObraId(idObra);
+	public Set<PartituraDTO> jpqlFindByIdObra(Long idObra) {
+		return partituraRepo.jpqlfindByIdObra(idObra);
 		
 	}
 

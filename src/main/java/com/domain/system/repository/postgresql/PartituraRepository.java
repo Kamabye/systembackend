@@ -16,12 +16,12 @@ public interface PartituraRepository extends JpaRepository<Partitura, Long>{
 	
 	List<Partitura> findByInstrumentoContainingOrderByInstrumentoAsc(String instrumento);
 	
-	List<Partitura> findByObraId(Long idObra);
+	List<Partitura> findByIdObra(Long idObra);
 	
 	@Query("SELECT new com.domain.system.models.dto.PartituraDTO(p.id, p.instrumento) FROM Partitura p")
 	List<PartituraDTO> jpqlfindAll();
 	
 	@Query("SELECT new com.domain.system.models.dto.PartituraDTO(p.id, p.instrumento) FROM Partitura p WHERE p.obra.id = :idObra")
-	Set<PartituraDTO> jpqlfindByObraId(@Param("idObra") Long idObra);
+	Set<PartituraDTO> jpqlfindByIdObra(@Param("idObra") Long idObra);
 
 }
