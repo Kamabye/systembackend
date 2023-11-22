@@ -107,7 +107,7 @@ public class ObraServiceImpJpa implements IObraService {
 		Set<ObraDTO> obrasdto = obraRepository.jpqlfindAll();
 
 		for (ObraDTO obraDTO : obrasdto) {
-			obraDTO.setPartituras(partituraService.jpqlFindByIdObra(obraDTO.getId()));
+			obraDTO.setPartituras(partituraService.jpqlfindByIdObra(obraDTO.getId()));
 		}
 
 		return obrasdto;
@@ -119,7 +119,7 @@ public class ObraServiceImpJpa implements IObraService {
 		Optional<ObraDTO> optional = obraRepository.jpqlfindByIdObra(idObra);
 		if (!optional.isEmpty()) {
 			ObraDTO obraDTO = optional.get();
-			obraDTO.setPartituras(partituraService.jpqlFindByIdObra(idObra));
+			obraDTO.setPartituras(partituraService.jpqlfindByIdObra(idObra));
 			return obraDTO;
 		}
 		return null;
