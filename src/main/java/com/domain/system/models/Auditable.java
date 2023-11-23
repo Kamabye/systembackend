@@ -15,9 +15,11 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.EqualsAndHashCode;
 
 //@Data //Solo usar cuando sea necesario utilizar estos atributos en la aplicacion. Ya que se pueden consultar en la base de datos
 @MappedSuperclass
+@EqualsAndHashCode
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Auditable {
 
