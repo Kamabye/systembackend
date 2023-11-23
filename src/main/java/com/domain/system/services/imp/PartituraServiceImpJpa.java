@@ -105,4 +105,14 @@ public class PartituraServiceImpJpa implements IPartituraService {
 		return null;
 	}
 
+	@Override
+	public Set<String> jpqlfindInstrumentos(Long idObra) {
+		
+		Set<String> instrumentos = partituraRepo.jpqlfindInstrumentos(idObra);
+		if(!instrumentos.isEmpty()) {
+			return instrumentos;
+		}
+		return null;
+	}
+
 }

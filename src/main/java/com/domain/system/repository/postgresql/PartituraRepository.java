@@ -36,4 +36,7 @@ public interface PartituraRepository extends JpaRepository<Partitura, Long> {
 	@Query("SELECT new com.domain.system.models.dto.PartituraDTO(p.id, p.instrumento) FROM Partitura p WHERE p.obra.id = :idObra ORDER BY p.instrumento ASC")
 	Set<PartituraDTO> jpqlfindByIdObra(@Param("idObra") Long idObra);
 
+	@Query("SELECT DISTINCT p.instrumento FROM Partitura p WHERE p.obra.id = :idObra ORDER BY p.instrumento ASC")
+	Set<String> jpqlfindInstrumentos(@Param("idObra") Long idObra);
+
 }

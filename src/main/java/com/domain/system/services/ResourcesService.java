@@ -25,8 +25,8 @@ public class ResourcesService {
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-			return null;
 		}
+		return null;
 	}
 
 }
