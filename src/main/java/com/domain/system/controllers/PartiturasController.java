@@ -26,6 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 import com.domain.system.interfaces.IObraService;
 import com.domain.system.interfaces.IPartituraService;
 import com.domain.system.models.dto.ObraDTO;
+import com.domain.system.models.dto.PartituraDTO;
 import com.domain.system.models.postgresql.Obra;
 import com.domain.system.models.postgresql.Partitura;
 
@@ -46,15 +47,14 @@ public class PartiturasController {
 	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
 	public ResponseEntity<?> findAllPartituras(@RequestParam(name = "idObra", required = false) String idObraString) {
 		Map<String, Object> responseBody = new HashMap<>();
-		// List<Partitura> partituras2;
 
 		try {
 			if (idObraString != null) {
 				Long idObra = Long.valueOf(idObraString);
-				
-				ObraDTO obraDTO2 = partituraService.jpqlfindObraByIdObra(idObra);
-				
-				responseBody.put("ObraDTO", obraDTO2);
+
+				ObraDTO obraDTO = partituraService.jpqlfindObraByIdObra(idObra);
+
+				responseBody.put("ObraDTO", obraDTO);
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
 			}
 
@@ -82,54 +82,61 @@ public class PartiturasController {
 
 	@PostMapping("")
 	public ResponseEntity<?> uploadPartitura(
-			@RequestParam(name = "partituraPDF", required = true) MultipartFile partituraPDF,
-			@RequestParam(name = "idObra", required = true) Long idObra,
-			@RequestParam(name = "instrumento", required = true) String instrumento) {
+			@RequestParam(name = "partituraPDF", required = false) MultipartFile partituraPDF,
+			@RequestParam(name = "idObra", required = false) Long idObraString,
+			@RequestParam(name = "instrumento", required = false) String instrumento) {
 
 		Map<String, Object> responseBody = new HashMap<>();
 
 		try {
-			System.out.println("Se va a buscar la obra");
-			Obra obra = obraService.findById(idObra);
+			if (!partituraPDF.isEmpty() && idObraString != null && instrumento != null) {
 
-			if (obra != null) {
-				System.out.println("Se encontró la obra y vamos a imprimir su contenido");
-				System.out.println(obra.getNombre());
-				System.out.println("Se imprimió la obra");
-				Partitura partitura = new Partitura();
-				partitura.setInstrumento(instrumento);
-				partitura.setPartituraPDFFromInputStream(partituraPDF.getInputStream());
+				Long idObra = Long.valueOf(idObraString);
 
-				Set<Partitura> partituras = obra.getPartituras();
+				Obra obra = obraService.findById(idObra);
 
-				Iterator<Partitura> iterator = partituras.iterator();
-				boolean bandera = false;
-				while (iterator.hasNext()) {
-					Partitura temp = iterator.next();
-					if (temp.getInstrumento().equals(instrumento)) {
-						bandera = true;
+				if (obra != null) {
+
+
+					Set<PartituraDTO> partituras = partituraService.jpqlfindByIdObra(idObra);
+
+					Iterator<PartituraDTO> iterator = partituras.iterator();
+
+					boolean bandera = false;
+					while (iterator.hasNext()) {
+						PartituraDTO temp = iterator.next();
+						if (temp.getInstrumento().equals(instrumento)) {
+							bandera = true;
+						}
 					}
+					
+					if (!bandera) {
+						
+						Partitura partitura = new Partitura();
+						partitura.setInstrumento(instrumento);
+						partitura.setPartituraPDFFromInputStream(partituraPDF.getInputStream());
+						partitura.setObra(obra);
+						partituraService.save(partitura);
+
+						responseBody.put("mensaje", "Partitura agregada guardada");
+						//responseBody.put("obra", partituraService.jpqlfindObraByIdObra(obraTemp.getId()));
+						return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
+					}
+
+					responseBody.put("mensaje", "Instrumento duplicado");
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+
 				}
-
-				if (!bandera) {
-					obra.addPartitura(partitura);
-
-					System.out.println("Se va a guardar la obra");
-					Obra obraTemp = obraService.save(obra);
-					System.out.println("Se guardó la obra");
-					responseBody.put("mensaje", "Partitura guardada");
-					responseBody.put("obra", obraTemp);
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
-				}
-				responseBody.put("mensaje", "Instrumento duplicado");
-				responseBody.put("obra", obra);
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CONFLICT);
-
 			}
 
-			responseBody.put("mensaje", "No existe la obra");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			responseBody.put("mensaje", "Debe ingresar todos los campos solicitados");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 
+		} catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (HibernateException e) {
 			e.printStackTrace();
 			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos HibernateException");

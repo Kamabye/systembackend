@@ -8,8 +8,10 @@ import com.domain.system.models.Auditable;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.google.common.io.ByteStreams;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -41,15 +43,15 @@ public class Partitura extends Auditable implements Serializable {
 	private String instrumento;
 
 	@Lob
-	// @Basic(fetch = FetchType.EAGER)
+	@Basic(fetch = FetchType.LAZY)
 	private byte[] partituraPDF;
 
 	@Lob
-	// @Basic(fetch = FetchType.EAGER)
+	@Basic(fetch = FetchType.LAZY)
 	private byte[] vistaPreviaPDF;
 
 	@Lob
-	// @Basic(fetch = FetchType.EAGER)
+	@Basic(fetch = FetchType.LAZY)
 	private byte[] xml;
 
 	@ManyToOne
