@@ -56,7 +56,6 @@ public class PostgreSQLConfig {
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory = builder.dataSource(dataSource).packages("com.domain.system.models.postgresql")
 				.persistenceUnit("postgresql").build();
-
 		factory.setJpaVendorAdapter(vendorAdapter);
 
 		return factory;
