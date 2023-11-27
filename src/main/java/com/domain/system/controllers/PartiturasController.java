@@ -14,9 +14,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -24,9 +26,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.domain.system.interfaces.IObraService;
-import com.domain.system.interfaces.IPDFService;
+import com.domain.system.interfaces.IMultipartFileService;
 import com.domain.system.interfaces.IPartituraService;
 import com.domain.system.models.dto.ObraDTO;
+import com.domain.system.models.dto.PartituraDTO;
 import com.domain.system.models.postgresql.Obra;
 import com.domain.system.models.postgresql.Partitura;
 
@@ -43,7 +46,7 @@ public class PartiturasController {
 	IObraService obraService;
 
 	@Autowired
-	IPDFService pdfService;
+	IMultipartFileService pdfService;
 
 	@GetMapping("")
 	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
@@ -113,22 +116,24 @@ public class PartiturasController {
 
 					if (!bandera) {
 						System.out.println("Bandera falsa");
-						byte[] vistaPrevia = pdfService.ponerMarcaAgua(partituraPDF);
 
-						System.out.println("Se va a guardar la parttitura");
-						Partitura partitura = new Partitura();
-						partitura.setInstrumento(instrumento);
-						System.out.println("Se va a cargará la parttitura");
-						partitura.setPartituraPDFFromInputStream(partituraPDF.getInputStream());
-						System.out.println("Se va a cargará la visa previa la parttitura");
-						partitura.setVistaPreviaPDF(vistaPrevia);
-						System.out.println("Se cargó la vista revia la partitura");
-						partitura.setObra(obra);
-						partituraService.save(partitura);
-						System.out.println("Se guardo la partitura");
+						if (!pdfService.esExtensionPermitida(partituraPDF)) {
 
-						responseBody.put("obraDTO", partituraService.jpqlfindObraByIdObra(idObra));
-						return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
+							byte[] vistaPrevia = pdfService.ponerMarcaAgua(partituraPDF);
+							Partitura partitura = new Partitura();
+							partitura.setInstrumento(instrumento);
+							partitura.setPartituraPDFFromInputStream(partituraPDF.getInputStream());
+							partitura.setVistaPreviaPDF(vistaPrevia);
+							partitura.setObra(obra);
+							partituraService.save(partitura);
+
+							responseBody.put("obraDTO", partituraService.jpqlfindObraByIdObra(idObra));
+							return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
+
+						}
+						responseBody.put("mensaje", "Partitura inválida");
+						return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+
 					}
 
 					responseBody.put("mensaje", "Instrumento duplicado");
@@ -168,6 +173,18 @@ public class PartiturasController {
 		}
 	}
 
+	@PutMapping("{idPartitura}")
+	public ResponseEntity<?> updatePartitura(
+			@PathVariable(name = "idPartitura", required = false) String idPartituraString) {
+
+		try {
+			return null;
+		} catch (Exception e) {
+			return null;
+		}
+
+	}
+
 	@GetMapping("download/{idPartitura}")
 	public ResponseEntity<?> findPartituraByIDURL(
 			@PathVariable(name = "idPartitura", required = false) String idPartituraString) {
@@ -196,6 +213,116 @@ public class PartiturasController {
 							temp.getObra().getNombre() + "_" + temp.getInstrumento() + ".pdf");
 
 					return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+				}
+				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+
+			}
+			responseBody.put("mensaje", "El idPartitura debe ser ingresado");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+
+		}
+
+		catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (HibernateException e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos HibernateException");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (DataAccessException e) {
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+
+		}
+	}
+
+	@DeleteMapping("{idPartitura}")
+	public ResponseEntity<?> deletePartituraByIDURL(
+			@PathVariable(name = "idPartitura", required = false) String idPartituraString) {
+		Map<String, Object> responseBody = new HashMap<>();
+		try {
+
+			if (idPartituraString != null) {
+
+				PartituraDTO partituraDTO;
+
+				Long idPartitura = Long.valueOf(idPartituraString);
+
+				partituraDTO = partituraService.jpqlfindById(idPartitura);
+
+				if (partituraDTO != null) {
+
+					partituraService.delete(idPartitura);
+
+					responseBody.put("mensaje", "La partitura : " + idPartitura + " ha sido eliminada con éxito");
+					responseBody.put("PartituraDTO", partituraDTO);
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+				}
+				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+
+			}
+			responseBody.put("mensaje", "El idPartitura debe ser ingresado");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+
+		}
+
+		catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (HibernateException e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos HibernateException");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (DataAccessException e) {
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+
+		}
+	}
+
+	@DeleteMapping("")
+	public ResponseEntity<?> deletePartituraByIDParam(
+			@RequestParam(name = "idPartitura", required = false) String idPartituraString) {
+		Map<String, Object> responseBody = new HashMap<>();
+		try {
+
+			if (idPartituraString != null) {
+
+				PartituraDTO partituraDTO;
+
+				Long idPartitura = Long.valueOf(idPartituraString);
+
+				partituraDTO = partituraService.jpqlfindById(idPartitura);
+
+				if (partituraDTO != null) {
+
+					partituraService.delete(idPartitura);
+
+					responseBody.put("mensaje", "La partitura : " + idPartitura + " ha sido eliminada con éxito");
+					responseBody.put("PartituraDTO", partituraDTO);
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 				}
 				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);

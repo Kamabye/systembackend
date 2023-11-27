@@ -5,7 +5,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public interface IPDFService {
+public interface IMultipartFileService {
 	
 	byte[] ponerMarcaAgua(MultipartFile archivoPDF, MultipartFile marcaDeAgua);
 	
@@ -15,4 +15,9 @@ public interface IPDFService {
 	
 	byte[] unirPDF(List<MultipartFile> archivosPDF);
 
+	String obtenerExtension(String nombreArchivo);
+
+	boolean esExtensionPermitida(MultipartFile partituraPDF);
+
+	
 }

@@ -29,14 +29,17 @@ public interface PartituraRepository extends JpaRepository<Partitura, Long> {
 
 	@Query("SELECT new com.domain.system.models.dto.PartituraDTO(p.id, p.instrumento) FROM Partitura p")
 	List<PartituraDTO> jpqlfindAll();
-	
-	@Query("SELECT NEW com.domain.system.models.dto.ObraDTO(o.id, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio) FROM Obra o WHERE o.id = :id ORDER BY o.nombre ASC")
-	Optional<ObraDTO> jpqlfindObraByIdObra(@Param("id") Long id);
+
+	@Query("SELECT NEW com.domain.system.models.dto.ObraDTO(o.id, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio) FROM Obra o WHERE o.id = :idObra ORDER BY o.nombre ASC")
+	Optional<ObraDTO> jpqlfindObraByIdObra(@Param("idObra") Long idObra);
 
 	@Query("SELECT new com.domain.system.models.dto.PartituraDTO(p.id, p.instrumento) FROM Partitura p WHERE p.obra.id = :idObra ORDER BY p.instrumento ASC")
 	Set<PartituraDTO> jpqlfindByIdObra(@Param("idObra") Long idObra);
 
 	@Query("SELECT DISTINCT p.instrumento FROM Partitura p WHERE p.obra.id = :idObra ORDER BY p.instrumento ASC")
 	Set<String> jpqlfindInstrumentos(@Param("idObra") Long idObra);
+
+	@Query("SELECT new com.domain.system.models.dto.PartituraDTO(p.id, p.instrumento) FROM Partitura p WHERE p.id = :idPartitura")
+	Optional<PartituraDTO> jpqlfindById(@Param("idPartitura") Long idPartitura);
 
 }

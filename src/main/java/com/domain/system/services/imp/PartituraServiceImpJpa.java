@@ -81,11 +81,11 @@ public class PartituraServiceImpJpa implements IPartituraService {
 	public List<PartituraDTO> jpqlFindAll() {
 		return partituraRepo.jpqlfindAll();
 	}
-	
+
 	@Override
 	public Set<PartituraDTO> jpqlfindByIdObra(Long idObra) {
 		return partituraRepo.jpqlfindByIdObra(idObra);
-		
+
 	}
 
 	@Override
@@ -107,10 +107,20 @@ public class PartituraServiceImpJpa implements IPartituraService {
 
 	@Override
 	public Set<String> jpqlfindInstrumentos(Long idObra) {
-		
+
 		Set<String> instrumentos = partituraRepo.jpqlfindInstrumentos(idObra);
-		if(!instrumentos.isEmpty()) {
+		if (!instrumentos.isEmpty()) {
 			return instrumentos;
+		}
+		return null;
+	}
+
+	@Override
+	public PartituraDTO jpqlfindById(Long idPartitura) {
+
+		Optional<PartituraDTO> partitura = partituraRepo.jpqlfindById(idPartitura);
+		if (!partitura.isEmpty()) {
+			return partitura.get();
 		}
 		return null;
 	}

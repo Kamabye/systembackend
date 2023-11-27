@@ -40,5 +40,7 @@ public interface IPartituraService {
 	ObraDTO jpqlfindObraByIdObra(Long idObra);
 
 	Set<String> jpqlfindInstrumentos(Long idObra);
+	
+	PartituraDTO jpqlfindById(Long idPartitura);
 
 }

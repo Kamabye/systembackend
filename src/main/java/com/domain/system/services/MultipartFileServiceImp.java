@@ -3,6 +3,7 @@ package com.domain.system.services;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Arrays;
 import java.util.List;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
@@ -19,11 +20,13 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.domain.system.interfaces.IPDFService;
+import com.domain.system.interfaces.IMultipartFileService;
 
 @Service
 @Primary
-public class PDFServiceImp implements IPDFService {
+public class MultipartFileServiceImp implements IMultipartFileService {
+
+	private static final List<String> EXTENSIONES_PERMITIDAS = Arrays.asList("pdf", "PDF");
 
 	@Autowired
 	private ResourcesService resourceService;
@@ -52,7 +55,7 @@ public class PDFServiceImp implements IPDFService {
 				PDPage page = documentoPDF.getPage(i);
 				System.out.println("Pagina cargada " + i);
 				PDRectangle pageSize = page.getMediaBox();
-				
+
 				float x = (pageSize.getWidth() - imagenMarcaDeAgua.getWidth()) / 2;
 				float y = (pageSize.getHeight() - imagenMarcaDeAgua.getHeight()) / 2;
 
@@ -142,6 +145,25 @@ public class PDFServiceImp implements IPDFService {
 		}
 
 		return null;
+	}
+
+	@Override
+	public boolean esExtensionPermitida(MultipartFile partituraPDF) {
+
+		String nombreArchivo = partituraPDF.getOriginalFilename();
+
+		String extensionArchivo = obtenerExtension(nombreArchivo);
+
+		return EXTENSIONES_PERMITIDAS.contains(extensionArchivo);
+
+	}
+
+	@Override
+	public String obtenerExtension(String nombreArchivo) {
+		if (nombreArchivo != null && nombreArchivo.lastIndexOf(".") != -1) {
+			return nombreArchivo.substring(nombreArchivo.lastIndexOf(".") + 1);
+		}
+		return "";
 	}
 
 }

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.domain.system.interfaces.IPDFService;
+import com.domain.system.interfaces.IMultipartFileService;
 import com.domain.system.interfaces.IPartituraService;
 import com.domain.system.models.postgresql.Obra;
 import com.domain.system.models.postgresql.Partitura;
@@ -28,7 +28,7 @@ import com.domain.system.models.postgresql.Partitura;
 public class PDFController {
 
 	@Autowired
-	private IPDFService pdfService;
+	private IMultipartFileService pdfService;
 
 	@Autowired
 	private IPartituraService partituraService;
