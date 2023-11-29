@@ -11,7 +11,6 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.domain.system.interfaces.proyecciones.UsuarioProyeccion;
-import com.domain.system.models.dto.NombreDTO;
 import com.domain.system.models.dto.UsuarioDTO;
 import com.domain.system.models.postgresql.Usuario;
 
@@ -73,10 +72,7 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
 
 	@Query(value = "SELECT * FROM usuarios u WHERE u.nombres = :nombres", nativeQuery = true)
 	List<UsuarioProyeccion> findByNombresProyeccion(@Param("nombres")String nombres);
-
-	@Query(value = "SELECT * FROM usuarios u WHERE u.nombres = :nombres", nativeQuery = true)
-	List<NombreDTO> findByNombreDTO(String nombres, Class<NombreDTO> projection);
-
+	
 	@Query(value = "SELECT nombres, email FROM usuarios WHERE nombres = :nombres", nativeQuery = true)
 	List<Object[]> buscarNombreYEmail(@Param("nombres") String nombres);
 

@@ -88,6 +88,8 @@ public class PartiturasController {
 
 	@PostMapping("")
 	public ResponseEntity<?> uploadPartitura(
+			// @RequestPart(name = "partituraPDF", required = false) MultipartFile
+			// partituraPDF,
 			@RequestParam(name = "partituraPDF", required = false) MultipartFile partituraPDF,
 			@RequestParam(name = "idObra", required = false) Long idObraString,
 			@RequestParam(name = "instrumento", required = false) String instrumento) {
@@ -95,7 +97,7 @@ public class PartiturasController {
 		Map<String, Object> responseBody = new HashMap<>();
 
 		try {
-			if (!partituraPDF.isEmpty() && idObraString != null && instrumento != null) {
+			if (idObraString != null && instrumento != null) {
 
 				Long idObra = Long.valueOf(idObraString);
 
@@ -117,18 +119,29 @@ public class PartiturasController {
 					if (!bandera) {
 						System.out.println("Bandera falsa");
 
-						if (!pdfService.esExtensionPermitida(partituraPDF)) {
+						if (pdfService.isPDFValid(partituraPDF)) {
+							
+							
+							System.out.println("ContentType: "+ partituraPDF.getContentType());
+							System.out.println("Name: " + partituraPDF.getName());
+							System.out.println("OriginalFileName: " + partituraPDF.getOriginalFilename());
+							System.out.println("Size: " + partituraPDF.getSize());
+							
 
 							byte[] vistaPrevia = pdfService.ponerMarcaAgua(partituraPDF);
-							Partitura partitura = new Partitura();
-							partitura.setInstrumento(instrumento);
-							partitura.setPartituraPDFFromInputStream(partituraPDF.getInputStream());
-							partitura.setVistaPreviaPDF(vistaPrevia);
-							partitura.setObra(obra);
-							partituraService.save(partitura);
+							if (vistaPrevia.length > 0) {
+								Partitura partitura = new Partitura();
+								partitura.setInstrumento(instrumento);
+								partitura.setPartituraPDFFromInputStream(partituraPDF.getInputStream());
+								partitura.setVistaPreviaPDF(vistaPrevia);
+								partitura.setObra(obra);
+								partituraService.save(partitura);
 
-							responseBody.put("obraDTO", partituraService.jpqlfindObraByIdObra(idObra));
-							return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
+								responseBody.put("obraDTO", partituraService.jpqlfindObraByIdObra(idObra));
+								return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
+							}
+							responseBody.put("mensaje", "Error en vistaprevia");
+							return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 
 						}
 						responseBody.put("mensaje", "Partitura inválida");

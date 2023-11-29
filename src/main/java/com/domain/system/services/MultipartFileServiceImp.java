@@ -1,6 +1,5 @@
 package com.domain.system.services;
 
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
@@ -26,16 +25,87 @@ import com.domain.system.interfaces.IMultipartFileService;
 @Primary
 public class MultipartFileServiceImp implements IMultipartFileService {
 
-	private static final List<String> EXTENSIONES_PERMITIDAS = Arrays.asList("pdf", "PDF");
+	private static final int BUFFER_MAX_MULTIPARTFILE = 8192;
+
+	private static final int PDF_SIZE_MAX = 2 * 1024 * 1024;// 2MB para archivos pdf
+	private static final int AUDIO_SIZE_MAX = 10 * 1024 * 1024;// 2MB para archivos audio
+
+	private static final List<String> EXTENSIONES_PDF_PERMITIDAS = Arrays.asList("pdf", "PDF");
 
 	@Autowired
 	private ResourcesService resourceService;
 
 	@Override
+	public boolean isPDFValid(MultipartFile partituraPDF) {
+
+		if (isSizeValidPDF(partituraPDF) && isPDF(partituraPDF)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isSizeValidPDF(MultipartFile multipartFile) {
+
+		if (multipartFile != null && !multipartFile.isEmpty() && multipartFile.getSize() <= PDF_SIZE_MAX) {
+			return true;
+		}
+
+		return false;
+	}
+
+	@Override
+	public boolean isPDF(MultipartFile partituraPDF) {
+
+		return esExtensionPDFPermitida(partituraPDF);
+	}
+
+	@Override
+	public boolean esExtensionPDFPermitida(MultipartFile partituraPDF) {
+
+		String nombreArchivo = partituraPDF.getOriginalFilename();
+
+		String extensionArchivo = obtenerExtension(nombreArchivo);
+
+		return EXTENSIONES_PDF_PERMITIDAS.contains(extensionArchivo);
+
+	}
+
+	@Override
+	public String obtenerExtension(String nombreArchivo) {
+		if (nombreArchivo != null && nombreArchivo.lastIndexOf(".") != -1) {
+			return nombreArchivo.substring(nombreArchivo.lastIndexOf(".") + 1);
+		}
+		return "";
+	}
+
+	@Override
 	public byte[] ponerMarcaAgua(MultipartFile archivoPDF) {
-		try {
-			System.out.println("Poner marca de agua multipart");
-			return ponerMarcaAgua(archivoPDF.getInputStream());
+		try (InputStream inputStream = archivoPDF.getInputStream()) {
+			// byte[] buffer = new byte[BUFFER_MAX_MULTIPARTFILE];
+			// int bytesRead;
+			// System.out.println("Poner marca de agua multipart");
+			// byte[] bytes = ByteStreams.toByteArray(inputStream);
+
+			// while ((bytesRead = inputStream.read(buffer)) != -1) {
+			// Realizar operaciones con el bloque de bytes leído
+			// Por ejemplo, puedes almacenarlos en una base de datos o realizar algún
+			// procesamiento específico.
+			// Aquí puedes procesar el bloque de bytes según tus necesidades.
+			// }
+
+			// while ((bytesRead = ByteStreams.read(inputStream, buffer, 0, buffer.length))
+			// != -1) {
+			// Realizar operaciones con el bloque de bytes leído
+			// Por ejemplo, puedes almacenarlos en una base de datos o realizar algún
+			// procesamiento específico.
+			// Aquí puedes procesar el bloque de bytes según tus necesidades.
+			// }
+
+			byte[] bytes = ponerMarcaAgua(inputStream);
+
+			return bytes;
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -45,84 +115,49 @@ public class MultipartFileServiceImp implements IMultipartFileService {
 
 	@Override
 	public byte[] ponerMarcaAgua(InputStream inputStream) {
-		try {
-			System.out.println("Poner marca de agua inputstream");
-			PDDocument documentoPDF = Loader.loadPDF(new RandomAccessReadBuffer(inputStream));
+		try (PDDocument documentoPDF = Loader.loadPDF(new RandomAccessReadBuffer(inputStream))) {
 
-			BufferedImage imagenMarcaDeAgua = resourceService.marcaDeAgua();
+			PDImageXObject image = PDImageXObject.createFromFileByContent(resourceService.getMarcaDeAguaFile(),
+					documentoPDF);
 			System.out.println("Datos cargados");
-			for (int i = 0; i < documentoPDF.getNumberOfPages(); i++) {
-				PDPage page = documentoPDF.getPage(i);
-				System.out.println("Pagina cargada " + i);
-				PDRectangle pageSize = page.getMediaBox();
+			int numPage = 1;
+			for (PDPage page : documentoPDF.getPages()) {
 
-				float x = (pageSize.getWidth() - imagenMarcaDeAgua.getWidth()) / 2;
-				float y = (pageSize.getHeight() - imagenMarcaDeAgua.getHeight()) / 2;
+				System.out.println("Pagina cargada " + numPage);
 
-				PDPageContentStream contentStream = new PDPageContentStream(documentoPDF, page,
-						PDPageContentStream.AppendMode.APPEND, true);
-				contentStream
-						.drawImage(
-								PDImageXObject.createFromByteArray(documentoPDF,
-										convertirImagenABytes(imagenMarcaDeAgua), "String"),
-								x, y, imagenMarcaDeAgua.getWidth(), imagenMarcaDeAgua.getHeight());
-				contentStream.close();
-				System.out.println("Pagina sellada " + i);
+				try (PDPageContentStream contentStream = new PDPageContentStream(documentoPDF, page,
+						PDPageContentStream.AppendMode.APPEND, true, true)) {
+
+					float imageWidth = image.getWidth();
+	                float imageHeight = image.getHeight();
+	                
+	                float centerX = (page.getMediaBox().getWidth() - imageWidth) / 2;
+	                float centerY = (page.getMediaBox().getHeight() - imageHeight) / 2;
+	                
+	                float rotatedX = centerX - imageHeight / 2;
+	                float rotatedY = centerY - imageWidth / 2;
+					// Ajusta las coordenadas y el tamaño de la imagen según tus necesidades
+					contentStream.drawImage(image, 100, 500, image.getWidth(), image.getHeight());
+					//contentStream.drawImage(image, 100, 100, 0, 0);
+	                //contentStream.drawImage(image, rotatedX, rotatedY, imageHeight, imageWidth);
+	                //contentStream.drawImage(image, rotatedX, rotatedY, imageHeight, imageWidth);
+
+					System.out.println("Pagina sellada " + numPage);
+					numPage++;
+				}
 			}
 
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			documentoPDF.save(outputStream);
-			documentoPDF.close();
-			System.out.println("Archivo sellado");
-			return outputStream.toByteArray();
+			try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
+				documentoPDF.save(byteArrayOutputStream);
+				System.out.println("Archivo sellado");
+				return byteArrayOutputStream.toByteArray();
+
+			}
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
-	}
-
-	@Override
-	public byte[] ponerMarcaAgua(MultipartFile archivoPDF, MultipartFile marcaDeAgua) {
-
-		try (InputStream pdfInputStream = archivoPDF.getInputStream();
-				InputStream marcaDeAguaInputStream = marcaDeAgua.getInputStream()) {
-			// PDDocument documentoPDF = Loader.loadPDF(pdfInputStream.readAllBytes());
-			PDDocument documentoPDF = Loader.loadPDF(new RandomAccessReadBuffer(pdfInputStream));
-			// PDFRenderer pdfRenderer = new PDFRenderer(documentoPDF);
-
-			BufferedImage imagenMarcaDeAgua = javax.imageio.ImageIO.read(marcaDeAguaInputStream);
-
-			for (int i = 0; i < documentoPDF.getNumberOfPages(); i++) {
-				PDPage page = documentoPDF.getPage(i);
-				PDRectangle pageSize = page.getMediaBox();
-				float x = (pageSize.getWidth() - imagenMarcaDeAgua.getWidth()) / 2;
-				float y = (pageSize.getHeight() - imagenMarcaDeAgua.getHeight()) / 2;
-
-				PDPageContentStream contentStream = new PDPageContentStream(documentoPDF, page,
-						PDPageContentStream.AppendMode.APPEND, true);
-				contentStream
-						.drawImage(
-								PDImageXObject.createFromByteArray(documentoPDF,
-										convertirImagenABytes(imagenMarcaDeAgua), "String"),
-								x, y, imagenMarcaDeAgua.getWidth(), imagenMarcaDeAgua.getHeight());
-				contentStream.close();
-			}
-
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			documentoPDF.save(outputStream);
-			documentoPDF.close();
-
-			return outputStream.toByteArray();
-		} catch (Exception e) {
-			return null;
-		}
-	}
-
-	private byte[] convertirImagenABytes(BufferedImage imagen) throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		javax.imageio.ImageIO.write(imagen, "png", baos);
-		return baos.toByteArray();
 	}
 
 	@Override
@@ -145,25 +180,6 @@ public class MultipartFileServiceImp implements IMultipartFileService {
 		}
 
 		return null;
-	}
-
-	@Override
-	public boolean esExtensionPermitida(MultipartFile partituraPDF) {
-
-		String nombreArchivo = partituraPDF.getOriginalFilename();
-
-		String extensionArchivo = obtenerExtension(nombreArchivo);
-
-		return EXTENSIONES_PERMITIDAS.contains(extensionArchivo);
-
-	}
-
-	@Override
-	public String obtenerExtension(String nombreArchivo) {
-		if (nombreArchivo != null && nombreArchivo.lastIndexOf(".") != -1) {
-			return nombreArchivo.substring(nombreArchivo.lastIndexOf(".") + 1);
-		}
-		return "";
 	}
 
 }
