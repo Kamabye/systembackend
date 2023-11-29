@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.domain.system.interfaces.IPartituraService;
+import com.domain.system.models.dto.LobDTO;
 import com.domain.system.models.dto.ObraDTO;
 import com.domain.system.models.dto.PartituraDTO;
 import com.domain.system.models.postgresql.Partitura;
@@ -121,6 +122,15 @@ public class PartituraServiceImpJpa implements IPartituraService {
 		Optional<PartituraDTO> partitura = partituraRepo.jpqlfindById(idPartitura);
 		if (!partitura.isEmpty()) {
 			return partitura.get();
+		}
+		return null;
+	}
+
+	@Override
+	public List<LobDTO> jpqlLobFindByIdObra(Long idObra) {
+		List<LobDTO> partituras = partituraRepo.jpqlLobfindByIdObra(idObra);
+		if (!partituras.isEmpty()) {
+			return partituras;
 		}
 		return null;
 	}

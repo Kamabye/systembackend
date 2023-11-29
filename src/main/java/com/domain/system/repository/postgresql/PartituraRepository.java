@@ -9,6 +9,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.domain.system.models.dto.LobDTO;
 import com.domain.system.models.dto.ObraDTO;
 import com.domain.system.models.dto.PartituraDTO;
 import com.domain.system.models.postgresql.Partitura;
@@ -35,6 +36,9 @@ public interface PartituraRepository extends JpaRepository<Partitura, Long> {
 
 	@Query("SELECT new com.domain.system.models.dto.PartituraDTO(p.id, p.instrumento) FROM Partitura p WHERE p.obra.id = :idObra ORDER BY p.instrumento ASC")
 	Set<PartituraDTO> jpqlfindByIdObra(@Param("idObra") Long idObra);
+	
+	@Query("SELECT new com.domain.system.models.dto.LobDTO(p.partituraPDF) FROM Partitura p WHERE p.obra.id = :idObra ORDER BY p.instrumento ASC")
+	List<LobDTO> jpqlLobfindByIdObra(@Param("idObra") Long idObra);
 
 	@Query("SELECT DISTINCT p.instrumento FROM Partitura p WHERE p.obra.id = :idObra ORDER BY p.instrumento ASC")
 	Set<String> jpqlfindInstrumentos(@Param("idObra") Long idObra);

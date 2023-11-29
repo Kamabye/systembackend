@@ -1,14 +1,17 @@
 package com.domain.system.services;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.io.RandomAccessReadBuffer;
 import org.apache.pdfbox.multipdf.PDFMergerUtility;
+import org.apache.pdfbox.pdfwriter.compress.CompressParameters;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -19,11 +22,14 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import com.domain.system.interfaces.IMultipartFileService;
+import com.domain.system.interfaces.IPDFService;
+import com.domain.system.models.dto.LobDTO;
+import com.domain.system.models.postgresql.Obra;
+import com.domain.system.models.postgresql.Partitura;
 
 @Service
 @Primary
-public class MultipartFileServiceImp implements IMultipartFileService {
+public class PDFServiceImp implements IPDFService {
 
 	private static final int BUFFER_MAX_MULTIPARTFILE = 8192;
 
@@ -128,19 +134,21 @@ public class MultipartFileServiceImp implements IMultipartFileService {
 				try (PDPageContentStream contentStream = new PDPageContentStream(documentoPDF, page,
 						PDPageContentStream.AppendMode.APPEND, true, true)) {
 
-					float imageWidth = image.getWidth();
-	                float imageHeight = image.getHeight();
-	                
-	                float centerX = (page.getMediaBox().getWidth() - imageWidth) / 2;
-	                float centerY = (page.getMediaBox().getHeight() - imageHeight) / 2;
-	                
-	                float rotatedX = centerX - imageHeight / 2;
-	                float rotatedY = centerY - imageWidth / 2;
-					// Ajusta las coordenadas y el tamaño de la imagen según tus necesidades
-					contentStream.drawImage(image, 100, 500, image.getWidth(), image.getHeight());
-					//contentStream.drawImage(image, 100, 100, 0, 0);
-	                //contentStream.drawImage(image, rotatedX, rotatedY, imageHeight, imageWidth);
-	                //contentStream.drawImage(image, rotatedX, rotatedY, imageHeight, imageWidth);
+					PDRectangle pageSize = page.getMediaBox();
+
+					float anchoPagina = pageSize.getWidth();
+					float altoPagina = pageSize.getHeight();
+
+					float anchoImagen = image.getWidth();
+					float altoImagen = image.getHeight();
+
+					// Cuando la imagen es mayor que el PDF se sale del area
+					float centerX = (pageSize.getWidth() - anchoImagen) / 2;
+					float centerY = (pageSize.getHeight() - altoImagen) / 2;
+
+					// contentStream.drawImage(image, centerX, centerY, imageWidth, imageHeight);
+					// contentStream.drawImage(image, 0, 0, imageWidth, imageHeight);
+					contentStream.drawImage(image, 0, 0, anchoPagina, altoPagina);
 
 					System.out.println("Pagina sellada " + numPage);
 					numPage++;
@@ -161,24 +169,30 @@ public class MultipartFileServiceImp implements IMultipartFileService {
 	}
 
 	@Override
-	public byte[] unirPDF(List<MultipartFile> archivosPDF) {
-
+	public byte[] unirPDF(List<LobDTO> partituras) {
 		try (PDDocument resultado = new PDDocument()) {
 			PDFMergerUtility merger = new PDFMergerUtility();
-
-			for (MultipartFile archivoPDF : archivosPDF) {
-				InputStream pdfInputStream = archivoPDF.getInputStream();
-				merger.appendDocument(resultado, Loader.loadPDF(new RandomAccessReadBuffer(pdfInputStream)));
+			int numPage = 1;
+			for (LobDTO partitura : partituras) {
+				merger.appendDocument(resultado, Loader
+						.loadPDF(new RandomAccessReadBuffer(new ByteArrayInputStream(partitura.getPartituraPDF()))));
+				System.out.println("Se agregó el instrumento " + numPage);
+				numPage++;
 			}
 
-			ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			resultado.save(outputStream);
-			return outputStream.toByteArray();
+			try (ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
+				System.out.println("Se va a guardar el archivo");
+				resultado.save(outputStream, CompressParameters.NO_COMPRESSION);
+				System.out.println("Se archivo completado");
+				return outputStream.toByteArray();
+			}
+
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
+		// TODO Auto-generated method stub
 		return null;
 	}
 

@@ -2,6 +2,7 @@ package com.domain.system.controllers;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -26,8 +27,9 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.domain.system.interfaces.IObraService;
-import com.domain.system.interfaces.IMultipartFileService;
+import com.domain.system.interfaces.IPDFService;
 import com.domain.system.interfaces.IPartituraService;
+import com.domain.system.models.dto.LobDTO;
 import com.domain.system.models.dto.ObraDTO;
 import com.domain.system.models.dto.PartituraDTO;
 import com.domain.system.models.postgresql.Obra;
@@ -46,7 +48,7 @@ public class PartiturasController {
 	IObraService obraService;
 
 	@Autowired
-	IMultipartFileService pdfService;
+	IPDFService pdfService;
 
 	@GetMapping("")
 	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
@@ -120,13 +122,11 @@ public class PartiturasController {
 						System.out.println("Bandera falsa");
 
 						if (pdfService.isPDFValid(partituraPDF)) {
-							
-							
-							System.out.println("ContentType: "+ partituraPDF.getContentType());
+
+							System.out.println("ContentType: " + partituraPDF.getContentType());
 							System.out.println("Name: " + partituraPDF.getName());
 							System.out.println("OriginalFileName: " + partituraPDF.getOriginalFilename());
 							System.out.println("Size: " + partituraPDF.getSize());
-							
 
 							byte[] vistaPrevia = pdfService.ponerMarcaAgua(partituraPDF);
 							if (vistaPrevia.length > 0) {
@@ -198,7 +198,7 @@ public class PartiturasController {
 
 	}
 
-	@GetMapping("download/{idPartitura}")
+	@GetMapping("view/{idPartitura}")
 	public ResponseEntity<?> findPartituraByIDURL(
 			@PathVariable(name = "idPartitura", required = false) String idPartituraString) {
 		Map<String, Object> responseBody = new HashMap<>();
@@ -232,6 +232,69 @@ public class PartiturasController {
 
 			}
 			responseBody.put("mensaje", "El idPartitura debe ser ingresado");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+
+		}
+
+		catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (HibernateException e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos HibernateException");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (DataAccessException e) {
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+
+		}
+	}
+
+	@GetMapping("download/{idObra}")
+	public ResponseEntity<?> downloadPartiturasByIDObraURL(
+			@PathVariable(name = "idObra", required = false) String idObraString) {
+		Map<String, Object> responseBody = new HashMap<>();
+		try {
+
+			if (idObraString != null) {
+
+				Partitura temp;
+
+				Long idObra = Long.valueOf(idObraString);
+
+				Obra obra = obraService.findById(idObra);
+
+				List<LobDTO> partituras = partituraService.jpqlLobFindByIdObra(idObra);
+
+				if (partituras != null) {
+					ByteArrayResource resource = new ByteArrayResource(pdfService.unirPDF(partituras));
+
+					HttpHeaders headers = new HttpHeaders();
+
+					headers.setContentType(MediaType.APPLICATION_PDF);
+					headers.setContentLength(resource.contentLength());
+					// headers.setContentDispositionFormData("attachment",temp.getObra().getNombre()
+					// + "_" + temp.getInstrumento() + ".pdf");
+
+					headers.setContentDispositionFormData("inline", obra.getNombre() + ".pdf");
+
+					return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+				}
+				responseBody.put("mensaje", "El ID: " + idObraString + " no existe en la base de datos");
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+
+			}
+			responseBody.put("mensaje", "El idObra debe ser ingresado");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 
 		}

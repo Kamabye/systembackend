@@ -2,10 +2,14 @@ package com.domain.system.interfaces;
 
 import java.io.InputStream;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
 
-public interface IMultipartFileService {
+import com.domain.system.models.dto.LobDTO;
+import com.domain.system.models.postgresql.Obra;
+
+public interface IPDFService {
 
 	boolean isPDFValid(MultipartFile partituraPDF);
 
@@ -21,7 +25,7 @@ public interface IMultipartFileService {
 
 	byte[] ponerMarcaAgua(InputStream inputStream);
 
-	byte[] unirPDF(List<MultipartFile> archivosPDF);
+	byte[] unirPDF(List<LobDTO> partituras);
 
 	
 
