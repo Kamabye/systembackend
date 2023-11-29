@@ -21,20 +21,15 @@ public class SecurityConfig {
 	 * No se agrega system a la url porque lo agrega el contextpath del
 	 * application.properties
 	 */
-	public static final String[] ENDPOINTS_WHITELIST = { 
-			"demo/**", 
-			"apiv1/auth/**", 
-			"apiv1/obra/**",
-			"apiv1/partitura/**",
-			"apiv1/pdf/**" 
-			};
+	public static final String[] ENDPOINTS_WHITELIST = { "demo/**", "apiv1/auth/**", "apiv1/obra/**",
+			"apiv1/partitura/**", "apiv1/pdf/**", "apiv1/user/**", "apiv1/rol/**" };
 
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthorizationFilter;
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
+		// headers().frameOptions().sameOrigin().and().
 		http.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(
 						auth -> auth.requestMatchers(ENDPOINTS_WHITELIST).permitAll().anyRequest().authenticated())

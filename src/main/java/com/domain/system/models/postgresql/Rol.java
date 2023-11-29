@@ -33,17 +33,6 @@ public class Rol extends Auditable implements Serializable {
 	@Column(unique = true)
 	private String rol;
 
-	/*
-	 * //@ManyToMany(mappedBy = "roles", fetch = FetchType.EAGER, cascade =
-	 * CascadeType.ALL)
-	 * 
-	 * @ManyToMany(mappedBy = "roles") private Set<Usuario> usuarios;
-	 * 
-	 * public void addUser(Usuario usuario) { if (usuarios == null) { usuarios = new
-	 * HashSet<Usuario>(); } usuarios.add(usuario); //usuario.getRoles().add(this);
-	 * }
-	 */
-
 	private static final long serialVersionUID = 1L;
 
 }

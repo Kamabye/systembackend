@@ -9,6 +9,7 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -218,14 +219,13 @@ public class PartiturasController {
 					HttpHeaders headers = new HttpHeaders();
 
 					headers.setContentType(MediaType.APPLICATION_PDF);
+					headers.add("Content-Disposition", "inline; filename="+ temp.getObra().getNombre() + "_" + temp.getInstrumento()+".pdf");
 					headers.setContentLength(resource.contentLength());
-					// headers.setContentDispositionFormData("attachment",temp.getObra().getNombre()
-					// + "_" + temp.getInstrumento() + ".pdf");
-
-					headers.setContentDispositionFormData("inline",
-							temp.getObra().getNombre() + "_" + temp.getInstrumento() + ".pdf");
-
-					return new ResponseEntity<>(resource, headers, HttpStatus.OK);
+					
+					return ResponseEntity
+			                .ok()
+			                .headers(headers)
+			                .body(resource);
 				}
 				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);

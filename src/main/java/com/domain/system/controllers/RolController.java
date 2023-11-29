@@ -14,39 +14,39 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.domain.system.interfaces.IUserService;
-import com.domain.system.models.postgresql.Usuario;
+import com.domain.system.interfaces.IRolService;
+import com.domain.system.models.postgresql.Rol;
 
 @RestController
-@RequestMapping({ "apiv1/user", "apiv1/user/" })
+@RequestMapping({ "apiv1/rol", "apiv1/rol/" })
 @CrossOrigin(origins = {"http://localhost:8081","http://localhost:4200"}, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
 		RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE }, allowedHeaders = "Authorization")
-public class UserController {
-
+public class RolController {
+	
 	@Autowired
-	private IUserService userService;
-
-	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
-	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
+	private IRolService rolService;
+	
+	
 	@GetMapping("")
-	public ResponseEntity<?> users() {
+	public ResponseEntity<?> roles() {
 		Map<String, Object> responseBody = new HashMap<>();
-		List<Usuario> listaUsuarios;
+		List<Rol> listaRoles;
 
 		try {
 			
-			listaUsuarios = userService.findAll();
+			listaRoles = rolService.findAll();
+
 			
-			if (listaUsuarios.size() > 0) {
+			if (!listaRoles.isEmpty()) {
 
 				//responseBody.put("mensaje", "Usuarios encontrados");
 				//responseBody.put("usuarios", listaUsuarios);
 				
 				//return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
-				return new ResponseEntity<List<Usuario>>(listaUsuarios, null, HttpStatus.OK);
+				return new ResponseEntity<List<Rol>>(listaRoles, null, HttpStatus.OK);
 			}
 			
-			responseBody.put("error", "Usuarios no encontrados");
+			responseBody.put("error", "Roles no encontrados");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			
 		} catch (DataAccessException e) {
@@ -61,6 +61,5 @@ public class UserController {
 
 		}
 	}
-	
-	
+
 }
