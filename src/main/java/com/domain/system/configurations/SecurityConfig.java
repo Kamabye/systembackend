@@ -29,11 +29,10 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http.headers(headers -> headers
-		        .frameOptions(frameOptions -> frameOptions
-		                .disable()
-		            )
-		        ).csrf(csrf -> csrf.disable())
+		// http.headers(headers -> headers.frameOptions(frameOptions ->
+		// frameOptions.sameOrigin())))
+		http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
+				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(
 						auth -> auth.requestMatchers(ENDPOINTS_WHITELIST).permitAll().anyRequest().authenticated())
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

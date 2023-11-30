@@ -224,6 +224,8 @@ public class PartiturasController {
 					headers.add("Content-Disposition",
 							"inline; filename=" + temp.getObra().getNombre() + "_" + temp.getInstrumento() + ".pdf");
 					headers.setContentLength(resource.contentLength());
+					headers.set("X-Frame-Options", "ALLOW-FROM http://localhost:4200"); // Set the X-Frame-Options header
+						
 					return ResponseEntity.ok().headers(headers).body(resource);
 				}
 				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
