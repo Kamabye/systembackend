@@ -3,6 +3,7 @@ package com.domain.system.configurations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -29,14 +30,21 @@ public class SecurityConfig {
 
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		// http.headers(headers -> headers.frameOptions(frameOptions ->
-		// frameOptions.sameOrigin())))
-		http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()))
+
+		http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()).contentSecurityPolicy(
+				secPolicy -> secPolicy.policyDirectives("frame-ancestors http://localhost:4200 http://localhost:8081")))
+
+				// http.headers(headers -> headers.frameOptions(frameOptions ->
+				// frameOptions.sameOrigin()))
+				// http.headers(headers -> headers.frameOptions(frameOptions ->
+				// frameOptions.disable()))
 				.csrf(csrf -> csrf.disable())
 				.authorizeHttpRequests(
 						auth -> auth.requestMatchers(ENDPOINTS_WHITELIST).permitAll().anyRequest().authenticated())
 				.sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-				.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class).httpBasic();
+				.addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
+				// .addFilter(jwtAuthorizationFilter)
+				.httpBasic(Customizer.withDefaults());
 		return http.build();
 	}
 
