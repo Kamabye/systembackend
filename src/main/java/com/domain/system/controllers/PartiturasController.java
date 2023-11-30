@@ -9,7 +9,6 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -38,8 +37,9 @@ import com.domain.system.models.postgresql.Partitura;
 
 @RestController
 @RequestMapping({ "apiv1/partitura", "apiv1/partitura/" })
-@CrossOrigin(origins = "http://localhost:8081", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
-		RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE }, allowedHeaders = "Authorization")
+@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200" }, methods = { RequestMethod.GET,
+		RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE,
+		RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type"})
 public class PartiturasController {
 
 	@Autowired
@@ -202,6 +202,8 @@ public class PartiturasController {
 	@GetMapping("view/{idPartitura}")
 	public ResponseEntity<?> findPartituraByIDURL(
 			@PathVariable(name = "idPartitura", required = false) String idPartituraString) {
+
+		System.out.println("Se ingresó a view Partotura");
 		Map<String, Object> responseBody = new HashMap<>();
 		try {
 
@@ -219,13 +221,10 @@ public class PartiturasController {
 					HttpHeaders headers = new HttpHeaders();
 
 					headers.setContentType(MediaType.APPLICATION_PDF);
-					headers.add("Content-Disposition", "inline; filename="+ temp.getObra().getNombre() + "_" + temp.getInstrumento()+".pdf");
+					headers.add("Content-Disposition",
+							"inline; filename=" + temp.getObra().getNombre() + "_" + temp.getInstrumento() + ".pdf");
 					headers.setContentLength(resource.contentLength());
-					
-					return ResponseEntity
-			                .ok()
-			                .headers(headers)
-			                .body(resource);
+					return ResponseEntity.ok().headers(headers).body(resource);
 				}
 				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
@@ -267,8 +266,6 @@ public class PartiturasController {
 		try {
 
 			if (idObraString != null) {
-
-				Partitura temp;
 
 				Long idObra = Long.valueOf(idObraString);
 
