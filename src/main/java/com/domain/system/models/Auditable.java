@@ -15,9 +15,10 @@ import jakarta.persistence.PrePersist;
 import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
+import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-//@Data //Solo usar cuando sea necesario utilizar estos atributos en la aplicacion. Ya que se pueden consultar en la base de datos
+@Data //Solo usar cuando sea necesario utilizar estos atributos en la aplicacion. Ya que se pueden consultar en la base de datos
 @MappedSuperclass
 @EqualsAndHashCode
 @EntityListeners(AuditingEntityListener.class)
@@ -26,29 +27,29 @@ public abstract class Auditable {
 	@CreatedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(updatable = false, nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP(3)")
-	protected Date createdAt;
+	private Date createdAt;
 
 	@LastModifiedDate
 	@Temporal(TemporalType.TIMESTAMP)
 	//@Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3)") //Solo para MYSQL, MariaDB
 	@Column(nullable = false, columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP(3)")
 	//@Column(nullable = false)
-	protected Date modifiedAt;
+	private Date modifiedAt;
 
 	@CreatedBy
-	protected String createdBy;
+	private String createdBy;
 
 	@LastModifiedBy
-	protected String modifiedBy;
+	private String modifiedBy;
 
 	@PrePersist
-	protected void onCreate() {
+	private void onCreate() {
 		createdAt = new Date();
 		modifiedAt = createdAt; // Se establece updatedAt igual que createdAt al crear la entidad
 	}
 
 	@PreUpdate
-	protected void onUpdate() {
+	private void onUpdate() {
 		modifiedAt = new Date(); // Se actualiza updatedAt cuando la entidad se actualiza
 	}
 }

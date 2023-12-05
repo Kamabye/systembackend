@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.domain.system.models.postgresql.Rol;
 import com.domain.system.models.postgresql.Usuario;
 
 public interface IUserService {
@@ -35,6 +36,8 @@ public interface IUserService {
 	List<Usuario> findByApellidoMaterno(String apellidoMaterno);
 
 	List<Usuario> findByNombresOrApellidoPaternoOrApellidoMaterno(String string);
+
+	Usuario deleteReturn(Long idUsuario);
 	
 	
 	//Metodos que utilizan JQPL del repositorio

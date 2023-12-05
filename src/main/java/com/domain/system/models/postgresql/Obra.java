@@ -12,7 +12,6 @@ import com.domain.system.models.Auditable;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.io.ByteStreams;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -56,13 +55,13 @@ public class Obra extends Auditable implements Serializable {
 	private BigDecimal precio;
 
 	private String genero;
+	
+	private String embedAudio;
 
-	private String urlVideo;
-
-	private String urlAudio;
-
+	private String embedVideo;
+	
 	@Lob
-	@Basic(fetch = FetchType.LAZY)
+	//@Basic(fetch = FetchType.LAZY)
 	private byte[] audio;
 
 	@OneToMany(mappedBy = "obra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

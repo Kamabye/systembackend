@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.domain.system.interfaces.IUserService;
+import com.domain.system.models.postgresql.Rol;
 import com.domain.system.models.postgresql.Usuario;
 import com.domain.system.repository.postgresql.UserRepository;
 
@@ -23,7 +24,7 @@ import com.domain.system.repository.postgresql.UserRepository;
 public class UserServiceImpJpa implements IUserService {
 
 	@Autowired
-	UserRepository userRepository;
+	UserRepository userRepo;
 	
 	/**
 	 * Métodos de servicio que utilizan Derived Query Methods del Repositorio
@@ -32,13 +33,13 @@ public class UserServiceImpJpa implements IUserService {
 	@Transactional
 	@Override
 	public Usuario save(Usuario usuario) {
-		return userRepository.save(usuario);
+		return userRepo.save(usuario);
 	}
 
 	@Transactional
 	@Override
 	public List<Usuario> saveAll(List<Usuario> usuarios) {
-		return userRepository.saveAll(usuarios);
+		return userRepo.saveAll(usuarios);
 	}
 
 	@Transactional(readOnly = true)
@@ -47,7 +48,7 @@ public class UserServiceImpJpa implements IUserService {
 
 		// Sort sort = Sort.by("nombres").ascending();
 		// return userRepository.findAll(sort);
-		return userRepository.findAll(Sort.by("nombres").ascending());
+		return userRepo.findAll(Sort.by("nombres").ascending());
 	}
 
 	@Transactional(readOnly = true)
@@ -58,7 +59,7 @@ public class UserServiceImpJpa implements IUserService {
 
 		PageRequest pageable = PageRequest.of(page, size, sort);
 
-		return userRepository.findAll(pageable);
+		return userRepo.findAll(pageable);
 	}
 
 	@Transactional(readOnly = true)
@@ -88,7 +89,7 @@ public class UserServiceImpJpa implements IUserService {
 		// Example<Usuario> example = Example.of(ejemploUsuario, matcher,
 		// ExampleMatcher.matchingAny());
 
-		return userRepository.findAll(example);
+		return userRepo.findAll(example);
 	}
 
 	@Override
@@ -114,26 +115,29 @@ public class UserServiceImpJpa implements IUserService {
 // ExampleMatcher.matchingAny());
 		Sort sort = Sort.by(Sort.Order.asc("nombres"));
 		PageRequest pageable = PageRequest.of(page, size, sort);
-		return userRepository.findAll(example, pageable);
+		return userRepo.findAll(example, pageable);
 	}
 
 	@Transactional
 	@Override
 	public void delete(Long idUsuario) {
-		userRepository.deleteById(idUsuario);
+		userRepo.deleteById(idUsuario);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public Usuario findById(Long idUsuario) {
-		// TODO Auto-generated method stub
+		Optional<Usuario> optional = userRepo.findById(idUsuario);
+		if (!optional.isEmpty()) {
+			return optional.get();
+		}
 		return null;
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public Usuario findByEmail(String email) {
-		Optional<Usuario> optional = userRepository.findByEmail(email);
+		Optional<Usuario> optional = userRepo.findByEmail(email);
 		if (optional.isPresent()) {
 			return optional.get();
 		}
@@ -143,27 +147,37 @@ public class UserServiceImpJpa implements IUserService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<Usuario> findByNombres(String nombres) {
-		return userRepository.findByNombres(nombres);
+		return userRepo.findByNombres(nombres);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public List<Usuario> findByApellidoPaterno(String apellidoPaterno) {
-		return userRepository.findByApellidoPaternoOrderByNombresAsc(apellidoPaterno);
+		return userRepo.findByApellidoPaternoOrderByNombresAsc(apellidoPaterno);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public List<Usuario> findByApellidoMaterno(String apellidoMaterno) {
-		return userRepository.findByApellidoMaternoOrderByNombresAsc(apellidoMaterno);
+		return userRepo.findByApellidoMaternoOrderByNombresAsc(apellidoMaterno);
 	}
 
 	@Transactional(readOnly = true)
 	@Override
 	public List<Usuario> findByNombresOrApellidoPaternoOrApellidoMaterno(String string) {
-		return userRepository
+		return userRepo
 				.findByNombresContainingOrApellidoPaternoContainingOrApellidoMaternoContainingOrderByNombresAsc(string,
 						string, string);
+	}
+
+	@Override
+	public Usuario deleteReturn(Long idUsuario) {
+		Optional<Usuario> optional = userRepo.findById(idUsuario);
+		if (!optional.isEmpty()) {
+			userRepo.deleteById(idUsuario);
+			return optional.get();
+		}
+		return null;
 	}
 
 }

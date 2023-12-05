@@ -28,7 +28,7 @@ public class Rol extends Auditable implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY AutoIncrement MYSQL MariaDB
 	@Column(name = "idRol", updatable = false, nullable = false)
-	protected Long id;
+	private Long id;
 
 	@Column(unique = true)
 	private String rol;

@@ -6,7 +6,8 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.http.HttpHeaders;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -26,8 +27,8 @@ import com.domain.system.models.postgresql.Rol;
 @RestController
 @RequestMapping({ "apiv1/rol", "apiv1/rol/" })
 @CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200" }, methods = { RequestMethod.GET,
-		RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE,
-		RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" })
+		RequestMethod.POST, RequestMethod.PUT,
+		RequestMethod.DELETE }, allowedHeaders = { "Authorization", "Content-Type" })
 public class RolController {
 
 	@Autowired
@@ -44,27 +45,28 @@ public class RolController {
 
 			if (!listaRoles.isEmpty()) {
 
-				// responseBody.put("mensaje", "Usuarios encontrados");
-				// responseBody.put("usuarios", listaUsuarios);
-
-				// return new ResponseEntity<Map<String, Object>>(responseBody, null,
-				// HttpStatus.OK);
-
-				HttpHeaders headers = new HttpHeaders();
-
 				return new ResponseEntity<List<Rol>>(listaRoles, null, HttpStatus.OK);
 			}
 
-			responseBody.put("error", "Roles no encontrados");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+			responseBody.put("mensaje", "No se encontraron resultados");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
+		} catch (EmptyResultDataAccessException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "No se encontraron resultados.");
+			responseBody.put("error", "EmptyResultDataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "DataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : "));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
 
@@ -84,31 +86,33 @@ public class RolController {
 				Rol rol = rolService.findById(idRol);
 
 				if (rol != null) {
-					// responseBody.put("obra", obra);
 					return new ResponseEntity<Rol>(rol, null, HttpStatus.OK);
-
 				}
+
 				responseBody.put("mensaje",
 						"El Rol ID: ".concat(idRolString.toString().concat(" no existe en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}
-
-			responseBody.put("error", "Roles no encontrados");
+			responseBody.put("mensaje", "Parámetros nulos");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			responseBody.put("mensaje", "Ingrese un ID válido");
+			responseBody.put("error",
+					"NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "DataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : "));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
 
@@ -117,7 +121,6 @@ public class RolController {
 
 	@PostMapping("")
 	public ResponseEntity<?> saveRol(@RequestBody Rol rol) {
-		System.out.println("Se llamó al POST Rol");
 		Map<String, Object> responseBody = new HashMap<>();
 
 		try {
@@ -127,31 +130,41 @@ public class RolController {
 				Rol rolSave = rolService.save(rol);
 
 				if (rolSave != null) {
-					// responseBody.put("obra", obra);
+
 					return new ResponseEntity<Rol>(rolSave, null, HttpStatus.OK);
 
 				}
 				responseBody.put("mensaje",
-						"El Rol ID: ".concat(rol.toString().concat(" no existe en la base de datos!.")));
+						"El Rol :".concat(rol.toString().concat(" no se pudo guardar en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}
 
-			responseBody.put("error", "Roles no encontrados");
+			responseBody.put("mensaje", "No se ha ingresado ningún rol");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			responseBody.put("mensaje", "Ingrese un ID válido");
+			responseBody.put("error",
+					"NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (DataIntegrityViolationException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El rol: ".concat(rol.getRol().concat(" ya existe en la base de datos")));
+			responseBody.put("error", "DataIntegrityViolationException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "DataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : "));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
 
@@ -159,35 +172,41 @@ public class RolController {
 	}
 
 	@DeleteMapping("{idRol}")
-	public ResponseEntity<?> deleteObraByIDUrl(@PathVariable(name = "idRol", required = true) String idRolString) {
+	public ResponseEntity<?> deleteRolByIDUrl(@PathVariable(name = "idRol", required = true) String idRolString) {
 		Map<String, Object> responseBody = new HashMap<>();
 		try {
 			Long idRol = Long.valueOf(idRolString);
 
-			Rol rolDelete = rolService.findById(idRol);
-			if (rolDelete != null) {
+			Rol rolDeleted = rolService.deleteReturn(idRol);
 
-				rolService.delete(idRol);
-
-				// responseBody.put("mensaje", "La obra : " + idRol + " ha sido eliminada con
-				// éxito");
-				// responseBody.put("obraDTO", rolDelete);
-				return new ResponseEntity<Rol>(rolDelete, null, HttpStatus.OK);
+			if (rolDeleted != null) {
+				return new ResponseEntity<Rol>(rolDeleted, null, HttpStatus.OK);
 			}
-			responseBody.put("mensaje", "La obra : " + idRol + " no existe en la base de datos");
+
+			responseBody.put("mensaje", "El IDRol: " + idRol + " no existe en la base de datos");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			responseBody.put("mensaje", "Ingrese un ID válido");
+			responseBody.put("error",
+					"NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (EmptyResultDataAccessException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "La obra : " + idRolString + " no existe en la base de datos");
+			responseBody.put("error", "EmptyResultDataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos DataAccessException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "DataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
-			responseBody.put("error", e.getMessage().concat(" : "));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
 
@@ -198,7 +217,6 @@ public class RolController {
 	@PutMapping("{idRol}")
 	public ResponseEntity<?> updateRol(@PathVariable(name = "idRol", required = true) String idRolString,
 			@RequestBody Rol rol) {
-		System.out.println("Se llamó al PUT Rol");
 		Map<String, Object> responseBody = new HashMap<>();
 
 		try {
@@ -217,13 +235,14 @@ public class RolController {
 					Rol rolUpdate = rolService.save(rolTemp);
 
 					if (rolUpdate != null) {
-						// responseBody.put("obra", obra);
+
 						return new ResponseEntity<Rol>(rolUpdate, null, HttpStatus.OK);
 
 					}
-					responseBody.put("mensaje",
-							"El Rol ID: ".concat(rol.toString().concat(" no existe en la base de datos!.")));
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+					responseBody.put("mensaje", "El Rol ID: "
+							.concat(rol.toString().concat(" no se pudo actualizar en la base de datos!.")));
+					return new ResponseEntity<Map<String, Object>>(responseBody, null,
+							HttpStatus.INTERNAL_SERVER_ERROR);
 
 				}
 
@@ -232,22 +251,25 @@ public class RolController {
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}
-
-			responseBody.put("error", "Datos inválidos");
+			responseBody.put("mensaje", "Datos inválidos");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			responseBody.put("mensaje", "Ingrese un ID válido");
+			responseBody.put("error",
+					"NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "DataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos");
-			responseBody.put("error", e.getMessage().concat(" : "));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
 

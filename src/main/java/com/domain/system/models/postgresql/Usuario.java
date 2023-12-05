@@ -8,7 +8,6 @@ import java.util.Set;
 
 import com.domain.system.models.Auditable;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -17,7 +16,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
+import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
@@ -46,18 +47,28 @@ public class Usuario extends Auditable implements Serializable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY AutoIncrement MYSQL MariaDB
 	@Column(name = "idUsuario", updatable = false, nullable = false)
-	protected Long id;
+	private Long id;
+
+	@Column(unique = true, nullable = true)
+	private String username;
 
 	@Column(unique = true, nullable = false)
 	private String email;
+
+	@Column(nullable = false)
 	private String password;
+
+	@Column(nullable = false)
 	private String nombres;
 	private String apellidoPaterno;
 	private String apellidoMaterno;
 	private Integer dia;
 	private Integer mes;
 	private Integer anio;
-	private String sexo;
+
+	@Lob
+	private byte[] imagen;
+
 	@Column(nullable = false)
 	private Boolean estatus;
 
@@ -67,15 +78,14 @@ public class Usuario extends Auditable implements Serializable {
 	@Temporal(TemporalType.DATE)
 	private Date dateOfBirth;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER)
 	// @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST,
 	// CascadeType.MERGE })
 	// @JsonManagedReference
 	// @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@JoinTable(name = "UsuariosRoles", // Nombre de la tabla que se creará
-			joinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "idUsuario"), 
-			inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "idRol"), 
-			uniqueConstraints = {@UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
+			joinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "idUsuario"), inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "idRol"), uniqueConstraints = {
+					@UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
 	private Set<Rol> roles;
 	// private List<Rol> roles;
 
@@ -97,5 +107,14 @@ public class Usuario extends Auditable implements Serializable {
 			}
 		}
 		return false;
+	}
+
+	@PrePersist
+	private void onCreate() {
+		estatus = false;
+		estatusBloqueo = false;
+		Date fecha = new Date(); 
+		setCreatedAt(fecha);
+		setModifiedAt(fecha);
 	}
 }
