@@ -35,9 +35,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 @RequestMapping({ "apiv1/user", "apiv1/user/" })
 @CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200" }, methods = { RequestMethod.GET,
-		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS }, allowedHeaders = {
-				"Authorization", "Content-Type", "Access-Control-Allow-Headers",
-				"X-Requested-With" }, exposedHeaders = { "Access-Control-Allow-Origin" })
+		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, allowedHeaders = {
+				"Authorization", "Content-Type"}, exposedHeaders = {})
 public class UserController {
 
 	@Autowired
@@ -102,12 +101,12 @@ public class UserController {
 				if (usuario != null) {
 					usuario.setPassword("");
 					usuario.setImagen(null);
-					
+
 					HttpHeaders headers = new HttpHeaders();
-			        headers.setContentType(MediaType.APPLICATION_JSON);
-			        
-			        return new ResponseEntity<>(usuario, headers, HttpStatus.OK);
-					//return new ResponseEntity<Usuario>(usuario, headers, HttpStatus.OK);
+					headers.setContentType(MediaType.APPLICATION_JSON);
+
+					return new ResponseEntity<>(usuario, headers, HttpStatus.OK);
+					// return new ResponseEntity<Usuario>(usuario, headers, HttpStatus.OK);
 				}
 
 				responseBody.put("mensaje",
@@ -141,8 +140,7 @@ public class UserController {
 	}
 
 	@PostMapping("")
-	public ResponseEntity<?> saveUser(
-			@RequestPart(name = "imagen", required = false) MultipartFile imagen,
+	public ResponseEntity<?> saveUser(@RequestPart(name = "imagen", required = false) MultipartFile imagen,
 			@RequestParam(name = "usuarioJSON", required = true) String usuarioJSON) {
 
 		Map<String, Object> responseBody = new HashMap<>();
@@ -212,8 +210,7 @@ public class UserController {
 	}
 
 	@PutMapping("{idUsuario}")
-	public ResponseEntity<?> updateUser(
-			@PathVariable(name = "idUsuario", required = true) String idUsuarioString,
+	public ResponseEntity<?> updateUser(@PathVariable(name = "idUsuario", required = true) String idUsuarioString,
 			@RequestBody Usuario usuario) {
 		Map<String, Object> responseBody = new HashMap<>();
 
@@ -294,17 +291,15 @@ public class UserController {
 
 		}
 	}
-	
+
 	@PutMapping("")
-	public ResponseEntity<?> updateUserByParam(
-			@RequestPart(name = "imagen", required = false) MultipartFile imagen,
+	public ResponseEntity<?> updateUserByParam(@RequestPart(name = "imagen", required = false) MultipartFile imagen,
 			@RequestParam(name = "usuarioJSON", required = true) String usuarioJSON) {
 		Map<String, Object> responseBody = new HashMap<>();
 
 		try {
-			
+
 			if (usuarioJSON != null) {
-				
 
 				ObjectMapper objectMapper = new ObjectMapper();
 
@@ -361,8 +356,6 @@ public class UserController {
 						"El Usuario ID: ".concat(usuario.toString().concat(" no existe en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
-
-				
 			}
 			responseBody.put("mensaje", "Datos inválidos");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);

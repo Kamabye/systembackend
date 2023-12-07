@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class AuthenticationByJwtService {
-	
+
 	@Autowired
 	private AuthenticationManager authenticationManager;
 
@@ -17,9 +17,13 @@ public class AuthenticationByJwtService {
 
 	public String authenticate(String username, String password) {
 		Authentication authentication = authenticationManager
-				.authenticate(new UsernamePasswordAuthenticationToken(username,password));
-		String jwtToken = jwtService.generateToken(authentication.getName());
-		return jwtToken;
+				.authenticate(new UsernamePasswordAuthenticationToken(username, password));
+		System.out.println(authentication.toString());
+		if(authentication.isAuthenticated()) {
+			String jwtToken = jwtService.generateToken(authentication.getName());
+			return jwtToken;
+		}
+		return null;
 	}
 
 }
