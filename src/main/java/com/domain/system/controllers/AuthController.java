@@ -8,6 +8,7 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -24,7 +25,7 @@ import com.domain.system.services.AuthenticationByJwtService;
 public class AuthController {
 
 	@Autowired
-	AuthenticationByJwtService authenticationByJwtService;
+	AuthenticationByJwtService authService;
 
 	@GetMapping("")
 	public ResponseEntity<?> auth(@RequestParam(name = "username", required = true) String username,
@@ -32,8 +33,9 @@ public class AuthController {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			if (username != null && password != null) {
-				
-				String token = authenticationByJwtService.authenticate(username, password);
+
+				String token = authService.authenticate(username, password);
+
 				if (token != null) {
 					return new ResponseEntity<String>(token, null, HttpStatus.OK);
 				}
@@ -54,10 +56,17 @@ public class AuthController {
 			response.put("mensaje", "Credenciales incorrectas BadCredentialsException");
 			response.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.NOT_FOUND);
+		} catch (AuthenticationException e) {
+			response.put("mensaje", "Error en  la authtenticacion AuthenticationException");
+			response.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.NOT_FOUND);
 		} catch (Exception e) {
 			response.put("mensaje", "Error al realizar la consulta en la base de datos");
 			response.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+
 		}
+
 	}
 }

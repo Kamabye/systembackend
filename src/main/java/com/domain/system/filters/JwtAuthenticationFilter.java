@@ -31,40 +31,35 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 			throws ServletException, IOException {
+
 		final String authHeader = request.getHeader("Authorization");
 
-		if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-			filterChain.doFilter(request, response);
-			return;
-		}
+		if (authHeader != null && authHeader.startsWith("Bearer ")) {
+			final String token = authHeader.substring(7);
+			try {
+				final String username = jwtService.extractUsername(token);
 
-		final String token = authHeader.substring(7);
-		try {
-			final String username = jwtService.extractUsername(token);
-			if (username == null) {
+				if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+					// UserDetails userDetails =
+					// this.userDetailsService.loadUserByUsername(userEmail);
+					UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
+					if (jwtService.isTokenValid(token, userDetails)) {
+
+						UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
+								userDetails, null, userDetails.getAuthorities());
+						// System.out.println(authToken.toString());
+						authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+						// System.out.println(authToken.toString());
+						SecurityContextHolder.getContext().setAuthentication(authToken);
+
+					}
+				}
+			} catch (SignatureException e) {
+				response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+				response.getWriter().write("Error de autenticación: Firma JWT no válida");
 				return;
 			}
-
-			if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-				// UserDetails userDetails =
-				// this.userDetailsService.loadUserByUsername(userEmail);
-				UserDetails userDetails = userDetailsService.loadUserByUsername(username);
-
-				if (jwtService.isTokenValid(token, userDetails)) {
-
-					UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(userDetails,
-							null, userDetails.getAuthorities());
-					// System.out.println(authToken.toString());
-					authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-					// System.out.println(authToken.toString());
-					SecurityContextHolder.getContext().setAuthentication(authToken);
-
-				}
-			}
-		} catch (SignatureException e) {
-			response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-	        response.getWriter().write("Error de autenticación: Firma JWT no válida");
-			return;
 		}
 
 		filterChain.doFilter(request, response);

@@ -53,12 +53,16 @@ public class JwtService {
 	private String createToken(Map<String, Object> extraClaims, UserDetails userDetails) {
 		Date now = new Date();
 		Date expirationDate = new Date(now.getTime() + EXPIRATION_TIME);
-		return Jwts.builder().setClaims(extraClaims).setSubject(userDetails.getUsername())
+		return Jwts.builder()
+				.setClaims(extraClaims)
+				.setSubject(userDetails.getUsername())
 				.claim("authorities",
 						userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
 								.collect(Collectors.joining(",")))
-				.setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(expirationDate)
-				.signWith(getSingInKey(), SignatureAlgorithm.HS256).compact();
+				.setIssuedAt(now)
+				.setExpiration(expirationDate)
+				.signWith(getSingInKey(), SignatureAlgorithm.HS256)
+				.compact();
 	}
 
 	private String createToken(Map<String, Object> extraClaims, String username) {
@@ -71,6 +75,11 @@ public class JwtService {
 
 	public String extractUsername(String token) {
 		return extractClaim(token, Claims::getSubject);
+	}
+	
+	public String extractAuthorities(String token) {
+		final Claims claims = extractAllClaims(token);
+		return (String) claims.get("authorities");
 	}
 
 	private <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {

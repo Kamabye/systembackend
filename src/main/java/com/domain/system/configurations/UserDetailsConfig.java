@@ -30,9 +30,9 @@ public class UserDetailsConfig {
 		authProvider.setPasswordEncoder(passwordEncoder());
 		return authProvider;
 	}
-
+	
 	@Bean
-	AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+	AuthenticationManager authenticar(AuthenticationConfiguration config) throws Exception {
 		return config.getAuthenticationManager();
 	}
 
