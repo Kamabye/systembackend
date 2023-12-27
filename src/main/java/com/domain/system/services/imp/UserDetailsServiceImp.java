@@ -23,8 +23,10 @@ public class UserDetailsServiceImp implements UserDetailsService {
 		Usuario usuario = userService.findByEmail(username);
 		//System.out.println("UserDetailsServiceImp : Se buscó al usuario");
 		if (usuario == null) {
+			//System.out.println("El usuario no se encontró");
 			throw new UsernameNotFoundException("Usuario no encontrado: " + username);
 		}
+		//System.out.println("Éxito Usuario encontrado");
 		return new UserDetailsImp(usuario);
 	}
 

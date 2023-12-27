@@ -37,8 +37,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping({ "apiv1/obra", "apiv1/obra/" })
-@CrossOrigin(origins = "http://localhost:8081", methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT,
-		RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE }, allowedHeaders = "Authorization")
+@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200" }, methods = { RequestMethod.GET,
+		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, allowedHeaders = {
+				"Authorization", "Content-Type"}, exposedHeaders = {})
 public class ObraController {
 
 	@Autowired
@@ -128,8 +129,9 @@ public class ObraController {
 					obrasUnidas = obraService.jpqlfindAll();
 					if (!obrasUnidas.isEmpty()) {
 						// responseBody.put("mensaje", "Obras encontradas");
-						responseBody.put("obras", obrasUnidas);
-						return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+						//responseBody.put("obras", obrasUnidas);
+						//return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+						return new ResponseEntity<Set<ObraDTO>>(obrasUnidas, null, HttpStatus.OK);
 					}
 					responseBody.put("mensaje", "Sin datos encontrados en la base de datos");
 					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);

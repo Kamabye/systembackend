@@ -5,12 +5,14 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,15 +23,16 @@ import com.domain.system.services.AuthenticationByJwtService;
 @RestController
 @RequestMapping({ "apiv1/auth", "apiv1/auth/" })
 @CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200" }, methods = { RequestMethod.GET,
-		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE }, allowedHeaders = "Authorization")
+		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS }, allowedHeaders = {
+				"Authorization", "Content-Type" })
 public class AuthController {
 
 	@Autowired
 	AuthenticationByJwtService authService;
 
-	@GetMapping("")
-	public ResponseEntity<?> auth(@RequestParam(name = "username", required = true) String username,
-			@RequestParam(name = "password", required = true) String password) {
+	@PostMapping("")
+	public ResponseEntity<?> auth(@RequestParam(name = "username", required = false) String username,
+			@RequestParam(name = "password", required = false) String password) {
 		Map<String, Object> response = new HashMap<>();
 		try {
 			if (username != null && password != null) {
@@ -37,7 +40,10 @@ public class AuthController {
 				String token = authService.authenticate(username, password);
 
 				if (token != null) {
-					return new ResponseEntity<String>(token, null, HttpStatus.OK);
+					HttpHeaders headers = new HttpHeaders();
+					headers.setContentType(MediaType.TEXT_PLAIN);
+					
+					return new ResponseEntity<String>(token, headers, HttpStatus.OK);
 				}
 
 				response.put("mensaje", "No se pudo generar el JWT");

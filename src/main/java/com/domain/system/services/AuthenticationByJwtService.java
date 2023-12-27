@@ -24,10 +24,8 @@ public class AuthenticationByJwtService {
 		System.out.println("JwtService.authenticate : " + authentication.toString());
 		
 		if(authentication.isAuthenticated()) {
-			String jwtToken = jwtService.generateToken((UserDetails) authentication.getPrincipal());
-			return jwtToken;
+			return jwtService.generateToken((UserDetails) authentication.getPrincipal());
 		}
 		return null;
 	}
-
 }
