@@ -1,9 +1,8 @@
 package com.domain.system.models.dto;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.Set;
-
-import com.domain.system.models.postgresql.Partitura;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -29,19 +28,32 @@ public class ObraDTO {
 	private String genero;
 
 	private BigDecimal precio;
-	
+
+	private Date createdAt;
+
+	private Date modifiedAt;
+
+	private String embedAudio;
+
+	private String embedVideo;
+
 	private Set<PartituraDTO> partituras;
 
-	public ObraDTO(Long idObra, String nombre, String compositor, String arreglista, String letrista, String genero,
-			BigDecimal precio) {
-		
-		this.id = idObra;
+	public ObraDTO(Long id, String nombre, String compositor, String arreglista, String letrista, String genero,
+			BigDecimal precio, String embedAudio, String embedVideo, Date createdAt, Date modifiedAt) {
+
+		this.id = id;
 		this.nombre = nombre;
 		this.compositor = compositor;
 		this.arreglista = arreglista;
 		this.letrista = letrista;
 		this.genero = genero;
 		this.precio = precio;
+		this.embedAudio = embedAudio;
+		this.embedVideo = embedVideo;
+		this.createdAt = createdAt;
+		this.modifiedAt = modifiedAt;
+
 	}
 
 }

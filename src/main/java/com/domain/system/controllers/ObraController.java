@@ -73,8 +73,9 @@ public class ObraController {
 				ObraDTO obra = obraService.jpqlfindByIdObra(idObra);
 
 				if (obra != null) {
-					responseBody.put("obra", obra);
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+					//responseBody.put("obra", obra);
+					//return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+					return new ResponseEntity<ObraDTO>(obra, null, HttpStatus.OK);
 
 				}
 				responseBody.put("mensaje",
@@ -117,10 +118,11 @@ public class ObraController {
 				}
 				if (parametrosNoNulos >= 1) {
 					if (!obrasUnidas.isEmpty()) {
-						responseBody.put("obrasUnidas", obrasUnidas);
-						return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+						//responseBody.put("obrasUnidas", obrasUnidas);
+						//return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.OK);
+						return new ResponseEntity<Set<ObraDTO>>(obrasUnidas, null, HttpStatus.OK);
 					}
-					responseBody.put("Mensaje", "Sin datos encontrados con los parámetros ingresados");
+					responseBody.put("mensaje", "Sin datos encontrados con los parámetros ingresados");
 					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 				} else {
