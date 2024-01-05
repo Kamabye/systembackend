@@ -32,6 +32,10 @@ public class ObraDTO {
 	private Date createdAt;
 
 	private Date modifiedAt;
+	
+	private Date createdBy;
+
+	private Date modifiedBy;
 
 	private String embedAudio;
 

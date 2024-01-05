@@ -28,7 +28,7 @@ public interface ObraRepository extends JpaRepository<Obra, Long> {
 	@Query("SELECT NEW com.domain.system.models.dto.ObraDTO(o.id, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio, o.embedAudio, o.embedVideo, o.createdAt, o.modifiedAt) FROM Obra o ORDER BY o.nombre ASC")
 	Set<ObraDTO> jpqlfindAll();
 
-	@Query("SELECT NEW com.domain.system.models.dto.ObraDTO(o.id, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio) FROM Obra o WHERE o.id = :id ORDER BY o.nombre ASC")
+	@Query("SELECT NEW com.domain.system.models.dto.ObraDTO(o.id, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio, o.embedAudio, o.embedVideo, o.createdAt, o.modifiedAt) FROM Obra o WHERE o.id = :id")
 	Optional<ObraDTO> jpqlfindByIdObra(@Param("id") Long id);
 
 	@Query("SELECT NEW com.domain.system.models.dto.ObraDTO(o.id, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio) FROM Obra o WHERE o.nombre LIKE %:nombre% ORDER BY o.nombre ASC")

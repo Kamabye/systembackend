@@ -27,8 +27,8 @@ import com.domain.system.models.postgresql.Rol;
 @RestController
 @RequestMapping({ "apiv1/rol", "apiv1/rol/" })
 @CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200" }, methods = { RequestMethod.GET,
-		RequestMethod.POST, RequestMethod.PUT,
-		RequestMethod.DELETE }, allowedHeaders = { "Authorization", "Content-Type" })
+		RequestMethod.POST, RequestMethod.PUT,RequestMethod.DELETE }, 
+		allowedHeaders = { "Authorization", "Content-Type" })
 public class RolController {
 
 	@Autowired

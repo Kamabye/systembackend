@@ -3,6 +3,7 @@ package com.domain.system.controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -29,14 +30,15 @@ import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.domain.system.interfaces.IUserService;
+import com.domain.system.models.dto.UsuarioDTO;
 import com.domain.system.models.postgresql.Usuario;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RestController
 @RequestMapping({ "apiv1/user", "apiv1/user/" })
 @CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200" }, methods = { RequestMethod.GET,
-		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, allowedHeaders = {
-				"Authorization", "Content-Type"}, exposedHeaders = {})
+		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, 
+		allowedHeaders = {"Authorization", "Content-Type"}, exposedHeaders = {})
 public class UserController {
 
 	@Autowired
@@ -51,6 +53,7 @@ public class UserController {
 	public ResponseEntity<?> users() {
 		Map<String, Object> responseBody = new HashMap<>();
 		List<Usuario> listaUsuarios;
+		Set<UsuarioDTO> usuariosDTO;
 
 		try {
 
@@ -154,6 +157,8 @@ public class UserController {
 				Usuario usuario = objectMapper.readValue(usuarioJSON, Usuario.class);
 
 				usuario.setPassword(pswEncode.encode(usuario.getPassword()));
+				
+				System.out.println("Se va a guardar un usuario: " + usuario.toString());
 
 				if (imagen != null) {
 					usuario.setImagen(imagen.getBytes());
