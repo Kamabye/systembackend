@@ -81,7 +81,7 @@ public class ObraController {
 
 				}
 				responseBody.put("mensaje",
-						"La Obra ID: ".concat(idObraString.toString().concat(" no existe en la base de datos!.")));
+						"El ID: ".concat(idObraString.toString().concat(" no existe en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			} else {
@@ -147,18 +147,20 @@ public class ObraController {
 
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			responseBody.put("mensaje", "Ingrese un ID válido");
+			responseBody.put("error",
+					"NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "DataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
-			responseBody.put("error", e.getMessage().concat(" : "));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
 
@@ -193,16 +195,20 @@ public class ObraController {
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			responseBody.put("mensaje", "Ingrese un ID válido");
+			responseBody.put("error",
+					"NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "DataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
-			responseBody.put("error", e.getMessage().concat(" : "));
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
 
@@ -272,17 +278,17 @@ public class ObraController {
 			responseBody.put("error", e.getMessage().concat(" : "));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (MultipartException e) {
-			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos MultipartException");
+			responseBody.put("mensaje", "Error al realizar la inserción en la base de datos MultipartException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataIntegrityViolationException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "La Obra: ".concat(obraJSON.concat(" ya existe en la base de datos")));
+			responseBody.put("mensaje", "El Objeto : ".concat(obraJSON.concat(" ya existe en la base de datos")));
 			responseBody.put("error", "DataIntegrityViolationException: "
 					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos DataAccessException");
+			responseBody.put("mensaje", "Error al realizar la inserción en la base de datos DataAccessException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (FileSizeLimitExceededException e) {
@@ -363,17 +369,17 @@ public class ObraController {
 			responseBody.put("error", e.getMessage().concat(" : "));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (MultipartException e) {
-			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos MultipartException");
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos MultipartException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataIntegrityViolationException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "La Obra: ".concat(obraJSON.concat(" ya existe en la base de datos")));
+			responseBody.put("mensaje", "El Objeto :".concat(obraJSON.concat(" ya existe en la base de datos")));
 			responseBody.put("error", "DataIntegrityViolationException: "
 					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos DataAccessException");
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (FileSizeLimitExceededException e) {
@@ -501,7 +507,7 @@ public class ObraController {
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos DataAccessException");
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
@@ -538,7 +544,7 @@ public class ObraController {
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos DataAccessException");
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
@@ -587,7 +593,7 @@ public class ObraController {
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la eliminación en la base de datos DataAccessException");
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
