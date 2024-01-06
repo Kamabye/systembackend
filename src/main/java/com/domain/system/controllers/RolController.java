@@ -27,8 +27,8 @@ import com.domain.system.models.postgresql.Rol;
 @RestController
 @RequestMapping({ "apiv1/rol", "apiv1/rol/" })
 @CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200" }, methods = { RequestMethod.GET,
-		RequestMethod.POST, RequestMethod.PUT,RequestMethod.DELETE }, 
-		allowedHeaders = { "Authorization", "Content-Type" })
+		RequestMethod.POST, RequestMethod.PUT,
+		RequestMethod.DELETE }, allowedHeaders = { "Authorization", "Content-Type" })
 public class RolController {
 
 	@Autowired
@@ -90,11 +90,11 @@ public class RolController {
 				}
 
 				responseBody.put("mensaje",
-						"El Rol ID: ".concat(idRolString.toString().concat(" no existe en la base de datos!.")));
+						"El Objeto con ID: ".concat(idRolString.toString().concat(" no existe en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}
-			responseBody.put("mensaje", "Parámetros nulos");
+			responseBody.put("mensaje", "Parámetros inválidos");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 
 		} catch (NumberFormatException e) {
@@ -135,12 +135,12 @@ public class RolController {
 
 				}
 				responseBody.put("mensaje",
-						"El Rol :".concat(rol.toString().concat(" no se pudo guardar en la base de datos!.")));
+						"El Objeto :".concat(rol.toString().concat(" no se pudo guardar en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}
 
-			responseBody.put("mensaje", "No se ha ingresado ningún rol");
+			responseBody.put("mensaje", "Objeto null");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 
 		} catch (NumberFormatException e) {
@@ -183,7 +183,7 @@ public class RolController {
 				return new ResponseEntity<Rol>(rolDeleted, null, HttpStatus.OK);
 			}
 
-			responseBody.put("mensaje", "El IDRol: " + idRol + " no existe en la base de datos");
+			responseBody.put("mensaje", "El ID: " + idRol + " no existe en la base de datos");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
@@ -193,7 +193,7 @@ public class RolController {
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (EmptyResultDataAccessException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "La obra : " + idRolString + " no existe en la base de datos");
+			responseBody.put("mensaje", "El ID : " + idRolString + " no existe en la base de datos");
 			responseBody.put("error", "EmptyResultDataAccessException: "
 					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -239,7 +239,7 @@ public class RolController {
 						return new ResponseEntity<Rol>(rolUpdate, null, HttpStatus.OK);
 
 					}
-					responseBody.put("mensaje", "El Rol ID: "
+					responseBody.put("mensaje", "El ID: "
 							.concat(rol.toString().concat(" no se pudo actualizar en la base de datos!.")));
 					return new ResponseEntity<Map<String, Object>>(responseBody, null,
 							HttpStatus.INTERNAL_SERVER_ERROR);
@@ -247,7 +247,7 @@ public class RolController {
 				}
 
 				responseBody.put("mensaje",
-						"El Rol ID: ".concat(rol.toString().concat(" no existe en la base de datos!.")));
+						"El ID: ".concat(rol.toString().concat(" no existe en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}

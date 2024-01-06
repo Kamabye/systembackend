@@ -113,7 +113,7 @@ public class UserController {
 				}
 
 				responseBody.put("mensaje",
-						"El IDUsuario: ".concat(idUsuarioString.toString().concat(" no existe en la base de datos!.")));
+						"El ID: ".concat(idUsuarioString.toString().concat(" no existe en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}
@@ -172,7 +172,7 @@ public class UserController {
 
 				}
 				responseBody.put("mensaje",
-						"El Usuario :".concat(usuario.toString().concat(" no se pudo guardar en la base de datos!.")));
+						"El Objeto :".concat(usuario.toString().concat(" no se pudo guardar en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}
@@ -194,7 +194,7 @@ public class UserController {
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataIntegrityViolationException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "El usuario: ".concat(usuarioJSON.concat(" ya existe en la base de datos")));
+			responseBody.put("mensaje", "El Objeto: ".concat(usuarioJSON.concat(" ya existe en la base de datos")));
 			responseBody.put("error", "DataIntegrityViolationException: "
 					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -260,7 +260,7 @@ public class UserController {
 						return new ResponseEntity<Usuario>(userUpdate, null, HttpStatus.OK);
 
 					}
-					responseBody.put("mensaje", "El Usuario ID: "
+					responseBody.put("mensaje", "El ID: "
 							.concat(usuario.toString().concat(" no se pudo actualizar en la base de datos!.")));
 					return new ResponseEntity<Map<String, Object>>(responseBody, null,
 							HttpStatus.INTERNAL_SERVER_ERROR);
@@ -268,7 +268,7 @@ public class UserController {
 				}
 
 				responseBody.put("mensaje",
-						"El Usuario ID: ".concat(usuario.toString().concat(" no existe en la base de datos!.")));
+						"El ID: ".concat(usuario.toString().concat(" no existe en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}
@@ -350,7 +350,7 @@ public class UserController {
 						return new ResponseEntity<Usuario>(userUpdate, null, HttpStatus.OK);
 
 					}
-					responseBody.put("mensaje", "El Usuario ID: "
+					responseBody.put("mensaje", "El ID: "
 							.concat(usuario.toString().concat(" no se pudo actualizar en la base de datos!.")));
 					return new ResponseEntity<Map<String, Object>>(responseBody, null,
 							HttpStatus.INTERNAL_SERVER_ERROR);
@@ -358,7 +358,7 @@ public class UserController {
 				}
 
 				responseBody.put("mensaje",
-						"El Usuario ID: ".concat(usuario.toString().concat(" no existe en la base de datos!.")));
+						"El ID: ".concat(usuario.toString().concat(" no existe en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}
@@ -400,7 +400,7 @@ public class UserController {
 				return new ResponseEntity<Usuario>(userDeleted, null, HttpStatus.OK);
 			}
 
-			responseBody.put("mensaje", "El IDUsuario: " + idUsuario + " no existe en la base de datos");
+			responseBody.put("mensaje", "El ID: " + idUsuario + " no existe en la base de datos");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
@@ -410,7 +410,7 @@ public class UserController {
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (EmptyResultDataAccessException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "La obra : " + idUsuarioString + " no existe en la base de datos");
+			responseBody.put("mensaje", "El ID : " + idUsuarioString + " no existe en la base de datos");
 			responseBody.put("error", "EmptyResultDataAccessException: "
 					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
