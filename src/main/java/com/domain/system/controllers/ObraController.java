@@ -219,37 +219,54 @@ public class ObraController {
 	@PostMapping("")
 	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
 	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
-	public ResponseEntity<?> saveObra(@RequestParam(name = "obraJSON", required = true) String obraJSON,
+	public ResponseEntity<?> saveObra(@RequestParam(name = "obraJSON", required = true) String obraJSONString,
 			@RequestPart(name = "audio", required = false) MultipartFile audio) {
 		Map<String, Object> responseBody = new HashMap<>();
 		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
 
 		try {
-			if (obraJSON != null) {
+			if (obraJSONString != null) {
 				ObjectMapper objectMapper = new ObjectMapper();
-				ObraDTO obraDTO = objectMapper.readValue(obraJSON, ObraDTO.class);
+				ObraDTO obraDTO = objectMapper.readValue(obraJSONString, ObraDTO.class);
 
-				Obra obraTemp = new Obra();
+				Obra obratemp = new Obra();
 
 				// obraTemp.setId(obraDTO.getId());
 
-				obraTemp.setNombre(obraDTO.getNombre());
-				obraTemp.setCompositor(obraDTO.getCompositor());
-				obraTemp.setArreglista(obraDTO.getArreglista());
-				obraTemp.setLetrista(obraDTO.getLetrista());
-				obraTemp.setGenero(obraDTO.getGenero());
-				obraTemp.setPrecio(obraDTO.getPrecio());
-				obraTemp.setEmbedAudio(obraDTO.getEmbedAudio());
-				obraTemp.setEmbedVideo(obraDTO.getEmbedVideo());
+				if (obraDTO.getNombre() != null)
+					obratemp.setNombre(obraDTO.getNombre());
+
+				if (obraDTO.getCompositor() != null)
+					obratemp.setCompositor(obraDTO.getCompositor());
+
+				if (obraDTO.getArreglista() != null)
+					obratemp.setArreglista(obraDTO.getArreglista());
+
+				if (obraDTO.getLetrista() != null)
+					obratemp.setLetrista(obraDTO.getLetrista());
+
+				if (obraDTO.getPrecio() != null)
+					obratemp.setPrecio(obraDTO.getPrecio());
+
+				if (obraDTO.getGenero() != null)
+					obratemp.setGenero(obraDTO.getGenero());
+
+				if (obraDTO.getEmbedAudio() != null) {
+					obratemp.setEmbedAudio(obraDTO.getEmbedAudio());
+				}
+
+				if (obraDTO.getEmbedVideo() != null) {
+					obratemp.setEmbedVideo(obraDTO.getEmbedVideo());
+				}
 
 				if (audio != null) {
 					// obraTemp.setAudio(audio.getBytes());
-					obraTemp.setAudioFromInputStream(audio.getInputStream());
+					obratemp.setAudioFromInputStream(audio.getInputStream());
 				}
 
 				Obra obrasave = null;
 
-				obrasave = obraService.save(obraTemp);
+				obrasave = obraService.save(obratemp);
 
 				if (obrasave != null) {
 					obraDTO.setId(obrasave.getId());
@@ -261,7 +278,7 @@ public class ObraController {
 				}
 
 				responseBody.put("mensaje",
-						"La Obra :".concat(obraTemp.toString().concat(" no se pudo guardar en la base de datos!.")));
+						"La Obra :".concat(obratemp.toString().concat(" no se pudo guardar en la base de datos!.")));
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 
 			}
@@ -283,7 +300,7 @@ public class ObraController {
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataIntegrityViolationException e) {
 			// e.printStackTrace();
-			responseBody.put("mensaje", "El Objeto : ".concat(obraJSON.concat(" ya existe en la base de datos")));
+			responseBody.put("mensaje", "El Objeto : ".concat(obraJSONString.concat(" ya existe en la base de datos")));
 			responseBody.put("error", "DataIntegrityViolationException: "
 					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
@@ -319,45 +336,58 @@ public class ObraController {
 
 		Obra obrasave;
 		Obra obratemp;
-		ObraDTO obraDTO;
 		try {
 			if (idObraString != null) {
 
 				Long idObra = Long.valueOf(idObraString);
 
-				ObjectMapper objectMapper = new ObjectMapper();
-				Obra obra = objectMapper.readValue(obraJSON, Obra.class);
+				if (obraJSON != null) {
+					ObjectMapper objectMapper = new ObjectMapper();
+					Obra obraDTO = objectMapper.readValue(obraJSON, Obra.class);
 
-				obratemp = obraService.findById(idObra);
+					obratemp = obraService.findById(idObra);
 
-				if (obratemp != null) {
-					if (obra.getNombre() != null)
-						obratemp.setNombre(obra.getNombre());
-					if (obra.getCompositor() != null)
-						obratemp.setCompositor(obra.getCompositor());
-					if (obra.getArreglista() != null)
-						obratemp.setArreglista(obra.getArreglista());
-					if (obra.getLetrista() != null)
-						obratemp.setLetrista(obra.getLetrista());
-					if (obra.getPrecio() != null)
-						obratemp.setPrecio(obra.getPrecio());
-					if (obra.getGenero() != null)
-						obratemp.setGenero(obra.getGenero());
-					if (audio != null) {
-						obratemp.setAudioFromInputStream(audio.getInputStream());
+					if (obratemp != null) {
+						if (obraDTO.getNombre() != null)
+							obratemp.setNombre(obraDTO.getNombre());
+						if (obraDTO.getCompositor() != null)
+							obratemp.setCompositor(obraDTO.getCompositor());
+						if (obraDTO.getArreglista() != null)
+							obratemp.setArreglista(obraDTO.getArreglista());
+						if (obraDTO.getLetrista() != null)
+							obratemp.setLetrista(obraDTO.getLetrista());
+						if (obraDTO.getPrecio() != null)
+							obratemp.setPrecio(obraDTO.getPrecio());
+						if (obraDTO.getGenero() != null)
+							obratemp.setGenero(obraDTO.getGenero());
+						if (obraDTO.getEmbedAudio() != null) {
+							obratemp.setEmbedAudio(obraDTO.getEmbedAudio());
+						}
+
+						if (obraDTO.getEmbedVideo() != null) {
+							obratemp.setEmbedVideo(obraDTO.getEmbedVideo());
+						}
+						if (audio != null) {
+							obratemp.setAudioFromInputStream(audio.getInputStream());
+						}
+
+						obrasave = obraService.save(obratemp);
+						ObraDTO obraDTOupdate = obraService.jpqlfindByIdObra(obrasave.getId());
+						// responseBody.put("mensaje", "La obra : " + idObra + " ha sido actualizado con
+						// éxito");
+						// responseBody.put("obraDTO", obraDTO);
+						// return new ResponseEntity<Map<String, Object>>(responseBody, null,
+						// HttpStatus.CREATED);
+						return new ResponseEntity<ObraDTO>(obraDTOupdate, null, HttpStatus.CREATED);
 					}
-
-					obrasave = obraService.save(obratemp);
-					obraDTO = obraService.jpqlfindByIdObra(obrasave.getId());
-					// responseBody.put("mensaje", "La obra : " + idObra + " ha sido actualizado con
-					// éxito");
-					responseBody.put("obraDTO", obraDTO);
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.CREATED);
+					responseBody.put("mensaje", "La obra : " + idObra + " no existe");
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 				}
-				responseBody.put("mensaje", "La obra : " + idObra + " no existe");
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				responseBody.put("mensaje", "Parámetros inválidos nulos");
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+
 			}
-			responseBody.put("mensaje", "La obra : " + idObraString + " no se ha especificado");
+			responseBody.put("mensaje", "Parámetros inválidos nulos");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
@@ -449,7 +479,7 @@ public class ObraController {
 				responseBody.put("mensaje", "La obra : " + idObra + " no existe");
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			}
-			responseBody.put("mensaje", "La obra : " + idObraString + " no se ha especificado");
+			responseBody.put("mensaje", "Parámetros inválidos nulos");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
@@ -488,19 +518,26 @@ public class ObraController {
 	public ResponseEntity<?> deleteObraByIDUrl(@PathVariable(name = "idObra", required = true) String idObraString) {
 		Map<String, Object> responseBody = new HashMap<>();
 		try {
-			Long idObra = Long.valueOf(idObraString);
+			if(idObraString != null) {
+				Long idObra = Long.valueOf(idObraString);
 
-			ObraDTO obraDelete = obraService.jpqlfindByIdObra(idObra);
-			if (obraDelete != null) {
+				ObraDTO obraDelete = obraService.jpqlfindByIdObra(idObra);
+				if (obraDelete != null) {
 
-				obraService.delete(idObra);
+					obraService.delete(idObra);
 
-				responseBody.put("mensaje", "La obra : " + idObra + " ha sido eliminada con éxito");
-				responseBody.put("obraDTO", obraDelete);
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+					//responseBody.put("mensaje", "La obra : " + idObra + " ha sido eliminada con éxito");
+					//responseBody.put("obraDTO", obraDelete);
+					//return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+					return new ResponseEntity<ObraDTO>(obraDelete, null, HttpStatus.OK);
+				}
+				responseBody.put("mensaje", "La obra : " + idObra + " no existe en la base de datos");
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			}
-			responseBody.put("mensaje", "La obra : " + idObra + " no existe en la base de datos");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			
+			responseBody.put("mensaje", "Parámetros inválidos nulos");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+			
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
@@ -576,7 +613,7 @@ public class ObraController {
 
 				headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				headers.setContentLength(resource.contentLength());
-				headers.setContentDispositionFormData("attachment", obra.getNombre() + ".aac");
+				headers.setContentDispositionFormData("inline", obra.getNombre() + ".aac");
 
 				// Devuelve la respuesta con el recurso y los encabezados
 				// return ResponseEntity.ok().headers(headers).body(resource);
