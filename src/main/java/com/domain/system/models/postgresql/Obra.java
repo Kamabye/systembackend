@@ -53,6 +53,8 @@ public class Obra extends Auditable implements Serializable {
 	private String letrista;
 
 	private BigDecimal precio;
+	
+	private Integer iva;
 
 	private String genero;
 	

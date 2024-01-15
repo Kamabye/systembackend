@@ -1,6 +1,13 @@
 package com.domain.system.controllers;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.domain.system.models.dto.ProductoDTOPayPal;
 import com.domain.system.services.PaypalService;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
-import com.paypal.base.exception.PayPalException;
 import com.paypal.base.rest.PayPalRESTException;
 
 @RestController
@@ -26,44 +33,89 @@ public class PayPalController {
 	private PaypalService paypalService;
 
 	@PostMapping("payment")
-	public String payment() throws PayPalException {
+	public ResponseEntity<?> createPayment() {
 
-		Payment payment;
+		Map<String, Object> responseBody = new HashMap<>();
+
 		try {
-			payment = paypalService.createPayment();
+
+			String urlPagoPayPal = "";
+
+			List<ProductoDTOPayPal> listaProductos = new ArrayList<ProductoDTOPayPal>();
+
+			ProductoDTOPayPal producto1 = new ProductoDTOPayPal();
+			producto1.setNombre("Producto_1");
+			producto1.setSku("SKU_1");
+			producto1.setDescripcion("Descripción Producto_1");
+			producto1.setCategoria("DIGITAL");
+			producto1.setPrecio("100");
+			producto1.setImpuesto("16.00");
+			producto1.setCantidad("10");
+
+			listaProductos.add(producto1);
+
+			ProductoDTOPayPal producto2 = new ProductoDTOPayPal();
+			producto2.setNombre("Producto_2");
+			producto2.setSku("SKU_2");
+			producto2.setDescripcion("Descripción Producto_2");
+			producto2.setCategoria("DIGITAL");
+			producto2.setPrecio("100.00");
+			producto2.setImpuesto("16.00");
+			producto2.setCantidad("10");
+
+			listaProductos.add(producto2);
+
+			String total = "2420.00";
+			String subTotal = "2000.00";
+			String impuestoTotal = "320.00";
+			String envio = "100.00";
+
+			Payment payment = paypalService.createPayment("sale", "paypal", "juancarloshdzvqz@gmail.com", "MXN", total,
+					subTotal, impuestoTotal, envio, "Pago de una partitura de nombre : ", listaProductos);
 
 			for (Links link : payment.getLinks()) {
 				if (link.getRel().equals("approval_url")) {
-					return "redirect:" + link.getHref();
+					urlPagoPayPal = link.getHref();
 				}
 			}
+			return new ResponseEntity<String>(urlPagoPayPal, null, HttpStatus.OK);
 		} catch (PayPalRESTException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "PayPalRESTException: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+
 		}
-
-		// Redirigir al enlace de aprobación de PayPal
-
-		return "redirect:/";
 	}
 
 	@GetMapping("/success")
-	public String success(@RequestParam(name = "paymentId", required = true) String paymentId,
+	public ResponseEntity<?> success(@RequestParam(name = "paymentId", required = true) String paymentId,
 			@RequestParam(name = "token", required = false) String token,
 			@RequestParam(name = "PayerID", required = true) String payerId) {
+		Map<String, Object> responseBody = new HashMap<>();
 		try {
 			Payment payment = paypalService.executePayment(paymentId, payerId);
 
 			if ("approved".equals(payment.getState())) {
-				// Pago exitoso, realiza acciones adicionales si es necesario
-				return "Pago exitoso";
-			} else {
-				// Estado no aprobado, manejar según tus necesidades
-				return "Estado no aprobado";
+				return new ResponseEntity<String>("Pago exitoso", null, HttpStatus.OK);
 			}
+			return new ResponseEntity<String>("Pago no exitoso", null, HttpStatus.OK);
 		} catch (PayPalRESTException e) {
-			// Manejar la excepción, según tus necesidades
-			return "Error al ejecutar el pago";
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "PayPalRESTException: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+
 		}
 	}
 
