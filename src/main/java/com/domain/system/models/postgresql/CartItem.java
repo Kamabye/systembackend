@@ -6,6 +6,7 @@ import java.math.RoundingMode;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -19,6 +20,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "CartItem")
 @Data
 //@EqualsAndHashCode(callSuper = true)
+@IdClass(CartItemID.class)
 @Builder
 @NoArgsConstructor // Genera un constructor sin parámetros
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
@@ -35,7 +37,7 @@ public class CartItem {
 	@JoinColumn(name = "idProducto")
 	private Obra producto;
 
-	// private Integer cantidad;
+	private Integer cantidad;
 
 	@Transient
 	public BigDecimal getSubtotal() {
