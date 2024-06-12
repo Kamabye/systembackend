@@ -4,14 +4,14 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
-import com.domain.system.models.postgresql.Rol;
 import com.domain.system.models.postgresql.Usuario;
 
 public interface IUserService {
 	
-	//Metodos que utilizan Derived Query Methods del repositorio
+	//Metodos que utilizan Derived Query Methods del repositorio. 
+	//Los métodos de consulta derivados son aquellos cuyas consultas se generan automáticamente a partir de los nombres de los métodos.
 
-	Usuario save(Usuario usuario);
+	Usuario guardar(Usuario usuario);
 	
 	List<Usuario> saveAll(List<Usuario> usuarios);
 
@@ -41,10 +41,11 @@ public interface IUserService {
 	
 	
 	//Metodos que utilizan JQPL del repositorio
+	//JPQL es un lenguaje de consulta orientado a objetos similar a SQL, pero opera sobre entidades JPA en lugar de tablas de base de datos. 
 	
 	
 	
-	
-	//Métodos que utilizan SQL del repositorio
+	//Métodos que utilizan SQL Nativo
+	//Las consultas SQL nativas son consultas escritas directamente en SQL. Estas se ejecutan directamente sobre la base de datos subyacente y son específicas del proveedor de la base de datos.
 
 }

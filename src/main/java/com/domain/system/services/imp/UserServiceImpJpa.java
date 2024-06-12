@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.domain.system.interfaces.IUserService;
-import com.domain.system.models.postgresql.Rol;
 import com.domain.system.models.postgresql.Usuario;
 import com.domain.system.repository.postgresql.UserRepository;
 
@@ -25,14 +24,14 @@ public class UserServiceImpJpa implements IUserService {
 
 	@Autowired
 	UserRepository userRepo;
-	
+
 	/**
 	 * Métodos de servicio que utilizan Derived Query Methods del Repositorio
 	 */
 
 	@Transactional
 	@Override
-	public Usuario save(Usuario usuario) {
+	public Usuario guardar(Usuario usuario) {
 		return userRepo.save(usuario);
 	}
 
@@ -165,9 +164,8 @@ public class UserServiceImpJpa implements IUserService {
 	@Transactional(readOnly = true)
 	@Override
 	public List<Usuario> findByNombresOrApellidoPaternoOrApellidoMaterno(String string) {
-		return userRepo
-				.findByNombresContainingOrApellidoPaternoContainingOrApellidoMaternoContainingOrderByNombresAsc(string,
-						string, string);
+		return userRepo.findByNombresContainingOrApellidoPaternoContainingOrApellidoMaternoContainingOrderByNombresAsc(
+				string, string, string);
 	}
 
 	@Override

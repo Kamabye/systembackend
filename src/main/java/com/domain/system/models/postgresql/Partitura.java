@@ -6,6 +6,7 @@ import java.io.Serializable;
 
 import com.domain.system.models.Auditable;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.common.io.ByteStreams;
 
 import jakarta.persistence.Basic;
@@ -44,19 +45,23 @@ public class Partitura extends Auditable implements Serializable {
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
+	@JsonIgnore
 	private byte[] partituraPDF;
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
+	@JsonIgnore
 	private byte[] vistaPreviaPDF;
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
+	@JsonIgnore
 	private byte[] xml;
 
 	@ManyToOne
 	@JoinColumn(name = "idObra")
 	@JsonBackReference
+	
 	private Obra obra;
 
 	private static final long serialVersionUID = 1L;

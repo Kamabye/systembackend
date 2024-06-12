@@ -16,9 +16,8 @@ import com.domain.system.models.postgresql.Usuario;
 
 @Repository
 public interface UserRepository extends JpaRepository<Usuario, Long> {
-	
-	
-	//Derived Query Methods
+
+	// Derived Query Methods
 
 	List<Usuario> findByNombres(String nombres);
 
@@ -38,9 +37,13 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
 	// Métodos @Query JPQL Java Persistence Query Language
 
 	@Query("SELECT u FROM Usuario u")
+	//@QueryHints({ 
+    //@QueryHint(name = "org.hibernate.cacheable", value = "true"),
+    //@QueryHint(name = "javax.persistence.query.timeout", value = "1000") 
+	//})
 	List<Usuario> queryObtenerUsuarios();
-	
-	@Query("SELECT u FROM Usuario u")	
+
+	@Query("SELECT u FROM Usuario u")
 	Page<Usuario> jpqlObtenerUsuarios(Pageable pageable);
 
 	@Query("SELECT new com.domain.system.models.dto.UsuarioDTO(u.id, u.nombres) FROM Usuario u")
@@ -65,15 +68,15 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
 	List<Object[]> jpqlBuscarNombreYRol(@Param("nombres") String nombres);
 
 	// Métodos @Query Nativo
-	@Query(value = "SELECT * FROM usuarios u WHERE u.nombres = :nombres", nativeQuery = true)
-	List<Usuario> sqlBuscarPorNombre(@Param("nombres") String nombres);
+	@Query(value = "SELECT * FROM usuarios WHERE nombres = ?1", nativeQuery = true)
+	List<Usuario> sqlBuscarPorNombreSQL(String nombres);
 
 	// Métodos con proyecciones.
 
-	@Query(value = "SELECT * FROM usuarios u WHERE u.nombres = :nombres", nativeQuery = true)
-	List<UsuarioProyeccion> findByNombresProyeccion(@Param("nombres")String nombres);
-	
-	@Query(value = "SELECT nombres, email FROM usuarios WHERE nombres = :nombres", nativeQuery = true)
-	List<Object[]> buscarNombreYEmail(@Param("nombres") String nombres);
+	@Query(value = "SELECT * FROM usuarios WHERE nombres = ?1", nativeQuery = true)
+	List<UsuarioProyeccion> findByNombresProyeccion(String nombres);
+
+	@Query(value = "SELECT nombres, email FROM usuarios WHERE nombres = ?1", nativeQuery = true)
+	List<Object[]> buscarNombreYEmail(String nombres);
 
 }

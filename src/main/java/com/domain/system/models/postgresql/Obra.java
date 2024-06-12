@@ -9,9 +9,12 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.domain.system.models.Auditable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.google.common.io.ByteStreams;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -37,6 +40,7 @@ import lombok.NoArgsConstructor;
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
 @AllArgsConstructor // Crea un constructor que solicita todos los parámetros de la clase que no son
 					// FINAL
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Obra extends Auditable implements Serializable {
 
 	@Id
@@ -63,11 +67,13 @@ public class Obra extends Auditable implements Serializable {
 	private String embedVideo;
 	
 	@Lob
-	//@Basic(fetch = FetchType.LAZY)
+	@Basic(fetch = FetchType.LAZY)
+	@JsonIgnore
 	private byte[] audio;
 
 	@OneToMany(mappedBy = "obra", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
 	@JsonManagedReference
+	@JsonIgnore
 	private Set<Partitura> partituras;
 
 	public void addPartitura(Partitura partitura) {

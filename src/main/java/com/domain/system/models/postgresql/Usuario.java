@@ -7,7 +7,11 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.domain.system.models.Auditable;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
+import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -37,6 +41,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // Genera un constructor sin parámetros
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
 @AllArgsConstructor // Genera un cosntructor para cada parámetro finales o no nulos
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario extends Auditable implements Serializable {
 
 	/**
@@ -56,6 +61,7 @@ public class Usuario extends Auditable implements Serializable {
 	private String email;
 
 	@Column(nullable = false)
+	@JsonIgnore
 	private String password;
 
 	@Column(nullable = false)
@@ -67,6 +73,8 @@ public class Usuario extends Auditable implements Serializable {
 	private Integer anio;
 
 	@Lob
+	@Basic(fetch = FetchType.LAZY)
+	@JsonIgnore
 	private byte[] imagen;
 
 	@Column(nullable = false)
@@ -81,11 +89,13 @@ public class Usuario extends Auditable implements Serializable {
 	@ManyToMany(fetch = FetchType.EAGER)
 	// @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST,
 	// CascadeType.MERGE })
-	// @JsonManagedReference
-	// @JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 	@JoinTable(name = "UsuariosRoles", // Nombre de la tabla que se creará
-			joinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "idUsuario"), inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "idRol"), uniqueConstraints = {
+			joinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "idUsuario"),
+			inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "idRol"),
+			uniqueConstraints = {
 					@UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
+	@JsonManagedReference //Cuando tienes relaciones bidireccionales complejas y necesitas mantener la integridad de las referencias en ambas direcciones.
+	@JsonIgnore
 	private Set<Rol> roles;
 	// private List<Rol> roles;
 
