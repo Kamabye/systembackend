@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -35,8 +36,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @RestController
 @RequestMapping({ "apiv1/user", "apiv1/user/" })
 @CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200" }, methods = { RequestMethod.GET,
-		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE}, 
-		allowedHeaders = {"Authorization", "Content-Type"}, exposedHeaders = {})
+		RequestMethod.POST, RequestMethod.PUT,
+		RequestMethod.DELETE }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class UserController {
 
 	@Autowired
@@ -59,6 +60,49 @@ public class UserController {
 			if (!listaUsuarios.isEmpty()) {
 
 				return new ResponseEntity<List<Usuario>>(listaUsuarios, null, HttpStatus.OK);
+			}
+
+			responseBody.put("mensaje", "No se encontraron resultados");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+
+		} catch (EmptyResultDataAccessException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "No se encontraron resultados.");
+			responseBody.put("error", "EmptyResultDataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+		} catch (DataAccessException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "DataAccessException: "
+					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+
+		}
+	}
+
+	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
+	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
+	@GetMapping("/pageable")
+	public ResponseEntity<?> usersPageable() {
+		Map<String, Object> responseBody = new HashMap<>();
+		// List<Usuario> listaUsuarios;
+		Page<Usuario> listaUsuarios;
+
+		try {
+
+			listaUsuarios = userService.findAllPage(0, 2);
+
+			if (!listaUsuarios.isEmpty()) {
+
+				// return new ResponseEntity<List<Usuario>>(listaUsuarios, null, HttpStatus.OK);
+				return new ResponseEntity<Page<Usuario>>(listaUsuarios, null, HttpStatus.OK);
 			}
 
 			responseBody.put("mensaje", "No se encontraron resultados");
@@ -148,14 +192,16 @@ public class UserController {
 		try {
 
 			if (usuarioJSON != null) {
+				//System.out.println(usuarioJSON);
 
 				ObjectMapper objectMapper = new ObjectMapper();
 
 				Usuario usuario = objectMapper.readValue(usuarioJSON, Usuario.class);
+				//System.out.println(usuario);
 
 				usuario.setPassword(pswEncode.encode(usuario.getPassword()));
-				
-				System.out.println("Se va a guardar un usuario: " + usuario.toString());
+
+				//System.out.println("Se va a guardar un usuario: " + usuario.toString());
 
 				if (imagen != null) {
 					usuario.setImagen(imagen.getBytes());
@@ -202,7 +248,7 @@ public class UserController {
 					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			// e.printStackTrace();
+			e.printStackTrace();
 			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);

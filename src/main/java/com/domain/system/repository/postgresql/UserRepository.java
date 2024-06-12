@@ -18,10 +18,28 @@ import com.domain.system.models.postgresql.Usuario;
 public interface UserRepository extends JpaRepository<Usuario, Long> {
 
 	// Derived Query Methods
+	// Todas la consultas deben implementar paginación para evitar la carga peresoza
 
 	List<Usuario> findByNombres(String nombres);
 
 	List<Usuario> findByNombres(String nombres, Pageable pageable);
+
+	List<Usuario> findByNombresAndApellidoPaterno(String nombres, String apellidoPaterno, Pageable pageable);
+
+	List<Usuario> findByApellidoPaternoOrApellidoMaterno(String apellidoPaterno, String apellidoMaterno,
+			Pageable pageable);
+
+	List<Usuario> findByNombresLike(String partedelnombre, Pageable pageable);
+
+	List<Usuario> findByNombresContaining(String partedelnombre, Pageable pageable);
+
+	List<Usuario> findByNombresStartingWith(String iniciodelnombre, Pageable pageable);
+
+	List<Usuario> findByNombresEndingWith(String finaldelnombre, Pageable pageable);
+
+	List<Usuario> findByNombresIgnoreCase(String nombres, Pageable pageable);
+
+	Long countById(Long id);
 
 	List<Usuario> findByNombresOrderByNombresAsc(String nombres, Pageable pageable);
 
@@ -35,12 +53,13 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
 			String nombres, String apellidoPaterno, String apellidoMaterno);
 
 	// Métodos @Query JPQL Java Persistence Query Language
+	// Todos los métodos tienen que comenzar con jpqlFindBy
 
 	@Query("SELECT u FROM Usuario u")
-	//@QueryHints({ 
-    //@QueryHint(name = "org.hibernate.cacheable", value = "true"),
-    //@QueryHint(name = "javax.persistence.query.timeout", value = "1000") 
-	//})
+	// @QueryHints({
+	// @QueryHint(name = "org.hibernate.cacheable", value = "true"),
+	// @QueryHint(name = "javax.persistence.query.timeout", value = "1000")
+	// })
 	List<Usuario> queryObtenerUsuarios();
 
 	@Query("SELECT u FROM Usuario u")
@@ -67,9 +86,26 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
 	@Query("SELECT u.nombres, r.rol FROM Usuario u JOIN u.roles r WHERE u.nombres = :nombres")
 	List<Object[]> jpqlBuscarNombreYRol(@Param("nombres") String nombres);
 
+	/*
+	 * @Query("SELECT v.producto, SUM(v.cantidad * v.precio) AS totalVentas " +
+	 * "FROM Venta v " + "GROUP BY v.producto " +
+	 * "HAVING SUM(v.cantidad * v.precio) > :valorMinimo") List<Object[]>
+	 * findProductosConVentasMayoresA(@Param("valorMinimo") double valorMinimo);
+	 * 
+	 * @Query("SELECT AVG(v.precio) FROM Venta v") Double findAveragePrecio();
+	 * 
+	 * @Query("SELECT AVG(v.precio) FROM Venta v WHERE v.producto = :producto")
+	 * Double findAveragePrecioByProducto(@Param("producto") String producto);
+	 */
+
 	// Métodos @Query Nativo
+	// Todos los métodos deben comenzar con sqlFindBy
+
 	@Query(value = "SELECT * FROM usuarios WHERE nombres = ?1", nativeQuery = true)
 	List<Usuario> sqlBuscarPorNombreSQL(String nombres);
+	
+	@Query(value = "SELECT AVG(precio) FROM Venta", nativeQuery = true)
+    Double sqlfindAveragePrecio();
 
 	// Métodos con proyecciones.
 

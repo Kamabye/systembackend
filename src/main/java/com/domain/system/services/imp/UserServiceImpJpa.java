@@ -9,6 +9,7 @@ import org.springframework.data.domain.Example;
 import org.springframework.data.domain.ExampleMatcher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -54,11 +55,33 @@ public class UserServiceImpJpa implements IUserService {
 	@Override
 	public Page<Usuario> findAllPage(Integer page, Integer size) {
 
-		Sort sort = Sort.by(Sort.Order.asc("nombres"));
+		// Ordenar los resultados por múltiples campos, cada uno con su dirección de
+		// ordenación
+		Sort.Order order1 = new Sort.Order(Sort.Direction.DESC, "apellidoPaterno");
+		Sort.Order order2 = new Sort.Order(Sort.Direction.DESC, "apellidoMaterno");
+		Sort.Order order3 = new Sort.Order(Sort.Direction.ASC, "nombres");
 
-		PageRequest pageable = PageRequest.of(page, size, sort);
+		// Sort sort = Sort.by(Sort.Order.asc("nombres"));
 
-		return userRepo.findAll(pageable);
+		// return userRepo.findAll(PageRequest.of(page, size, sort));
+		Page<Usuario> pageUsuario = userRepo.findAll(PageRequest.of(page, size, Sort.by(order1, order2, order3)));
+
+		List<Usuario> usuarios = pageUsuario.getContent();
+		long totalElementos = pageUsuario.getTotalElements();
+		int totalPaginas = pageUsuario.getTotalPages();
+		int numeroPagina = pageUsuario.getNumber();
+		int tamanoPagina = pageUsuario.getSize();
+		int numeroElementosPagina = pageUsuario.getNumberOfElements();
+		boolean tieneContenido = pageUsuario.hasContent();
+		boolean esPrimeraPagina = pageUsuario.isFirst();
+		boolean esUltimaPagina = pageUsuario.isLast();
+		boolean haySiguiente = pageUsuario.hasNext();
+		boolean hayAnterior = pageUsuario.hasPrevious();
+		Pageable siguientePagina = pageUsuario.nextPageable();
+		Pageable paginaAnterior = pageUsuario.previousPageable();
+
+		return pageUsuario;
+
 	}
 
 	@Transactional(readOnly = true)

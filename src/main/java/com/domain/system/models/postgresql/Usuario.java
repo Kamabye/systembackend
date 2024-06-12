@@ -10,6 +10,7 @@ import com.domain.system.models.Auditable;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
@@ -61,7 +62,8 @@ public class Usuario extends Auditable implements Serializable {
 	private String email;
 
 	@Column(nullable = false)
-	@JsonIgnore
+	//@JsonIgnore
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 
 	@Column(nullable = false)
@@ -74,7 +76,8 @@ public class Usuario extends Auditable implements Serializable {
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
-	@JsonIgnore
+	//@JsonIgnore
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private byte[] imagen;
 
 	@Column(nullable = false)
@@ -95,7 +98,8 @@ public class Usuario extends Auditable implements Serializable {
 			uniqueConstraints = {
 					@UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
 	@JsonManagedReference //Cuando tienes relaciones bidireccionales complejas y necesitas mantener la integridad de las referencias en ambas direcciones.
-	@JsonIgnore
+	//@JsonIgnore
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Set<Rol> roles;
 	// private List<Rol> roles;
 
