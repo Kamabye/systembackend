@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.domain.system.interfaces.DTOProyecciones.IUsuarioDTO;
 import com.domain.system.models.postgresql.Usuario;
 
 public interface IUserService {
@@ -43,9 +44,14 @@ public interface IUserService {
 	//Metodos que utilizan JQPL del repositorio
 	//JPQL es un lenguaje de consulta orientado a objetos similar a SQL, pero opera sobre entidades JPA en lugar de tablas de base de datos. 
 	
+	List<IUsuarioDTO> jpqlfindAllUsuariosIDTO();
 	
+	Page<IUsuarioDTO> jpqlfindAllUsuariosIDTOPageable(Integer pageNumber, Integer pageSize);
+
 	
 	//Métodos que utilizan SQL Nativo
 	//Las consultas SQL nativas son consultas escritas directamente en SQL. Estas se ejecutan directamente sobre la base de datos subyacente y son específicas del proveedor de la base de datos.
+	
+	Page<IUsuarioDTO> sqlfindAllUsuariosIDTOPageable(int pageNumber, int pageSize);
 
 }

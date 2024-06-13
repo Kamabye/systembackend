@@ -23,7 +23,7 @@ import jakarta.persistence.EntityManagerFactory;
 
 @Configuration
 @Profile("postgresql")
-@EnableTransactionManagement
+@EnableTransactionManagement //Se habilitan las transacciones en la base de datos
 @EnableJpaRepositories(basePackages = "com.domain.system.repository.postgresql", entityManagerFactoryRef = "entityManagerFactoryPostgreSQL", transactionManagerRef = "transactionManagerPostgreSQL")
 public class PostgreSQLConfig {
 

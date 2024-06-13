@@ -7,8 +7,6 @@ import java.util.Iterator;
 import java.util.Set;
 
 import com.domain.system.models.Auditable;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -42,7 +40,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // Genera un constructor sin parámetros
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
 @AllArgsConstructor // Genera un cosntructor para cada parámetro finales o no nulos
-@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
+//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class Usuario extends Auditable implements Serializable {
 
 	/**
@@ -52,7 +50,8 @@ public class Usuario extends Auditable implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY AutoIncrement MYSQL MariaDB
-	@Column(name = "idUsuario", updatable = false, nullable = false)
+	//@Column(name = "idUsuario", updatable = false, nullable = false)
+	@Column(updatable = false, nullable = false)
 	private Long id;
 
 	@Column(unique = true, nullable = true)
@@ -93,13 +92,13 @@ public class Usuario extends Auditable implements Serializable {
 	// @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST,
 	// CascadeType.MERGE })
 	@JoinTable(name = "UsuariosRoles", // Nombre de la tabla que se creará
-			joinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "idUsuario"),
-			inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "idRol"),
+			joinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "id"),
+			inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "id"),
 			uniqueConstraints = {
 					@UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
 	@JsonManagedReference //Cuando tienes relaciones bidireccionales complejas y necesitas mantener la integridad de las referencias en ambas direcciones.
 	//@JsonIgnore
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	//@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Set<Rol> roles;
 	// private List<Rol> roles;
 

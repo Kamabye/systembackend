@@ -1,4 +1,4 @@
-package com.domain.system.interfaces.proyecciones;
+package com.domain.system.interfaces.DTOProyecciones;
 
 public interface IPartituraDTO {
 	

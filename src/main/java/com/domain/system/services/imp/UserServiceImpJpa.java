@@ -11,10 +11,12 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.domain.system.interfaces.IUserService;
+import com.domain.system.interfaces.DTOProyecciones.IUsuarioDTO;
 import com.domain.system.models.postgresql.Usuario;
 import com.domain.system.repository.postgresql.UserRepository;
 
@@ -25,6 +27,9 @@ public class UserServiceImpJpa implements IUserService {
 
 	@Autowired
 	UserRepository userRepo;
+	
+	@Autowired
+	private PasswordEncoder pswEncode;
 
 	/**
 	 * Métodos de servicio que utilizan Derived Query Methods del Repositorio
@@ -33,6 +38,7 @@ public class UserServiceImpJpa implements IUserService {
 	@Transactional
 	@Override
 	public Usuario guardar(Usuario usuario) {
+		usuario.setPassword(pswEncode.encode(usuario.getPassword()));
 		return userRepo.save(usuario);
 	}
 
@@ -114,6 +120,7 @@ public class UserServiceImpJpa implements IUserService {
 		return userRepo.findAll(example);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public Page<Usuario> findByExampleWithPage(Usuario usuario, Integer page, Integer size) {
 
@@ -191,6 +198,7 @@ public class UserServiceImpJpa implements IUserService {
 				string, string, string);
 	}
 
+	@Transactional
 	@Override
 	public Usuario deleteReturn(Long idUsuario) {
 		Optional<Usuario> optional = userRepo.findById(idUsuario);
@@ -199,6 +207,29 @@ public class UserServiceImpJpa implements IUserService {
 			return optional.get();
 		}
 		return null;
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public List<IUsuarioDTO> jpqlfindAllUsuariosIDTO() {
+
+		return userRepo.jpqlfindAllUsuariosIDTO();
+	}
+
+	@Transactional(readOnly = true)
+	@Override
+	public Page<IUsuarioDTO> jpqlfindAllUsuariosIDTOPageable(Integer pageNumber, Integer pageSize) {
+
+		Pageable pageable = PageRequest.of(pageNumber, pageSize);
+		
+		return userRepo.jpqlfindAllUsuariosIDTOPageable(pageable);
+	}
+
+	@Override
+	public Page<IUsuarioDTO> sqlfindAllUsuariosIDTOPageable(int pageNumber, int pageSize) {
+Pageable pageable = PageRequest.of(pageNumber, pageSize);
+		
+		return userRepo.sqlfindAllUsuariosIDTOPageable(pageable);
 	}
 
 }

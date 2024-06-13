@@ -13,7 +13,6 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,6 +29,7 @@ import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.domain.system.interfaces.IUserService;
+import com.domain.system.interfaces.DTOProyecciones.IUsuarioDTO;
 import com.domain.system.models.postgresql.Usuario;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -43,9 +43,6 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 
-	@Autowired
-	private PasswordEncoder pswEncode;
-
 	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
 	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
 	@GetMapping("")
@@ -56,10 +53,12 @@ public class UserController {
 		try {
 
 			listaUsuarios = userService.findAll();
+			
 
 			if (!listaUsuarios.isEmpty()) {
 
 				return new ResponseEntity<List<Usuario>>(listaUsuarios, null, HttpStatus.OK);
+				
 			}
 
 			responseBody.put("mensaje", "No se encontraron resultados");
@@ -90,19 +89,26 @@ public class UserController {
 	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
 	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
 	@GetMapping("/pageable")
-	public ResponseEntity<?> usersPageable() {
+	public ResponseEntity<?> usersPageable(
+			@RequestParam(defaultValue = "0") int pageNumber,
+            @RequestParam(defaultValue = "2") int pageSize) {
 		Map<String, Object> responseBody = new HashMap<>();
 		// List<Usuario> listaUsuarios;
 		Page<Usuario> listaUsuarios;
+		Page<IUsuarioDTO> listaUsuariosIDTO;
 
 		try {
 
-			listaUsuarios = userService.findAllPage(0, 2);
+			listaUsuarios = userService.findAllPage(pageNumber, pageSize);
+			listaUsuariosIDTO = userService.sqlfindAllUsuariosIDTOPageable(pageNumber, pageSize);
+			//listaUsuariosIDTO = userService.jpqlfindAllUsuariosIDTOPageable(pageNumber, pageSize);
 
 			if (!listaUsuarios.isEmpty()) {
 
 				// return new ResponseEntity<List<Usuario>>(listaUsuarios, null, HttpStatus.OK);
-				return new ResponseEntity<Page<Usuario>>(listaUsuarios, null, HttpStatus.OK);
+				//return new ResponseEntity<Page<Usuario>>(listaUsuarios, null, HttpStatus.OK);
+				//return new ResponseEntity<Page<IUsuarioDTO>>(listaUsuariosIDTO, null, HttpStatus.OK);
+				return new ResponseEntity<Page<IUsuarioDTO>>(listaUsuariosIDTO, null, HttpStatus.OK);
 			}
 
 			responseBody.put("mensaje", "No se encontraron resultados");
@@ -199,7 +205,7 @@ public class UserController {
 				Usuario usuario = objectMapper.readValue(usuarioJSON, Usuario.class);
 				//System.out.println(usuario);
 
-				usuario.setPassword(pswEncode.encode(usuario.getPassword()));
+				usuario.setPassword(usuario.getPassword());
 
 				//System.out.println("Se va a guardar un usuario: " + usuario.toString());
 
@@ -275,7 +281,7 @@ public class UserController {
 						userTemp.setUsername(usuario.getUsername());
 					}
 					if (usuario.getPassword() != "") {
-						userTemp.setPassword(pswEncode.encode(usuario.getPassword()));
+						userTemp.setPassword(usuario.getPassword());
 					}
 					if (usuario.getEmail() != "") {
 						userTemp.setEmail(usuario.getEmail());
@@ -361,7 +367,7 @@ public class UserController {
 						userTemp.setUsername(usuario.getUsername());
 					}
 					if (usuario.getPassword() != "") {
-						userTemp.setPassword(pswEncode.encode(usuario.getPassword()));
+						userTemp.setPassword(usuario.getPassword());
 					}
 					if (usuario.getEmail() != "") {
 						userTemp.setEmail(usuario.getEmail());

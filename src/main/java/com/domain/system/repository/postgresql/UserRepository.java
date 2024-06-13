@@ -10,7 +10,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.domain.system.interfaces.proyecciones.UsuarioProyeccion;
+import com.domain.system.interfaces.DTOProyecciones.IUsuarioDTO;
 import com.domain.system.models.dto.UsuarioDTO;
 import com.domain.system.models.postgresql.Usuario;
 
@@ -18,30 +18,30 @@ import com.domain.system.models.postgresql.Usuario;
 public interface UserRepository extends JpaRepository<Usuario, Long> {
 
 	// Derived Query Methods
-	// Todas la consultas deben implementar paginación para evitar la carga peresoza
-
-	List<Usuario> findByNombres(String nombres);
-
-	List<Usuario> findByNombres(String nombres, Pageable pageable);
-
-	List<Usuario> findByNombresAndApellidoPaterno(String nombres, String apellidoPaterno, Pageable pageable);
-
-	List<Usuario> findByApellidoPaternoOrApellidoMaterno(String apellidoPaterno, String apellidoMaterno,
-			Pageable pageable);
-
-	List<Usuario> findByNombresLike(String partedelnombre, Pageable pageable);
-
-	List<Usuario> findByNombresContaining(String partedelnombre, Pageable pageable);
-
-	List<Usuario> findByNombresStartingWith(String iniciodelnombre, Pageable pageable);
-
-	List<Usuario> findByNombresEndingWith(String finaldelnombre, Pageable pageable);
-
-	List<Usuario> findByNombresIgnoreCase(String nombres, Pageable pageable);
+	// Para mejorar el rendimiento se recomiendo usar las consultas con paginación.
 
 	Long countById(Long id);
 
-	List<Usuario> findByNombresOrderByNombresAsc(String nombres, Pageable pageable);
+	List<Usuario> findByNombres(String nombres);
+
+	Page<Usuario> findByNombres(String nombres, Pageable pageable);
+
+	Page<Usuario> findByNombresAndApellidoPaterno(String nombres, String apellidoPaterno, Pageable pageable);
+
+	Page<Usuario> findByApellidoPaternoOrApellidoMaterno(String apellidoPaterno, String apellidoMaterno,
+			Pageable pageable);
+
+	Page<Usuario> findByNombresLike(String partedelnombre, Pageable pageable);
+
+	Page<Usuario> findByNombresContaining(String partedelnombre, Pageable pageable);
+
+	Page<Usuario> findByNombresStartingWith(String iniciodelnombre, Pageable pageable);
+
+	Page<Usuario> findByNombresEndingWith(String finaldelnombre, Pageable pageable);
+
+	Page<Usuario> findByNombresIgnoreCase(String nombres, Pageable pageable);
+
+	Page<Usuario> findByNombresOrderByNombresAsc(String nombres, Pageable pageable);
 
 	List<Usuario> findByApellidoPaternoOrderByNombresAsc(String apellidoPaterno);
 
@@ -98,19 +98,34 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
 	 * Double findAveragePrecioByProducto(@Param("producto") String producto);
 	 */
 
+	// JPQL con Interfaces Proyecciones DTO
+
+	@Query("SELECT u FROM Usuario u")
+	List<IUsuarioDTO> jpqlfindAllUsuariosIDTO();
+
+	@Query("SELECT u FROM Usuario u")
+	Page<IUsuarioDTO> jpqlfindAllUsuariosIDTOPageable(Pageable pageable);
+
+	// JPQL con Clases Proyecciones DTO
+
+	
+	
 	// Métodos @Query Nativo
 	// Todos los métodos deben comenzar con sqlFindBy
+	
+	@Query(value = "SELECT * FROM usuarios", nativeQuery = true)
+	Page<IUsuarioDTO> sqlfindAllUsuariosIDTOPageable(Pageable pageable);
 
 	@Query(value = "SELECT * FROM usuarios WHERE nombres = ?1", nativeQuery = true)
 	List<Usuario> sqlBuscarPorNombreSQL(String nombres);
-	
+
 	@Query(value = "SELECT AVG(precio) FROM Venta", nativeQuery = true)
-    Double sqlfindAveragePrecio();
+	Double sqlfindAveragePrecio();
 
 	// Métodos con proyecciones.
 
 	@Query(value = "SELECT * FROM usuarios WHERE nombres = ?1", nativeQuery = true)
-	List<UsuarioProyeccion> findByNombresProyeccion(String nombres);
+	List<IUsuarioDTO> findByNombresProyeccion(String nombres);
 
 	@Query(value = "SELECT nombres, email FROM usuarios WHERE nombres = ?1", nativeQuery = true)
 	List<Object[]> buscarNombreYEmail(String nombres);
