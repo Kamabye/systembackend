@@ -22,8 +22,9 @@ public class SecurityConfig {
 	 * No se agrega system a la url porque lo agrega el contextpath del
 	 * application.properties
 	 */
+	//"apiv1/user/**",  "apiv1/rol/**", 
 	public static final String[] ENDPOINTS_WHITELIST = { "demo/**", "apiv1/auth/**", "apiv1/obra/**",
-			"apiv1/partitura/**", "apiv1/pdf/**", "apiv1/user/**", "apiv1/rol/**", "apiv1/paypal/**", "apiv1/shopcart/**"};
+			"apiv1/partitura/**", "apiv1/pdf/**","apiv1/paypal/**", "apiv1/shopcart/**"};
 
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthorizationFilter;

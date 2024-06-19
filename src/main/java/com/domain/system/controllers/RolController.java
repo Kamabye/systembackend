@@ -86,6 +86,7 @@ public class RolController {
 				Rol rol = rolService.findById(idRol);
 
 				if (rol != null) {
+					System.out.println(rol.toString());
 					return new ResponseEntity<Rol>(rol, null, HttpStatus.OK);
 				}
 

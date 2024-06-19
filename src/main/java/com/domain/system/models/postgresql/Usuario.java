@@ -3,10 +3,10 @@ package com.domain.system.models.postgresql;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Set;
 
 import com.domain.system.models.Auditable;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -50,7 +50,7 @@ public class Usuario extends Auditable implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY AutoIncrement MYSQL MariaDB
-	//@Column(name = "idUsuario", updatable = false, nullable = false)
+	// @Column(name = "idUsuario", updatable = false, nullable = false)
 	@Column(updatable = false, nullable = false)
 	private Long id;
 
@@ -61,7 +61,7 @@ public class Usuario extends Auditable implements Serializable {
 	private String email;
 
 	@Column(nullable = false)
-	//@JsonIgnore
+	// @JsonIgnore
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private String password;
 
@@ -75,7 +75,7 @@ public class Usuario extends Auditable implements Serializable {
 
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
-	//@JsonIgnore
+	// @JsonIgnore
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private byte[] imagen;
 
@@ -83,50 +83,72 @@ public class Usuario extends Auditable implements Serializable {
 	private Boolean estatus;
 
 	@Column(nullable = false)
+	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Boolean estatusBloqueo;
 
 	@Temporal(TemporalType.DATE)
 	private Date dateOfBirth;
 
-	@ManyToMany(fetch = FetchType.EAGER)
+	// @JsonBackReference
+	// @JsonIgnore
+	// @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	// @JsonIgnoreProperties("usuarios")
+	// @JsonManagedReference //Cuando tienes relaciones bidireccionales complejas y
+	// necesitas mantener la integridad de las referencias en ambas direcciones.
+
 	// @ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST,
 	// CascadeType.MERGE })
-	@JoinTable(name = "UsuariosRoles", // Nombre de la tabla que se creará
-			joinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "id"),
-			inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "id"),
-			uniqueConstraints = {
-					@UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
-	@JsonManagedReference //Cuando tienes relaciones bidireccionales complejas y necesitas mantener la integridad de las referencias en ambas direcciones.
-	//@JsonIgnore
-	//@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	private Set<Rol> roles;
+
 	// private List<Rol> roles;
+	/*
+	 * @JoinTable(name = "UsuariosRoles", // Nombre de la tabla que se creará
+	 * joinColumns = @JoinColumn(name = "idUsuario", nullable = false),
+	 * inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false),
+	 * uniqueConstraints = {
+	 * 
+	 * @UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
+	 */
+	//
+	@ManyToMany(fetch = FetchType.EAGER)
+	@JoinTable(name = "UsuariosRoles", // Nombre de la tabla que se creará
+			joinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "id"), uniqueConstraints = {
+
+					@UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
+	@JsonIgnoreProperties("usuarios")
+	@JsonManagedReference
+	private Set<Rol> roles;
 
 	public void addRole(Rol rol) {
-		if (roles == null) {
-			roles = new HashSet<Rol>();
+		if (this.roles == null) {
+			this.roles = new HashSet<Rol>();
 		}
-		roles.add(rol);
-		// rol.getUsuarios().add(this);
+		this.roles.add(rol);
+		rol.getUsuarios().add(this);
 	}
 
 	public boolean hasRole(String roleName) {
-		Iterator<Rol> iterator = roles.iterator();
 
-		while (iterator.hasNext()) {
-			Rol rol = iterator.next();
-			if (rol.getRol().equals(roleName)) {
-				return true;
-			}
-		}
-		return false;
+		return this.roles.stream().anyMatch(rol -> rol.getRol().equals(roleName));
+
+		/*
+		 * Iterator<Rol> iterator = roles.iterator();
+		 * 
+		 * while (iterator.hasNext()) { Rol rol = iterator.next(); if
+		 * (rol.getRol().equals(roleName)) { return true; } } return false;
+		 */
+
 	}
+	
+	public void removeRol(Rol rol) {
+        this.roles.remove(rol);
+        rol.getUsuarios().remove(this);
+    }
 
 	@PrePersist
 	private void onCreate() {
 		estatus = false;
 		estatusBloqueo = false;
-		Date fecha = new Date(); 
+		Date fecha = new Date();
 		setCreatedAt(fecha);
 		setModifiedAt(fecha);
 	}

@@ -25,7 +25,7 @@ public class RolServiceImpJpa implements IRolService {
 	@Override
 	public List<Rol> findAll() {
 
-		return rolRepo.findAll(Sort.by("rol").ascending());
+		return rolRepo.findAll(Sort.by("rol").descending());
 	}
 
 	@Transactional(readOnly = true)

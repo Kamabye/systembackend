@@ -63,6 +63,7 @@ public class AuthController {
 			response.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.NOT_FOUND);
 		} catch (AuthenticationException e) {
+			e.printStackTrace();
 			response.put("mensaje", "Error en  la authtenticacion AuthenticationException");
 			response.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.NOT_FOUND);

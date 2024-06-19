@@ -27,7 +27,7 @@ public class UserServiceImpJpa implements IUserService {
 
 	@Autowired
 	UserRepository userRepo;
-	
+
 	@Autowired
 	private PasswordEncoder pswEncode;
 
@@ -66,11 +66,13 @@ public class UserServiceImpJpa implements IUserService {
 		Sort.Order order1 = new Sort.Order(Sort.Direction.DESC, "apellidoPaterno");
 		Sort.Order order2 = new Sort.Order(Sort.Direction.DESC, "apellidoMaterno");
 		Sort.Order order3 = new Sort.Order(Sort.Direction.ASC, "nombres");
+		Sort.Order order4 = new Sort.Order(Sort.Direction.ASC, "id");
 
 		// Sort sort = Sort.by(Sort.Order.asc("nombres"));
 
 		// return userRepo.findAll(PageRequest.of(page, size, sort));
-		Page<Usuario> pageUsuario = userRepo.findAll(PageRequest.of(page, size, Sort.by(order1, order2, order3)));
+		//Page<Usuario> pageUsuario = userRepo.findAll(PageRequest.of(page, size, Sort.by(order1, order2, order3)));
+		Page<Usuario> pageUsuario = userRepo.findAll(PageRequest.of(page, size, Sort.by(order4)));
 
 		List<Usuario> usuarios = pageUsuario.getContent();
 		long totalElementos = pageUsuario.getTotalElements();
@@ -166,8 +168,9 @@ public class UserServiceImpJpa implements IUserService {
 	@Transactional(readOnly = true)
 	@Override
 	public Usuario findByEmail(String email) {
+		
 		Optional<Usuario> optional = userRepo.findByEmail(email);
-		if (optional.isPresent()) {
+		if (!optional.isEmpty()) {
 			return optional.get();
 		}
 		return null;
@@ -221,14 +224,15 @@ public class UserServiceImpJpa implements IUserService {
 	public Page<IUsuarioDTO> jpqlfindAllUsuariosIDTOPageable(Integer pageNumber, Integer pageSize) {
 
 		Pageable pageable = PageRequest.of(pageNumber, pageSize);
-		
+
 		return userRepo.jpqlfindAllUsuariosIDTOPageable(pageable);
 	}
 
+	@Transactional(readOnly = true)
 	@Override
 	public Page<IUsuarioDTO> sqlfindAllUsuariosIDTOPageable(int pageNumber, int pageSize) {
-Pageable pageable = PageRequest.of(pageNumber, pageSize);
-		
+		Pageable pageable = PageRequest.of(pageNumber, pageSize);
+
 		return userRepo.sqlfindAllUsuariosIDTOPageable(pageable);
 	}
 

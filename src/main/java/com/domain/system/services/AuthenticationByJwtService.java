@@ -21,7 +21,7 @@ public class AuthenticationByJwtService {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 		
-		System.out.println("JwtService.authenticate : " + authentication.toString());
+		//System.out.println("JwtService.authenticate : " + authentication.toString());
 		
 		if(authentication.isAuthenticated()) {
 			return jwtService.generateToken((UserDetails) authentication.getPrincipal());

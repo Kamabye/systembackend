@@ -1,5 +1,7 @@
 package com.domain.system.services.imp;
 
+import java.util.NoSuchElementException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -15,24 +17,17 @@ import com.domain.system.userdetails.UserDetailsImp;
 @Primary
 public class UserDetailsServiceImp implements UserDetailsService {
 
-	//@Autowired
-	//private UserServiceImpJpa userService;
-	
 	@Autowired
-	UserRepository userRepo;
-
+	private UserRepository userRepo;
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-		//System.out.println("UserDetailsServiceImp : ");
-		Usuario usuario = userRepo.findByEmail(username).get();
-		//System.out.println("UserDetailsServiceImp : Se buscó al usuario");
-		if (usuario == null) {
-			//System.out.println("El usuario no se encontró");
-			throw new UsernameNotFoundException("Usuario no encontrado: " + username);
-		}
-		//System.out.println("Éxito Usuario encontrado");
+
+		Usuario usuario = userRepo.findByEmail(username)
+				.orElseThrow(() -> new NoSuchElementException("Usuario no encontrado con email: " + username));
+
+		System.out.println("UserDetailsServiceImp : " + usuario.toString());
+
 		return new UserDetailsImp(usuario);
 	}
-
 }

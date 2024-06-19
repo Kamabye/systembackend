@@ -3,15 +3,14 @@ package com.domain.system.controllers;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -29,7 +28,7 @@ import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.domain.system.interfaces.IUserService;
-import com.domain.system.interfaces.DTOProyecciones.IUsuarioDTO;
+import com.domain.system.models.postgresql.Rol;
 import com.domain.system.models.postgresql.Usuario;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -95,20 +94,21 @@ public class UserController {
 		Map<String, Object> responseBody = new HashMap<>();
 		// List<Usuario> listaUsuarios;
 		Page<Usuario> listaUsuarios;
-		Page<IUsuarioDTO> listaUsuariosIDTO;
+		//Page<IUsuarioDTO> listaUsuariosIDTO;
 
 		try {
 
 			listaUsuarios = userService.findAllPage(pageNumber, pageSize);
-			listaUsuariosIDTO = userService.sqlfindAllUsuariosIDTOPageable(pageNumber, pageSize);
+			//listaUsuariosIDTO = userService.sqlfindAllUsuariosIDTOPageable(pageNumber, pageSize);
 			//listaUsuariosIDTO = userService.jpqlfindAllUsuariosIDTOPageable(pageNumber, pageSize);
 
 			if (!listaUsuarios.isEmpty()) {
 
 				// return new ResponseEntity<List<Usuario>>(listaUsuarios, null, HttpStatus.OK);
-				//return new ResponseEntity<Page<Usuario>>(listaUsuarios, null, HttpStatus.OK);
+				return new ResponseEntity<Page<Usuario>>(listaUsuarios, null, HttpStatus.OK);
+				//return new ResponseEntity<List<Usuario>>(listaUsuarios.getContent(), null, HttpStatus.OK);
 				//return new ResponseEntity<Page<IUsuarioDTO>>(listaUsuariosIDTO, null, HttpStatus.OK);
-				return new ResponseEntity<Page<IUsuarioDTO>>(listaUsuariosIDTO, null, HttpStatus.OK);
+				//return new ResponseEntity<Page<IUsuarioDTO>>(listaUsuariosIDTO, null, HttpStatus.OK);
 			}
 
 			responseBody.put("mensaje", "No se encontraron resultados");
@@ -149,13 +149,16 @@ public class UserController {
 				Usuario usuario = userService.findById(idUsuario);
 
 				if (usuario != null) {
-					usuario.setPassword("");
-					usuario.setImagen(null);
+					System.out.println(usuario.toString());
+					//usuario.setPassword("");
+					//usuario.setImagen(null);
 
-					HttpHeaders headers = new HttpHeaders();
-					headers.setContentType(MediaType.APPLICATION_JSON);
+					//HttpHeaders headers = new HttpHeaders();
+					//headers.setContentType(MediaType.APPLICATION_JSON);
 
-					return new ResponseEntity<>(usuario, headers, HttpStatus.OK);
+					//return new ResponseEntity<>(usuario, headers, HttpStatus.OK);
+					//return new ResponseEntity<Usuario>(usuario, null, HttpStatus.OK);
+					return new ResponseEntity<Set<Rol>>(usuario.getRoles(), null, HttpStatus.OK);
 					// return new ResponseEntity<Usuario>(usuario, headers, HttpStatus.OK);
 				}
 

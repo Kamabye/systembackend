@@ -5,6 +5,7 @@ import java.util.Set;
 
 import com.domain.system.models.Auditable;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,17 +31,20 @@ public class Rol extends Auditable implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY AutoIncrement MYSQL MariaDB
-	@Column(name = "id", updatable = false, nullable = false)
+	//@Column(name = "id", updatable = false, nullable = false)
+	@Column(updatable = false, nullable = false)
 	private Long id;
 
 	@Column(unique = true)
 	private String rol;
-	
-	
+
 	@ManyToMany(mappedBy = "roles")
-	//@JsonIgnore //Si solo necesitas romper un ciclo de referencia en una dirección específica y no te importa perder esa información en la serialización.
+	// @JsonIgnore //Si solo necesitas romper un ciclo de referencia en una
+	// dirección específica y no te importa perder esa información en la
+	// serialización.
+	@JsonIgnoreProperties("roles")
 	@JsonBackReference
-    private Set<Usuario> usuarios;
+	private Set<Usuario> usuarios;
 
 	private static final long serialVersionUID = 1L;
 
