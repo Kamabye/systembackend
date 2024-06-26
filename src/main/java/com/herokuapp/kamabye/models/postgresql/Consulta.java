@@ -2,6 +2,7 @@ package com.herokuapp.kamabye.models.postgresql;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.herokuapp.kamabye.models.Auditable;
@@ -110,7 +111,7 @@ public class Consulta extends Auditable implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	// @JsonIgnore
-	//@JsonBackReference
+	@JsonBackReference
 	@JoinColumn(name = "idPaciente")
 	//@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Paciente paciente;

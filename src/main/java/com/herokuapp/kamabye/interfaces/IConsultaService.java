@@ -11,8 +11,6 @@ public interface IConsultaService {
 	
 	Consulta guardar(Consulta consulta);
 
-	Consulta buscarPorId(Integer idConsulta);
-
 	void eliminar(Integer idConsulta);
 
 	Long totalRegistros();
@@ -26,5 +24,7 @@ public interface IConsultaService {
 	Consulta ultimaConsulta(Paciente paciente);
 
 	Page<Consulta> findAll(int pageNumber, int pageSize);
+
+	Consulta findByIdConsulta(Long idConsulta);
 	
 }

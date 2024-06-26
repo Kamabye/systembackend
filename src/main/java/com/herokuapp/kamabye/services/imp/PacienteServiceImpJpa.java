@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.herokuapp.kamabye.interfaces.IPacienteService;
+import com.herokuapp.kamabye.models.postgresql.Consulta;
 import com.herokuapp.kamabye.models.postgresql.Paciente;
 import com.herokuapp.kamabye.repository.postgresql.PacienteRepository;
 
@@ -102,6 +103,12 @@ public class PacienteServiceImpJpa implements IPacienteService {
 			pacienteRepo.deleteById(idPaciente);
 			return optional.get();
 		}
+		return null;
+	}
+
+	@Override
+	public Page<Consulta> getConsultas(int pageNumber, int pageSize) {
+		// TODO Auto-generated method stub
 		return null;
 	}
 	

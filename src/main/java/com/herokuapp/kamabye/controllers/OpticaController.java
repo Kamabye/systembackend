@@ -2,6 +2,7 @@ package com.herokuapp.kamabye.controllers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -46,6 +47,7 @@ public class OpticaController {
 	public ResponseEntity<?> pacientes(@RequestParam(defaultValue = "0") int pageNumber,
 	  @RequestParam(defaultValue = "2") int pageSize) {
 		Map<String, Object> responseBody = new HashMap<>();
+		
 		// List<Usuario> listaUsuarios;
 		Page<Paciente> pageListaPacientes;
 		
@@ -87,6 +89,50 @@ public class OpticaController {
 		}
 	}
 	
+	@GetMapping("paciente/{idPaciente}")
+	public ResponseEntity<?> findPaciente(@PathVariable(name = "idPaciente", required = false) String idPacienteString) {
+		Map<String, Object> responseBody = new HashMap<>();
+		
+		try {
+			
+			if (idPacienteString != null) {
+				
+				Long idPaciente = Long.valueOf(idPacienteString);
+				
+				Paciente paciente = pacienteService.findByIdPaciente(idPaciente);
+				
+				if (paciente != null) {
+					return new ResponseEntity<Paciente>(paciente, null, HttpStatus.OK);
+				}
+				
+				responseBody.put("mensaje",
+				  "El ID: ".concat(idPacienteString.toString().concat(" no existe en la base de datos!.")));
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				
+			}
+			responseBody.put("mensaje", "Parámetros nulos");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+			
+		} catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ingrese un ID válido");
+			responseBody.put("error", "NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (DataAccessException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error",
+			  "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			
+		}
+	}
 	
 	// @PostMapping(value = "", consumes = "application/json", produces =
 	// "application/json")
@@ -156,7 +202,7 @@ public class OpticaController {
 			responseBody.put("mensaje", "El ID: ".concat(paciente.toString().concat(" no existe en la base de datos!.")));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			
-		}catch (DataAccessException e) {
+		} catch (DataAccessException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error",
@@ -216,13 +262,28 @@ public class OpticaController {
 	}
 	
 	@GetMapping("consulta")
-	public ResponseEntity<?> consultas(@RequestParam(defaultValue = "0") int pageNumber,
+	public ResponseEntity<?> consultas(@RequestParam(name = "idConsulta", required = false) Integer idConsultaString, @RequestParam(defaultValue = "0") int pageNumber,
 	  @RequestParam(defaultValue = "2") int pageSize) {
 		Map<String, Object> responseBody = new HashMap<>();
 		// List<Usuario> listaUsuarios;
 		Page<Consulta> pageListaConsultas;
 		
 		try {
+			
+			if (idConsultaString != null) {
+				Long idConsulta = Long.valueOf(idConsultaString);
+				
+				Consulta consulta = consultaService.findByIdConsulta(idConsulta);
+				
+				if (consulta != null) {
+					return new ResponseEntity<Consulta>(consulta, null, HttpStatus.OK);
+				}
+				
+				responseBody.put("mensaje",
+				  "El ID: ".concat(idConsultaString.toString().concat(" no existe en la base de datos!.")));
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				
+			}
 			
 			// listaUsuarios = userService.findAll();
 			pageListaConsultas = consultaService.findAll(pageNumber, pageSize);
@@ -252,6 +313,51 @@ public class OpticaController {
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
 			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			
+		}
+	}
+	
+	@GetMapping("consulta/{idPaciente}")
+	public ResponseEntity<?> findConsultasByPaciente(@PathVariable(name = "idPaciente", required = false) String idPacienteString) {
+		Map<String, Object> responseBody = new HashMap<>();
+		
+		try {
+			
+			if (idPacienteString != null) {
+				
+				Long idPaciente = Long.valueOf(idPacienteString);
+				
+				Paciente paciente = pacienteService.findByIdPaciente(idPaciente);
+				
+				if (paciente != null) {
+					return new ResponseEntity<Set<Consulta>>(paciente.getConsultas(), null, HttpStatus.OK);
+				}
+				
+				responseBody.put("mensaje",
+				  "El ID: ".concat(idPacienteString.toString().concat(" no existe en la base de datos!.")));
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				
+			}
+			responseBody.put("mensaje", "Parámetros nulos");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+			
+		} catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ingrese un ID válido");
+			responseBody.put("error", "NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (DataAccessException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error",
+			  "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
 			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);

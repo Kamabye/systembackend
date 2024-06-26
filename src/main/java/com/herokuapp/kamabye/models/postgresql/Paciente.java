@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.herokuapp.kamabye.models.Auditable;
 
@@ -76,7 +77,7 @@ public class Paciente extends Auditable implements Serializable {
 //En esta relación se debe mapear la clase que será el inverso
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "paciente", cascade = CascadeType.ALL)
 // @JsonIgnore
-	//@JsonManagedReference
+	@JsonManagedReference
 // @OrderBy("column ASC")
 	private Set<Consulta> consultas = new HashSet<>();
 	
@@ -87,7 +88,7 @@ public class Paciente extends Auditable implements Serializable {
 		this.consultas.add(consulta);
 	}
 	
-	//@Transient
+	// @Transient
 	public Integer getEdadCalculada() {
 		if (this.fechaNacimiento != null) {
 			long lapso = new Date().getTime() - fechaNacimiento.getTime();

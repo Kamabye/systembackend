@@ -4,11 +4,14 @@ import java.util.List;
 
 import org.springframework.data.domain.Page;
 
+import com.herokuapp.kamabye.models.postgresql.Consulta;
 import com.herokuapp.kamabye.models.postgresql.Paciente;
 
 public interface IPacienteService {
 
 	Page<Paciente> findAll(int pageNumber, int pageSize);
+	
+	Page<Consulta> getConsultas(int pageNumber, int pageSize);
 
 	Paciente buscarPorId(Integer idPaciente);
 

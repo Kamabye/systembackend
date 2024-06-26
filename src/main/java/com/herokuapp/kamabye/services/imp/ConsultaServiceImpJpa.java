@@ -1,6 +1,7 @@
 package com.herokuapp.kamabye.services.imp;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
@@ -23,12 +24,6 @@ public class ConsultaServiceImpJpa implements IConsultaService {
 	
 	@Override
 	public Consulta guardar(Consulta consulta) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
-	@Override
-	public Consulta buscarPorId(Integer idConsulta) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -76,6 +71,13 @@ public class ConsultaServiceImpJpa implements IConsultaService {
 		Page<Consulta> pageConsultas = consultaRepo.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(order3)));
 		
 		return pageConsultas;
+	}
+	
+	@Override
+	public Consulta findByIdConsulta(Long idConsulta) {
+		
+		return consultaRepo.findById(idConsulta)
+		  .orElseThrow(() -> new NoSuchElementException("Consulta no encontrado con ID: " + idConsulta));
 	}
 	
 }
