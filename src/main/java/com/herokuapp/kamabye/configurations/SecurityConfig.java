@@ -24,7 +24,7 @@ public class SecurityConfig {
 	 */
 	// "apiv1/user/**", "apiv1/rol/**",
 	public static final String[] ENDPOINTS_WHITELIST = { "demo/**", "apiv1/user/initialized", "apiv1/auth/**", "apiv1/obra/**",
-	  "apiv1/partitura/**", "apiv1/pdf/**", "apiv1/paypal/**", "apiv1/shopcart/**", "apiv1/optica/**" };
+	  "apiv1/partitura/**", "apiv1/pdf/**", "apiv1/paypal/**", "apiv1/shopcart/**", "apiv1/optica/**", "apiv1/user/**", "apiv1/rol/**" };
 	
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthorizationFilter;
