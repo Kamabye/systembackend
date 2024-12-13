@@ -157,6 +157,12 @@
 			<artifactId>jackson-databind</artifactId>
 		</dependency>
 
+		<!-- Esta dependencia permite el uso de validaciones -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
 	</dependencies>
 
 	<build>
