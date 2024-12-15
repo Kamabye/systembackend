@@ -22,9 +22,7 @@ import com.system.domain.services.AuthenticationByJwtService;
 
 @RestController
 @RequestMapping({ "apiv1/auth", "apiv1/auth/" })
-@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200" }, methods = { RequestMethod.GET,
-		RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE,
-		RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" })
+@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders =  { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class AuthController {
 
 	@Autowired
