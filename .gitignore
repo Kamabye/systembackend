@@ -1,5 +1,5 @@
 HELP.md
-##target/clases
+## target/clases
 
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
