@@ -7,12 +7,6 @@
       "sourceMethod": "postgreDataSourceProperties()"
     },
     {
-      "name": "postgresql.datasource",
-      "type": "javax.sql.DataSource",
-      "sourceType": "com.system.domain.configurations.PostgreSQLConfig",
-      "sourceMethod": "dataSource()"
-    },
-    {
       "name": "postgresql.datasource.xa",
       "type": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$Xa",
       "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties",
@@ -23,12 +17,6 @@
       "type": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties",
       "sourceType": "com.system.domain.configurations.SupabaseSQLConfig",
       "sourceMethod": "supabaseDataSourceProperties()"
-    },
-    {
-      "name": "supabase.datasource",
-      "type": "javax.sql.DataSource",
-      "sourceType": "com.system.domain.configurations.SupabaseSQLConfig",
-      "sourceMethod": "dataSource()"
     },
     {
       "name": "supabase.datasource.xa",

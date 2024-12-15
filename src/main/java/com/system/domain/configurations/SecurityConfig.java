@@ -33,7 +33,7 @@ public class SecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		
 		http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()).contentSecurityPolicy(
-		  secPolicy -> secPolicy.policyDirectives("frame-ancestors http://localhost:4200 http://localhost:8081 https://kamabye.herokuapp.com https://opticalemus.herokuapp.com")))
+		  secPolicy -> secPolicy.policyDirectives("frame-ancestors http://localhost:4200 http://localhost:8081 https://system-i73z.onrender.com https://opticalemus.onrender.com")))
 		  
 		  // http.headers(headers -> headers.frameOptions(frameOptions ->
 		  // frameOptions.sameOrigin()))
