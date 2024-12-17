@@ -10,7 +10,7 @@
 		<relativePath /> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.system</groupId>
-	<artifactId>domain</artifactId>
+	<artifactId>kamabye</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>kamabye</name>
 	<description>System Application</description>
