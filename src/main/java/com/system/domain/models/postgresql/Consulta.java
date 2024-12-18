@@ -50,17 +50,17 @@ public class Consulta extends Auditable implements Serializable {
 	 * Medidas de Autorefractometro
 	 */
 	// Esferas
-	@Column
+	@Column(precision = 10, scale = 2)
 	@NumberFormat(pattern = "#.##")
 	private Double totalDer;
-	@Column
+	@Column(precision = 10, scale = 2)
 	@NumberFormat(pattern = "#.##")
 	private Double totalIzq;
 	// Cilindros
-	@Column
+	@Column(precision = 10, scale = 2)
 	@NumberFormat(pattern = "#.##")
 	private Double totalAstigDer;
-	@Column
+	@Column(precision = 10, scale = 2)
 	@NumberFormat(pattern = "#.##")
 	private Double totalAstigIzq;
 	// Ejes
@@ -74,18 +74,18 @@ public class Consulta extends Auditable implements Serializable {
 	 */
 	
 	// Esfera
-	@Column
+	@Column(precision = 10, scale = 2)
 	@NumberFormat(pattern = "#.##")
 	private Double subLejDer;
-	@Column
+	@Column(precision = 10, scale = 2)
 	@NumberFormat(pattern = "#.##")
 	private Double subLejIzq;
 	
 	// Cilindro
-	@Column
+	@Column(precision = 10, scale = 2)
 	@NumberFormat(pattern = "#.##")
 	private Double subLejAstigDer;
-	@Column
+	@Column(precision = 10, scale = 2)
 	@NumberFormat(pattern = "#.##")
 	private Double subLejAstigIzq;
 	@Column
@@ -97,10 +97,10 @@ public class Consulta extends Auditable implements Serializable {
 	/**
 	 * Adicional
 	 */
-	@Column
+	@Column(precision = 10, scale = 2)
 	@NumberFormat(pattern = "#.##")
 	private Double addDer;
-	@Column
+	@Column(precision = 10, scale = 2)
 	@NumberFormat(pattern = "#.##")
 	private Double addIzq;
 	
