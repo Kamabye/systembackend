@@ -2,6 +2,8 @@ package com.system.domain.models.postgresql;
 
 import java.io.Serializable;
 
+import org.springframework.format.annotation.NumberFormat;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -49,13 +51,17 @@ public class Consulta extends Auditable implements Serializable {
 	 */
 	// Esferas
 	@Column
+	@NumberFormat(pattern = "#.##")
 	private Double totalDer;
 	@Column
+	@NumberFormat(pattern = "#.##")
 	private Double totalIzq;
 	// Cilindros
 	@Column
+	@NumberFormat(pattern = "#.##")
 	private Double totalAstigDer;
 	@Column
+	@NumberFormat(pattern = "#.##")
 	private Double totalAstigIzq;
 	// Ejes
 	@Column
@@ -69,14 +75,18 @@ public class Consulta extends Auditable implements Serializable {
 	
 	// Esfera
 	@Column
+	@NumberFormat(pattern = "#.##")
 	private Double subLejDer;
 	@Column
+	@NumberFormat(pattern = "#.##")
 	private Double subLejIzq;
 	
 	// Cilindro
 	@Column
+	@NumberFormat(pattern = "#.##")
 	private Double subLejAstigDer;
 	@Column
+	@NumberFormat(pattern = "#.##")
 	private Double subLejAstigIzq;
 	@Column
 	// Eje
@@ -88,8 +98,10 @@ public class Consulta extends Auditable implements Serializable {
 	 * Adicional
 	 */
 	@Column
+	@NumberFormat(pattern = "#.##")
 	private Double addDer;
 	@Column
+	@NumberFormat(pattern = "#.##")
 	private Double addIzq;
 	
 	// Agudeza Visual
