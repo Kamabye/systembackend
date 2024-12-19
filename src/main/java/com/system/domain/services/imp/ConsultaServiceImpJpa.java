@@ -109,23 +109,28 @@ public class ConsultaServiceImpJpa implements IConsultaService {
 		
 		return pageConsultas;
 	}
-
+	
 	@Override
 	public Consulta patchUpdate(Consulta consulta) {
 		Consulta saveConsulta = this.findByIdConsulta(consulta.getIdConsulta());
 		
-		if(saveConsulta != null) {
+		if (saveConsulta != null) {
 			
-			if(consulta.getPaciente() != null) {
+			if (consulta.getPaciente() != null) {
 				saveConsulta.setPaciente(consulta.getPaciente());
 			}
 			
 			return consultaRepo.save(saveConsulta);
 		}
 		
-		
 		// TODO Auto-generated method stub
 		return null;
+	}
+	
+	@Override
+	public Paciente findPacienteByIdConsulta(Long idConsulta) {
+		Consulta consulta = consultaRepo.findById(idConsulta).orElseThrow(() -> new NoSuchElementException("Consulta no encontrado con ID: " + idConsulta));
+		return consulta.getPaciente();
 	}
 	
 }

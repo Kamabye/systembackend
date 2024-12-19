@@ -37,4 +37,6 @@ public interface IConsultaService {
 
 	Consulta patchUpdate(Consulta consulta);
 	
+	Paciente findPacienteByIdConsulta(Long idConsulta);
+	
 }

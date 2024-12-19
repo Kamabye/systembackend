@@ -1,8 +1,7 @@
 package com.system.domain.models.postgresql;
 
 import java.io.Serializable;
-
-import org.springframework.format.annotation.NumberFormat;
+import java.math.BigDecimal;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -51,19 +50,17 @@ public class Consulta extends Auditable implements Serializable {
 	 */
 	// Esferas
 	//@Column(precision = 10, scale = 2)
-	@Column
-	@NumberFormat(pattern = "#.##")
-	private Double totalDer;
-	@Column
-	@NumberFormat(pattern = "#.##")
-	private Double totalIzq;
+	//@Column
+	//@NumberFormat(pattern = "#.##")
+	@Column(precision = 10, scale = 2)
+	private BigDecimal totalDer;
+	@Column(precision = 10, scale = 2)
+	private BigDecimal totalIzq;
 	// Cilindros
-	@Column
-	@NumberFormat(pattern = "#.##")
-	private Double totalAstigDer;
-	@Column
-	@NumberFormat(pattern = "#.##")
-	private Double totalAstigIzq;
+	@Column(precision = 10, scale = 2)
+	private BigDecimal totalAstigDer;
+	@Column(precision = 10, scale = 2)
+	private BigDecimal totalAstigIzq;
 	// Ejes
 	@Column
 	private Integer totalAngDer;
@@ -75,20 +72,16 @@ public class Consulta extends Auditable implements Serializable {
 	 */
 	
 	// Esfera
-	@Column
-	@NumberFormat(pattern = "#.##")
-	private Double subLejDer;
-	@Column
-	@NumberFormat(pattern = "#.##")
-	private Double subLejIzq;
+	@Column(precision = 10, scale = 2)
+	private BigDecimal subLejDer;
+	@Column(precision = 10, scale = 2)
+	private BigDecimal subLejIzq;
 	
 	// Cilindro
-	@Column
-	@NumberFormat(pattern = "#.##")
-	private Double subLejAstigDer;
-	@Column
-	@NumberFormat(pattern = "#.##")
-	private Double subLejAstigIzq;
+	@Column(precision = 10, scale = 2)
+	private BigDecimal subLejAstigDer;
+	@Column(precision = 10, scale = 2)
+	private BigDecimal subLejAstigIzq;
 	@Column
 	// Eje
 	private Integer subLejAngDer;
@@ -98,12 +91,10 @@ public class Consulta extends Auditable implements Serializable {
 	/**
 	 * Adicional
 	 */
-	@Column
-	@NumberFormat(pattern = "#.##")
-	private Double addDer;
-	@Column
-	@NumberFormat(pattern = "#.##")
-	private Double addIzq;
+	@Column(precision = 10, scale = 2)
+	private BigDecimal addDer;
+	@Column(precision = 10, scale = 2)
+	private BigDecimal addIzq;
 	
 	// Agudeza Visual
 	@Column
@@ -118,9 +109,6 @@ public class Consulta extends Auditable implements Serializable {
 	// Comentarios
 	@Column
 	private String rx;
-	
-	@Column
-	private String ocupacion;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	// @JsonIgnore

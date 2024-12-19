@@ -1,7 +1,9 @@
 HELP.md
 ## target/clases
 
-!.mvn/wrapper/maven-wrapper.jar
+/src/**
+
+.mvn/**
 !**/src/main/**/target/
 !**/src/test/**/target/
 

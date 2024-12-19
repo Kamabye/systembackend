@@ -38,7 +38,7 @@ import jakarta.validation.constraints.Min;
 
 @RestController
 @RequestMapping({ "apiv1/optica", "apiv1/optica/" })
-@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders =  { "Authorization", "Content-Type" }, exposedHeaders = {})
+@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class OpticaController {
 	
 	@Autowired
@@ -718,6 +718,54 @@ public class OpticaController {
 			
 		}
 		
+	}
+	
+	@GetMapping("consultas/getPaciente")
+	public ResponseEntity<?> getPacienteByIdConsulta(@RequestParam(defaultValue = "0") int pageNumber,
+	  @RequestParam(defaultValue = "2") int pageSize, @RequestParam(name = "idConsulta", required = true) Integer idConsultaString) {
+		Map<String, Object> responseBody = new HashMap<>();
+		
+		try {
+			
+			if (idConsultaString != null) {
+				Long idConsulta = Long.valueOf(idConsultaString);
+				
+				if (idConsulta > 0) {
+					Paciente paciente = consultaService.findPacienteByIdConsulta(idConsulta);
+					
+					if (paciente != null) {
+						return new ResponseEntity<Paciente>(paciente, null, HttpStatus.OK);
+					}
+					
+					responseBody.put("mensaje",
+					  "El ID: ".concat(idConsultaString.toString().concat(" no existe en la base de datos!.")));
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				}
+			}
+			
+			responseBody.put("mensaje", "No se encontraron resultados");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			
+		} catch (EmptyResultDataAccessException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "No se encontraron resultados.");
+			responseBody.put("error", "EmptyResultDataAccessException: "
+			  .concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+		} catch (DataAccessException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error",
+			  "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			
+		}
 	}
 	
 	@ExceptionHandler({ AccessDeniedException.class })
