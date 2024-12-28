@@ -26,11 +26,13 @@ public class PacienteServiceImpJpa implements IPacienteService {
 	@Autowired
 	private PacienteRepository pacienteRepo;
 	
+	@Transactional(readOnly = true)
 	@Override
 	public Long countById(Long idPaciente) {
 		return pacienteRepo.countByIdPaciente(idPaciente);
 	}
 	
+	@Transactional(readOnly = true)
 	@Override
 	public Page<Paciente> findAll(int pageNumber, int pageSize) {
 		
@@ -61,6 +63,7 @@ public class PacienteServiceImpJpa implements IPacienteService {
 		return pacienteRepo.findById(idPaciente).orElseThrow(() -> new NoSuchElementException("Paciente no encontrado con ID: " + idPaciente));
 	}
 	
+	@Transactional(readOnly = true)
 	@Override
 	public Page<Paciente> findByString(int pageNumber, int pageSize, String string) {
 		
@@ -100,7 +103,7 @@ public class PacienteServiceImpJpa implements IPacienteService {
 	@Override
 	public Paciente patchUpdate(Paciente pacientePatch) {
 		
-		Paciente existingPaciente = findById(pacientePatch.getIdPaciente());
+		Paciente existingPaciente = this.findById(pacientePatch.getIdPaciente());
 		
 		if (existingPaciente != null) {
 			
@@ -152,6 +155,7 @@ public class PacienteServiceImpJpa implements IPacienteService {
 		return null;
 	}
 	
+	@Transactional(readOnly = true)
 	@Override
 	public Page<Consulta> getConsultas(int pageNumber, int pageSize) {
 		// TODO Auto-generated method stub
@@ -245,6 +249,5 @@ public class PacienteServiceImpJpa implements IPacienteService {
 				}
 			}
 		}
-		
 	}
 }

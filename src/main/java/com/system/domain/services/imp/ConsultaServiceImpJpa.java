@@ -111,14 +111,16 @@ public class ConsultaServiceImpJpa implements IConsultaService {
 	}
 	
 	@Override
-	public Consulta patchUpdate(Consulta consulta) {
-		Consulta saveConsulta = this.findByIdConsulta(consulta.getIdConsulta());
+	public Consulta patchUpdate(Consulta consultaPatch) {
+		Consulta saveConsulta = this.findByIdConsulta(consultaPatch.getIdConsulta());
 		
 		if (saveConsulta != null) {
 			
-			if (consulta.getPaciente() != null) {
-				saveConsulta.setPaciente(consulta.getPaciente());
-			}
+			// if (consultaPatch.getPaciente() != null) {
+			// saveConsulta.setPaciente(consultaPatch.getPaciente());
+			// }
+			
+			mergePatchFields(saveConsulta, consultaPatch);
 			
 			return consultaRepo.save(saveConsulta);
 		}
@@ -131,6 +133,74 @@ public class ConsultaServiceImpJpa implements IConsultaService {
 	public Paciente findPacienteByIdConsulta(Long idConsulta) {
 		Consulta consulta = consultaRepo.findById(idConsulta).orElseThrow(() -> new NoSuchElementException("Consulta no encontrado con ID: " + idConsulta));
 		return consulta.getPaciente();
+	}
+	
+	private void mergePatchFields(Consulta existingConsulta, Consulta consultaPatch) {
+		// TODO Auto-generated method stub
+		
+		if (consultaPatch.getTotalDer() != null && !consultaPatch.getTotalDer().equals(existingConsulta.getTotalDer())) {
+			existingConsulta.setTotalDer(consultaPatch.getTotalDer());
+		}
+		if (consultaPatch.getTotalIzq() != null && !consultaPatch.getTotalIzq().equals(existingConsulta.getTotalIzq())) {
+			existingConsulta.setTotalIzq(consultaPatch.getTotalIzq());
+		}
+		
+		if (consultaPatch.getTotalAstigDer() != null && !consultaPatch.getTotalAstigDer().equals(existingConsulta.getTotalAstigDer())) {
+			existingConsulta.setTotalAstigDer(consultaPatch.getTotalAstigDer());
+		}
+		if (consultaPatch.getTotalAstigIzq() != null && !consultaPatch.getTotalAstigIzq().equals(existingConsulta.getTotalAstigIzq())) {
+			existingConsulta.setTotalAstigIzq(consultaPatch.getTotalAstigIzq());
+		}
+		
+		if (consultaPatch.getTotalAngDer() != null && !consultaPatch.getTotalAngDer().equals(existingConsulta.getTotalAngDer())) {
+			existingConsulta.setTotalAngDer(consultaPatch.getTotalAngDer());
+		}
+		if (consultaPatch.getTotalAngIzq() != null && !consultaPatch.getTotalAngIzq().equals(existingConsulta.getTotalAngIzq())) {
+			existingConsulta.setTotalAngIzq(consultaPatch.getTotalAngIzq());
+		}
+		
+		if (consultaPatch.getSubLejDer() != null && !consultaPatch.getSubLejDer().equals(existingConsulta.getSubLejDer())) {
+			existingConsulta.setSubLejDer(consultaPatch.getSubLejDer());
+		}
+		if (consultaPatch.getSubLejIzq() != null && !consultaPatch.getSubLejIzq().equals(existingConsulta.getSubLejIzq())) {
+			existingConsulta.setSubLejIzq(consultaPatch.getSubLejIzq());
+		}
+		
+		if (consultaPatch.getSubLejAstigDer() != null && !consultaPatch.getSubLejAstigDer().equals(existingConsulta.getSubLejAstigDer())) {
+			existingConsulta.setSubLejAstigDer(consultaPatch.getSubLejAstigDer());
+		}
+		if (consultaPatch.getSubLejAstigIzq() != null && !consultaPatch.getSubLejAstigIzq().equals(existingConsulta.getSubLejAstigIzq())) {
+			existingConsulta.setSubLejAstigIzq(consultaPatch.getSubLejAstigIzq());
+		}
+		
+		if (consultaPatch.getSubLejAngDer() != null && !consultaPatch.getSubLejAngDer().equals(existingConsulta.getSubLejAngDer())) {
+			existingConsulta.setSubLejAngDer(consultaPatch.getSubLejAngDer());
+		}
+		if (consultaPatch.getSubLejAngIzq() != null && !consultaPatch.getSubLejAngIzq().equals(existingConsulta.getSubLejAngIzq())) {
+			existingConsulta.setSubLejAngIzq(consultaPatch.getSubLejAngIzq());
+		}
+		
+		if (consultaPatch.getAddDer() != null && !consultaPatch.getAddDer().equals(existingConsulta.getAddDer())) {
+			existingConsulta.setAddDer(consultaPatch.getAddDer());
+		}
+		if (consultaPatch.getAddIzq() != null && !consultaPatch.getAddIzq().equals(existingConsulta.getAddIzq())) {
+			existingConsulta.setAddIzq(consultaPatch.getAddIzq());
+		}
+		
+		if (consultaPatch.getAVDer() != null && !consultaPatch.getAVDer().equals(existingConsulta.getAVDer())) {
+			existingConsulta.setAVDer(consultaPatch.getAVDer());
+		}
+		if (consultaPatch.getAVIzq() != null && !consultaPatch.getAVIzq().equals(existingConsulta.getAVIzq())) {
+			existingConsulta.setAVIzq(consultaPatch.getAVIzq());
+		}
+		
+		if (consultaPatch.getDip() != null && !consultaPatch.getDip().equals(existingConsulta.getDip())) {
+			existingConsulta.setDip(consultaPatch.getDip());
+		}
+		
+		if (consultaPatch.getRx() != null && !consultaPatch.getRx().isBlank() && !consultaPatch.getRx().isEmpty() && !consultaPatch.getRx().equals(existingConsulta.getRx())) {
+			existingConsulta.setRx(consultaPatch.getRx());
+		}
 	}
 	
 }
