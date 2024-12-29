@@ -3,7 +3,6 @@ package com.system.domain.configurations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -23,8 +22,8 @@ public class SecurityConfig {
 	 * application.properties
 	 */
 	// "apiv1/user/**", "apiv1/rol/**",
-	public static final String[] ENDPOINTS_WHITELIST = { "demo/**", "apiv1/auth/**", "apiv1/obra/**",
-	  "apiv1/partitura/**", "apiv1/pdf/**", "apiv1/paypal/**", "apiv1/shopcart/**", "apiv1/optica/**", "apiv1/user/**", "apiv1/rol/**" };
+	public static final String[] ENDPOINTS_WHITELIST = { "/demo/**", "/apiv1/auth/**", "/apiv1/obra/**",
+	  "/apiv1/partitura/**", "/apiv1/pdf/**", "/apiv1/paypal/**", "/apiv1/shopcart/**", "/apiv1/optica/**", "/apiv1/user/**", "/apiv1/rol/**" };
 	
 	@Autowired
 	private JwtAuthenticationFilter jwtAuthorizationFilter;
@@ -33,18 +32,18 @@ public class SecurityConfig {
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		
 		http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()).contentSecurityPolicy(
-		  secPolicy -> secPolicy.policyDirectives("frame-ancestors http://localhost:4200 http://localhost:8081 https://system-i73z.onrender.com https://opticalemus.onrender.com")))
+		  secPolicy -> secPolicy.policyDirectives("frame-ancestors http://localhost:4200 http://localhost:8080 https://system-i73z.onrender.com https://opticalemus.onrender.com")))
 		  
 		  // http.headers(headers -> headers.frameOptions(frameOptions ->
 		  // frameOptions.sameOrigin()))
 		  // http.headers(headers -> headers.frameOptions(frameOptions ->
 		  // frameOptions.disable()))
 		  .csrf(csrf -> csrf.disable())
-		  //.authorizeHttpRequests(auth -> auth.requestMatchers(ENDPOINTS_WHITELIST).permitAll().anyRequest().authenticated())
 		  .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+		  .authorizeHttpRequests(auth -> auth.requestMatchers(ENDPOINTS_WHITELIST).permitAll().anyRequest().authenticated())
 		  .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-		  // .addFilter(jwtAuthorizationFilter)
-		  .httpBasic(Customizer.withDefaults());
+		  //.httpBasic(Customizer.withDefaults())
+		  ;
 		return http.build();
 	}
 	

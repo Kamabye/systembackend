@@ -40,7 +40,6 @@ C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controllers\ShopCartC
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\SecurityConfig.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\interfaces\IShopCartService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\PaypalService.java
-C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controllers\DemoController.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\PDFServiceImp.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\ResourcesService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\postgresql\CartItem.java
@@ -49,6 +48,7 @@ C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\imp\Consulta
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\imp\RolServiceImpJpa.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\interfaces\IObraService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\postgresql\Paciente.java
+C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controllers\KamabyeController.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controllers\PartiturasController.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\repository\postgresql\PartituraRepository.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\imp\PacienteServiceImpJpa.java

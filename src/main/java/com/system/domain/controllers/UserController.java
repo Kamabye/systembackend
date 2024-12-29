@@ -39,13 +39,13 @@ import com.system.domain.models.postgresql.Usuario;
 
 @RestController
 @RequestMapping({ "apiv1/user", "apiv1/user/" })
-@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders =  { "Authorization", "Content-Type" }, exposedHeaders = {})
+@CrossOrigin(origins = { "http://localhost:8080", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders =  { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class UserController {
 	
 	@Autowired
 	private IUserService userService;
 	
-	@PreAuthorize("hasAnyRole('Administrador','USERS_Administrador') OR #id == authentication.principal.id")
+	@PreAuthorize("hasAnyRole('Administrador','USERS_Administrador') OR #idUsuario == authentication.principal.idUsuario")
 	//@PostAuthorize(value = "")
 	@GetMapping("")
 	

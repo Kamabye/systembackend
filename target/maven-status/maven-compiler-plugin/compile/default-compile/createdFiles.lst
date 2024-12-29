@@ -13,6 +13,7 @@ com\system\domain\interfaces\IPartituraService.class
 com\system\domain\repository\postgresql\PartituraRepository.class
 com\system\domain\configurations\SecurityConfig.class
 com\system\domain\services\MePaService.class
+com\system\domain\controllers\KamabyeController.class
 com\system\domain\models\dto\PartituraDTO.class
 com\system\domain\SystemApplication.class
 com\system\domain\controllers\UserController.class
@@ -66,7 +67,6 @@ com\system\domain\models\postgresql\Paciente.class
 com\system\domain\interfaces\IConsultaService.class
 com\system\domain\interfaces\IPacienteService.class
 com\system\domain\services\imp\UserDetailsServiceImp.class
-com\system\domain\controllers\DemoController.class
 com\system\domain\models\postgresql\CartItem.class
 com\system\domain\services\PDFServiceImp.class
 com\system\domain\models\postgresql\Consulta.class

@@ -11,11 +11,8 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -26,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.WebRequest;
 
 import com.system.domain.interfaces.IConsultaService;
 import com.system.domain.interfaces.IPacienteService;
@@ -38,7 +34,7 @@ import jakarta.validation.constraints.Min;
 
 @RestController
 @RequestMapping({ "apiv1/optica", "apiv1/optica/" })
-@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
+@CrossOrigin(origins = { "http://localhost:8080", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class OpticaController {
 	
 	@Autowired
@@ -70,7 +66,7 @@ public class OpticaController {
 					return new ResponseEntity<Page<Paciente>>(pageListaPacientes, HttpStatus.OK);
 				}
 				responseBody.put("mensaje", "No se encontraron resultados que contengan: " + string);
-				return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.NO_CONTENT);
 			}
 			
 			// listaUsuarios = userService.findAll();
@@ -87,19 +83,19 @@ public class OpticaController {
 			}
 			
 			responseBody.put("mensaje", "No se encontraron resultados");
-			return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, HttpStatus.NO_CONTENT);
 			
 		} catch (ConstraintViolationException e) {
 			responseBody.put("mensaje", "La cantidad de resultados por página debe ser mayor a 0");
 			responseBody.put("error", "ConstraintViolationException: "
 			  .concat(e.getMessage().concat(" : ").concat(e.getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 		} catch (EmptyResultDataAccessException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "No se encontraron resultados.");
 			responseBody.put("error", "EmptyResultDataAccessException: "
 			  .concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 		} catch (DataAccessException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "Ha ocurrido un error.");
@@ -134,11 +130,11 @@ public class OpticaController {
 				
 				responseBody.put("mensaje",
 				  "El ID: ".concat(idPacienteString.toString().concat(" no existe en la base de datos!.")));
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 				
 			}
 			responseBody.put("mensaje", "Parámetros nulos");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
@@ -179,7 +175,7 @@ public class OpticaController {
 			}
 			responseBody.put("mensaje",
 			  "El Objeto :".concat(paciente.toString().concat(" no se pudo guardar en la base de datos!.")));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			
 		} catch (DataIntegrityViolationException e) {
 			// e.printStackTrace();
@@ -235,7 +231,7 @@ public class OpticaController {
 			}
 			
 			responseBody.put("mensaje", "El ID: ".concat(paciente.toString().concat(" no existe en la base de datos!.")));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			
 		} catch (DataAccessException e) {
 			// e.printStackTrace();
@@ -284,7 +280,7 @@ public class OpticaController {
 			}
 			
 			responseBody.put("mensaje", "El ID: ".concat(paciente.toString().concat(" no existe en la base de datos!.")));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			
 		} catch (DataAccessException e) {
 			// e.printStackTrace();
@@ -316,7 +312,7 @@ public class OpticaController {
 			}
 			
 			responseBody.put("mensaje", "El ID: " + idUsuario + " no existe en la base de datos");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "Ingrese un ID válido");
@@ -463,7 +459,7 @@ public class OpticaController {
 					
 					responseBody.put("mensaje",
 					  "El ID: ".concat(idConsultaString.toString().concat(" no existe en la base de datos!.")));
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 				}
 			}
 			// List<Usuario> listaUsuarios;
@@ -480,14 +476,14 @@ public class OpticaController {
 			}
 			
 			responseBody.put("mensaje", "No se encontraron resultados");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			
 		} catch (EmptyResultDataAccessException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "No se encontraron resultados.");
 			responseBody.put("error", "EmptyResultDataAccessException: "
 			  .concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 		} catch (DataAccessException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "Ha ocurrido un error.");
@@ -526,11 +522,11 @@ public class OpticaController {
 				
 				responseBody.put("mensaje",
 				  "El ID: ".concat(idPacienteString.toString().concat(" no existe en la base de datos!.")));
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 				
 			}
 			responseBody.put("mensaje", "Parámetros nulos");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
@@ -569,7 +565,7 @@ public class OpticaController {
 			}
 			responseBody.put("mensaje",
 			  "El Objeto :".concat(consulta.toString().concat(" no se pudo guardar en la base de datos!.")));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			
 		} catch (DataIntegrityViolationException e) {
 			// e.printStackTrace();
@@ -617,7 +613,7 @@ public class OpticaController {
 			}
 			
 			responseBody.put("mensaje", "El ID: ".concat(consulta.toString().concat(" no existe en la base de datos!.")));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			
 		} catch (DataAccessException e) {
 			// e.printStackTrace();
@@ -659,7 +655,7 @@ public class OpticaController {
 			}
 			
 			responseBody.put("mensaje", "El ID: ".concat(consulta.getIdConsulta().toString().concat(" no existe en la base de datos!.")));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			
 		} catch (DataAccessException e) {
 			// e.printStackTrace();
@@ -691,7 +687,7 @@ public class OpticaController {
 			}
 			
 			responseBody.put("mensaje", "El ID: " + idConsulta + " no existe en la base de datos");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 		} catch (NumberFormatException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "Ingrese un ID válido");
@@ -739,19 +735,19 @@ public class OpticaController {
 					
 					responseBody.put("mensaje",
 					  "El ID: ".concat(idConsultaString.toString().concat(" no existe en la base de datos!.")));
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 				}
 			}
 			
 			responseBody.put("mensaje", "No se encontraron resultados");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			
 		} catch (EmptyResultDataAccessException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "No se encontraron resultados.");
 			responseBody.put("error", "EmptyResultDataAccessException: "
 			  .concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 		} catch (DataAccessException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "Ha ocurrido un error.");
@@ -766,24 +762,6 @@ public class OpticaController {
 		} finally {
 			
 		}
-	}
-	
-	@ExceptionHandler({ AccessDeniedException.class })
-	public ResponseEntity<?> handleAccessDeniedException() {
-		return new ResponseEntity<>("Acceso Denegado: El usuario no tiene los permisos para este recurso", HttpStatus.UNAUTHORIZED);
-	}
-	
-	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-	public ResponseEntity<?> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex, WebRequest request) {
-		String message = "Content-Type not supported: " + ex.getContentType();
-		return new ResponseEntity<>(message, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
-	}
-	
-	@ExceptionHandler(ConstraintViolationException.class)
-	public ResponseEntity<?> handleConstraintViolation(ConstraintViolationException ex) {
-		// Build an error response with details about the violated constraint(s)
-		String message = "Content-Type not supported: " + ex.getConstraintViolations().toString();
-		return new ResponseEntity<>(message, HttpStatus.BAD_REQUEST);
 	}
 	
 }

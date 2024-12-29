@@ -21,11 +21,11 @@ public class AuthenticationByJwtService {
 		Authentication authentication = authenticationManager
 				.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 		
-		System.out.println("JwtService.authenticate : " + authentication.toString());
-		
 		if(authentication.isAuthenticated()) {
+			System.out.println("JwtService.authenticate : " + authentication.toString());
 			return jwtService.generateToken((UserDetails) authentication.getPrincipal());
 		}
+		System.out.println("No autenticado");
 		return null;
 	}
 }
