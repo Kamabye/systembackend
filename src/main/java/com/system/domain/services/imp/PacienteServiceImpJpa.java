@@ -42,9 +42,10 @@ public class PacienteServiceImpJpa implements IPacienteService {
 		// pacienteRepo.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(order3)));
 		
 		Sort sort = Sort.by(
-		  Sort.Order.asc("nombres"),
-		  Sort.Order.asc("primerApellido"),
-		  Sort.Order.asc("segundoApellido"));
+				Sort.Order.asc("nombres"),
+				Sort.Order.asc("segundoApellido"),
+				Sort.Order.asc("primerApellido")
+		  );
 		
 		Page<Paciente> pagePacientes = pacienteRepo.findAll(PageRequest.of(pageNumber, pageSize, sort));
 		
@@ -67,9 +68,13 @@ public class PacienteServiceImpJpa implements IPacienteService {
 	@Override
 	public Page<Paciente> findByString(int pageNumber, int pageSize, String string) {
 		
-		Sort.Order order = new Sort.Order(Sort.Direction.ASC, "nombres");
+		Sort sort = Sort.by(
+				Sort.Order.asc("nombres"),
+				Sort.Order.asc("primerApellido"),
+				Sort.Order.asc("segundoApellido")
+		  );
 		
-		return pacienteRepo.findByNombresContainingIgnoreCaseOrPrimerApellidoContainingIgnoreCaseOrSegundoApellidoContainingIgnoreCaseOrderByNombresAsc(string, string, string, PageRequest.of(pageNumber, pageSize, Sort.by(order)));
+		return pacienteRepo.findByNombresContainingIgnoreCaseOrPrimerApellidoContainingIgnoreCaseOrSegundoApellidoContainingIgnoreCaseOrderByNombresAsc(string, string, string, PageRequest.of(pageNumber, pageSize, sort));
 	}
 	
 	@Override
