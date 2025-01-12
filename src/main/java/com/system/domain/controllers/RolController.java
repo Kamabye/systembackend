@@ -26,7 +26,7 @@ import com.system.domain.models.postgresql.Rol;
 
 @RestController
 @RequestMapping({ "apiv1/rol", "apiv1/rol/" })
-@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders =  { "Authorization", "Content-Type" }, exposedHeaders = {})
+@CrossOrigin(origins = { "http://localhost:8080", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders =  { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class RolController {
 
 	@Autowired
@@ -47,14 +47,14 @@ public class RolController {
 			}
 
 			responseBody.put("mensaje", "No se encontraron resultados");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 
 		} catch (EmptyResultDataAccessException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "No se encontraron resultados.");
 			responseBody.put("error", "EmptyResultDataAccessException: "
 					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 		} catch (DataAccessException e) {
 			// e.printStackTrace();
 			responseBody.put("mensaje", "Ha ocurrido un error.");

@@ -13,46 +13,54 @@ import com.paypal.core.PayPalHttpClient;
 
 @Configuration
 public class PaypalConfig {
-
+	
 	@Value("${paypal.client-id}")
-	private String productionClientId;
+	private String liveClientID;
 	@Value("${paypal.client-secret}")
-	private String productionClientSecret;
-
+	private String liveClientSecret;
+	@Value("${paypal.baseUrlLive}")
+	private String baseUrlLive;
+	
 	@Value("${paypal.client-id.sandbox}")
 	private String sandboxClientId;
 	@Value("${paypal.client-secret.sandbox}")
 	private String sandboxClientSecret;
-
+	@Value("${paypal.baseUrlSandobox.sandbox}")
+	private String baseUrlSandobox;
+	
 	@Value("${paypal.mode}")
 	private String mode;
-
+	
+	@Bean
+	public APIContext apiContextPaypal() {
+		
+		String clientId = (mode.equals("sandbox")) ? sandboxClientId : liveClientID;
+		String clientSecret = (mode.equals("sandbox")) ? sandboxClientSecret : liveClientSecret;
+		
+		APIContext context = new APIContext(clientId, clientSecret, mode, paypalSdkConfig());
+		
+		return context;
+		
+	}
+	
 	@Bean
 	public Map<String, String> paypalSdkConfig() {
 		Map<String, String> configMap = new HashMap<>();
 		configMap.put("mode", mode);
 		return configMap;
 	}
-
-	@Bean
-	public APIContext apiContextPaypal() {
-
-		String clientId = (mode.equals("sandbox")) ? sandboxClientId : productionClientId;
-		String clientSecret = (mode.equals("sandbox")) ? sandboxClientSecret : productionClientSecret;
-
-		APIContext context = new APIContext(clientId, clientSecret, mode, paypalSdkConfig());
-
-		return context;
-
-	}
-
+	
 	@Bean
 	public PayPalHttpClient getPaypalClient() {
 		
-		String clientId = (mode.equals("sandbox")) ? sandboxClientId : productionClientId;
-		String clientSecret = (mode.equals("sandbox")) ? sandboxClientSecret : productionClientSecret;
+		String clientId = (mode.equals("sandbox")) ? sandboxClientId : liveClientID;
+		String clientSecret = (mode.equals("sandbox")) ? sandboxClientSecret : liveClientSecret;
 		
-		return new PayPalHttpClient(new PayPalEnvironment.Sandbox(clientId, clientSecret));
+		if (mode.equals("sandbox")) {
+			return new PayPalHttpClient(new PayPalEnvironment.Sandbox(clientId, clientSecret));
+		}
+		return new PayPalHttpClient(new PayPalEnvironment.Live(clientId, clientSecret));
+		
 	}
-
+	
 }

@@ -2,6 +2,7 @@ package com.system.domain.models.postgresql;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -16,6 +17,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -49,9 +51,9 @@ public class Consulta extends Auditable implements Serializable {
 	 * Medidas de Autorefractometro
 	 */
 	// Esferas
-	//@Column(precision = 10, scale = 2)
-	//@Column
-	//@NumberFormat(pattern = "#.##")
+	// @Column(precision = 10, scale = 2)
+	// @Column
+	// @NumberFormat(pattern = "#.##")
 	@Column(precision = 10, scale = 2)
 	private BigDecimal totalDer;
 	@Column(precision = 10, scale = 2)
@@ -102,7 +104,7 @@ public class Consulta extends Auditable implements Serializable {
 	@Column
 	private Integer AVIzq;
 	
-	//Distancia Inter Pupilar
+	// Distancia Inter Pupilar
 	@Column
 	private Integer dip;
 	
@@ -112,12 +114,12 @@ public class Consulta extends Auditable implements Serializable {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	// @JsonIgnore
-	//@JsonBackReference
+	// @JsonBackReference
 	@JoinColumn(name = "idPaciente")
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Paciente paciente;
 	
-	//@Transient
+	// @Transient
 	public String getAVDerSnellen() {
 		String snellen = "";
 		switch (AVDer) {
@@ -158,7 +160,7 @@ public class Consulta extends Auditable implements Serializable {
 		return snellen;
 	}
 	
-	//@Transient
+	// @Transient
 	public String getAVIzqSnellen() {
 		String snellen = "";
 		switch (AVIzq) {
@@ -197,6 +199,14 @@ public class Consulta extends Auditable implements Serializable {
 				break;
 		}
 		return snellen;
+	}
+	
+	@PrePersist
+	private void onCreate() {
+		LocalDateTime fecha = LocalDateTime.now();
+		setCreatedAt(fecha);
+		setModifiedAt(fecha);
+		
 	}
 	
 }

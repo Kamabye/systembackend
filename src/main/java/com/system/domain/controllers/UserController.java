@@ -50,7 +50,7 @@ public class UserController {
 	@GetMapping("")
 	
 	public ResponseEntity<?> users(@RequestParam(defaultValue = "0") int pageNumber,
-	  @RequestParam(defaultValue = "2") int pageSize) {
+	  @RequestParam(defaultValue = "10") int pageSize) {
 		Map<String, Object> responseBody = new HashMap<>();
 		// List<Usuario> listaUsuarios;
 		Page<Usuario> pageListaUsuarios;

@@ -181,14 +181,6 @@ public class PacienteServiceImpJpa implements IPacienteService {
 			existingPaciente.setSegundoApellido(pacientePatch.getSegundoApellido());
 		}
 		
-		if (pacientePatch.getNombre() != null && !pacientePatch.getNombre().isBlank() && !pacientePatch.getNombre().isEmpty() && !pacientePatch.getNombre().equals(existingPaciente.getNombre())) {
-			existingPaciente.setNombre(pacientePatch.getNombre());
-		}
-		
-		if (pacientePatch.getApellidos() != null && !pacientePatch.getApellidos().isBlank() && !pacientePatch.getApellidos().isEmpty() && !pacientePatch.getApellidos().equals(existingPaciente.getApellidos())) {
-			existingPaciente.setApellidos(pacientePatch.getApellidos());
-		}
-		
 		if (pacientePatch.getEdad() != null && pacientePatch.getEdad() > 0 && !pacientePatch.getEdad().equals(existingPaciente.getEdad())) {
 			existingPaciente.setEdad(pacientePatch.getEdad());
 		}

@@ -50,12 +50,12 @@ public class Paciente extends Auditable implements Serializable {
 	private Long idPaciente;
 	
 	// @Column(nullable = false)
+	@Column
 	private String nombres;
+	@Column
 	private String primerApellido;
+	@Column
 	private String segundoApellido;
-	
-	private String nombre;
-	private String apellidos;
 	
 	@Column
 	private Integer edad;

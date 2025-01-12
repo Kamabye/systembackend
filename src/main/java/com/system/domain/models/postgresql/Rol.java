@@ -37,7 +37,7 @@ import lombok.ToString;
 @AllArgsConstructor
 //@EqualsAndHashCode(exclude = "roles")
 //@ToString(exclude = "roles")
-@JsonIdentityInfo(scope = Rol.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "idRol")
+//@JsonIdentityInfo(scope = Rol.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "idRol")
 //@JsonIgnoreProperties("usuarios")
 public class Rol extends Auditable implements Serializable {
 
@@ -57,7 +57,7 @@ public class Rol extends Auditable implements Serializable {
 	// @EqualsAndHashCode.Exclude
 	// @ToString.Exclude
 	//@JsonBackReference
-	//@JsonIgnore
+	@JsonIgnore
 	//@JsonIgnoreProperties("roles")
 	private Set<Usuario> usuarios = new HashSet<>();
 

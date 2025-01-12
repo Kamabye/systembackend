@@ -68,10 +68,16 @@ public class Usuario extends Auditable implements Serializable {
 	
 	@Column(nullable = false)
 	private String nombres;
+	
+	@Column
 	private String primerApellido;
+	@Column
 	private String segundoApellido;
+	@Column
 	private Integer dia;
+	@Column
 	private Integer mes;
+	@Column
 	private Integer anio;
 	
 	// @Basic(fetch = FetchType.EAGER)
@@ -124,7 +130,7 @@ public class Usuario extends Auditable implements Serializable {
 	
 	// @EqualsAndHashCode.Exclude
 	// @ToString.Exclude
-	@JsonManagedReference
+		//@JsonManagedReference
 	// @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	// @JsonIgnoreProperties("usuarios")
 	private Set<Rol> roles = new HashSet<>();

@@ -31,8 +31,9 @@ public class SecurityConfig {
 	@Bean
 	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		
-		http.headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable()).contentSecurityPolicy(
-		  secPolicy -> secPolicy.policyDirectives("frame-ancestors http://localhost:4200 http://localhost:8080 https://system-i73z.onrender.com https://opticalemus.onrender.com")))
+		http
+		  .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable())
+		    .contentSecurityPolicy(secPolicy -> secPolicy.policyDirectives("default-src 'self'; frame-ancestors https://system-i73z.onrender.com https://opticalemus.onrender.com http://localhost:4200 http://localhost:8080")))
 		  
 		  // http.headers(headers -> headers.frameOptions(frameOptions ->
 		  // frameOptions.sameOrigin()))
@@ -42,8 +43,8 @@ public class SecurityConfig {
 		  .sessionManagement(sess -> sess.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
 		  .authorizeHttpRequests(auth -> auth.requestMatchers(ENDPOINTS_WHITELIST).permitAll().anyRequest().authenticated())
 		  .addFilterBefore(jwtAuthorizationFilter, UsernamePasswordAuthenticationFilter.class)
-		  //.httpBasic(Customizer.withDefaults())
-		  ;
+		// .httpBasic(Customizer.withDefaults())
+		;
 		return http.build();
 	}
 	
