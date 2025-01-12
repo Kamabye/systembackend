@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.paypal.api.payments.Links;
 import com.paypal.api.payments.Payment;
 import com.paypal.base.rest.PayPalRESTException;
+import com.system.domain.models.PayPal.OrderRequestPayPalV2;
 import com.system.domain.models.dto.PaymentPayPalDTO;
 import com.system.domain.models.dto.ProductoDTOPayPal;
 import com.system.domain.services.PayPalServiceV2;
@@ -42,19 +43,17 @@ public class PayPalController {
 	private PayPalServiceV2 paypalServicev2;
 	
 	@PostMapping("/create-order")
-	public Mono<?> createOrder(@RequestParam double amount, @RequestParam String currency, @RequestParam String return_url) {
+	public Mono<?> createOrder(@RequestBody OrderRequestPayPalV2 orderRequest) {
 		
 		Map<String, Object> responseBody = new HashMap<>();
 		try {
-			return paypalServicev2.createOrder(amount, currency, return_url)
+			return paypalServicev2.createOrder(orderRequest)
 			  .map(order -> ResponseEntity.status(HttpStatus.CREATED).body(order))
 			  .onErrorResume(e -> {
-      //logger.error("Error en el controlador al crear la orden", e);
-      return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
-  })
-			  ;
-		}
-		catch (Exception e){
+				  // logger.error("Error en el controlador al crear la orden", e);
+				  return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+			  });
+		} catch (Exception e) {
 			e.printStackTrace();
 			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "DataAccessException: "
@@ -74,8 +73,7 @@ public class PayPalController {
 			return paypalServicev2.captureOrder(orderId)
 			  .map(status -> ResponseEntity.ok(status))
 			  .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()));
-		}
-		catch (Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "DataAccessException: "
