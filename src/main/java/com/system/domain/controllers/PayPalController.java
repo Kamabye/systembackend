@@ -72,7 +72,34 @@ public class PayPalController {
 		try {
 			return paypalServicev2.captureOrder(orderId)
 			  .map(status -> ResponseEntity.ok(status))
-			  .onErrorResume(e -> Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build()));
+			  .onErrorResume(e -> {
+			  	e.printStackTrace();
+			  return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+		}
+			  );
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMessage().concat(" : ").concat(e.getMessage())));
+			
+			return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+		}
+	}
+	
+	@GetMapping("/details-order")
+	public Mono<?> detailsOrder(@RequestParam String orderId) {
+		
+		Map<String, Object> responseBody = new HashMap<>();
+		
+		try {
+			return paypalServicev2.detailsOrder(orderId)
+			  .map(status -> ResponseEntity.ok(status))
+			  .onErrorResume(e -> {
+			  	e.printStackTrace();
+			  return Mono.just(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build());
+		}
+			  );
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBody.put("mensaje", "Ha ocurrido un error.");

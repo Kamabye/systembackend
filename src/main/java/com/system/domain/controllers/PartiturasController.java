@@ -1,6 +1,7 @@
 package com.system.domain.controllers;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -17,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -37,7 +39,7 @@ import com.system.domain.models.postgresql.Partitura;
 
 @RestController
 @RequestMapping({ "apiv1/partitura", "apiv1/partitura/" })
-@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders =  { "Authorization", "Content-Type" }, exposedHeaders = {})
+@CrossOrigin(origins = { "http://localhost:8081", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class PartiturasController {
 	
 	@Autowired
@@ -155,6 +157,68 @@ public class PartiturasController {
 			}
 			
 			responseBody.put("mensaje", "Debe ingresar todos los campos solicitados");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+			
+		} catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (HibernateException e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos HibernateException");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (DataAccessException e) {
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (IOException e) {
+			responseBody.put("mensaje", "Error en la lectura del archivo PDF");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			
+		}
+	}
+	
+	@PatchMapping("/upload/{idPartitura}")
+	public ResponseEntity<?> uploadPartitura(
+	  @PathVariable(name = "idPartitura", required = true) String idPartituraString,
+	  @RequestParam(name = "partituraPDF", required = true) MultipartFile partituraPDF) {
+		
+		Map<String, Object> responseBody = new HashMap<>();
+		
+		try (InputStream inputStream = partituraPDF.getInputStream()) {
+			if (pdfService.isPDFValid(partituraPDF)) {
+				Long idPartitura = Long.valueOf(idPartituraString);
+				
+				Partitura partitura = partituraService.findById(idPartitura);
+				
+				byte[] vistaPrevia = pdfService.ponerMarcaAgua(partituraPDF);
+				partitura.setPartituraPDFFromInputStream(inputStream);
+				partitura.setVistaPreviaPDF(vistaPrevia);
+				
+				Partitura partituraSave = partituraService.save(partitura);
+				
+				ByteArrayResource resource = new ByteArrayResource(partituraSave.getVistaPreviaPDF());
+				
+				HttpHeaders headers = new HttpHeaders();
+				
+				headers.setContentType(MediaType.APPLICATION_PDF);
+				headers.add("Content-Disposition",
+				  "inline; filename=" + partituraSave.getObra().getNombre() + "_" + partituraSave.getInstrumento() + ".pdf");
+				headers.setContentLength(resource.contentLength());
+				
+				return ResponseEntity.ok().headers(headers).body(resource);
+				
+			}
+			responseBody.put("mensaje", "Partitura inválida");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 			
 		} catch (NumberFormatException e) {

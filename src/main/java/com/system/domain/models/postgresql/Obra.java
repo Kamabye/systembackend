@@ -82,15 +82,20 @@ public class Obra extends Auditable implements Serializable {
 	@Column
 	private String embedVideo;
 	
+	@Column
 	@Lob
 	@Basic(fetch = FetchType.LAZY)
 	@JsonIgnore
 	private byte[] audio;
 	
+	@Column
 	@OneToMany(mappedBy = "obra", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
 	// @JsonManagedReference
 	// @JsonIgnore
 	private Set<Partitura> partituras;
+	
+	@Column
+	private Long idUsuario;
 	
 	public void addPartitura(Partitura partitura) {
 		if (partituras == null) {

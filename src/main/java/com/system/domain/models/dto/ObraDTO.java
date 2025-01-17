@@ -56,4 +56,17 @@ public class ObraDTO {
 		
 	}
 	
+	public ObraDTO(Long idObra, String nombre, String compositor, String arreglista, String letrista, String genero,
+	  BigDecimal precio) {
+		
+		this.idObra = idObra;
+		this.nombre = nombre;
+		this.compositor = compositor;
+		this.arreglista = arreglista;
+		this.letrista = letrista;
+		this.genero = genero;
+		this.precio = precio;
+		
+	}
+	
 }

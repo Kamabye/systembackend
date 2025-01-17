@@ -1,13 +1,12 @@
 package com.system.domain.interfaces;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
-import java.util.Set;
 
 import org.springframework.web.multipart.MultipartFile;
 
 import com.system.domain.models.dto.LobDTO;
-import com.system.domain.models.postgresql.Obra;
 
 public interface IPDFService {
 
@@ -27,6 +26,7 @@ public interface IPDFService {
 
 	byte[] unirPDF(List<LobDTO> partituras);
 
+	byte[] pdfToPng(MultipartFile pdfFile) throws IOException;
 	
 
 }

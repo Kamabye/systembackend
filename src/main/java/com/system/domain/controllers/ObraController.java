@@ -1,6 +1,7 @@
 package com.system.domain.controllers;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
@@ -20,6 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -451,6 +453,50 @@ public class ObraController {
 		
 	}
 	
+	@PatchMapping("/upload/{idObra}")
+	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
+	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
+	public ResponseEntity<?> saveObra(
+	  @PathVariable(name = "idObra", required = true) String idObraString,
+	  @RequestParam MultipartFile audioFile) {
+		Map<String, Object> responseBody = new HashMap<>();
+		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
+		
+		try (InputStream inputStream = audioFile.getInputStream()) {
+			
+			Long idObra = Long.valueOf(idObraString);
+			
+			Obra obra = obraService.findById(idObra);
+			
+			obra.setAudioFromInputStream(inputStream);
+			
+			Obra obrasave = obraService.save(obra);
+			
+			return new ResponseEntity<Obra>(obrasave, null, HttpStatus.OK);
+			
+		} catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (MultipartException e) {
+			responseBody.put("mensaje", "Error al realizar la inserción en la base de datos MultipartException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (DataAccessException e) {
+			responseBody.put("mensaje", "Error al realizar la inserción en la base de datos DataAccessException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			
+		}
+	}
+	
 	@DeleteMapping("{idObra}")
 	public ResponseEntity<?> deleteObraByIDUrl(@PathVariable(name = "idObra", required = true) String idObraString) {
 		Map<String, Object> responseBody = new HashMap<>();
@@ -524,6 +570,75 @@ public class ObraController {
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			
+		}
+		
+	}
+	
+	@PutMapping("/upload/{idObra}")
+	public ResponseEntity<?> uploadAudio(@PathVariable(name = "idObra", required = true) String idObraString,
+	  @RequestPart(name = "audio", required = false) MultipartFile audio) {
+		Map<String, Object> responseBody = new HashMap<>();
+		
+		Obra obrasave;
+		Obra obratemp;
+		try {
+			if (idObraString != null) {
+				
+				Long idObra = Long.valueOf(idObraString);
+				
+				obratemp = obraService.findById(idObra);
+				if (audio != null) {
+					obratemp.setAudioFromInputStream(audio.getInputStream());
+				}
+				
+				obrasave = obraService.save(obratemp);
+				ObraDTO obraDTOupdate = obraService.jpqlfindByIdObra(obrasave.getIdObra());
+				// responseBody.put("mensaje", "La obra : " + idObra + " ha sido actualizado con
+				// éxito");
+				// responseBody.put("obraDTO", obraDTO);
+				// return new ResponseEntity<Map<String, Object>>(responseBody, null,
+				// HttpStatus.CREATED);
+				return new ResponseEntity<ObraDTO>(obraDTOupdate, null, HttpStatus.CREATED);
+			}
+			responseBody.put("mensaje", "Parámetros inválidos nulos");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+			
+		} catch (
+		
+		NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (InvalidContentTypeException e) {
+			responseBody.put("mensaje", "Error en el multipart form InvalidContentTypeException");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (MultipartException e) {
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos MultipartException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (DataAccessException e) {
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (FileSizeLimitExceededException e) {
+			responseBody.put("mensaje",
+			  "Error al guardar en la base de datos. Límite excedido FileSizeLimitExceededException");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (IOException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "Ha ocurrido un error.");
+			responseBody.put("error", "IOException: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
 			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
 			responseBody.put("error", e.getMessage().concat(" : "));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
