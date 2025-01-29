@@ -29,13 +29,13 @@ public class ObraDTO {
 	
 	private BigDecimal precio;
 	
-	private LocalDateTime createdAt;
-	
-	private LocalDateTime modifiedAt;
-	
 	private String embedAudio;
 	
 	private String embedVideo;
+	
+	private LocalDateTime createdAt;
+	
+	private LocalDateTime modifiedAt;
 	
 	private Set<PartituraDTO> partituras;
 	
@@ -53,19 +53,6 @@ public class ObraDTO {
 		this.embedVideo = embedVideo;
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
-		
-	}
-	
-	public ObraDTO(Long idObra, String nombre, String compositor, String arreglista, String letrista, String genero,
-	  BigDecimal precio) {
-		
-		this.idObra = idObra;
-		this.nombre = nombre;
-		this.compositor = compositor;
-		this.arreglista = arreglista;
-		this.letrista = letrista;
-		this.genero = genero;
-		this.precio = precio;
 		
 	}
 	

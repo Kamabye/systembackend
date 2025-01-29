@@ -2,11 +2,8 @@ package com.system.domain.controllers;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
@@ -14,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -39,9 +37,11 @@ import com.system.domain.interfaces.IObraService;
 import com.system.domain.models.dto.ObraDTO;
 import com.system.domain.models.postgresql.Obra;
 
+import jakarta.validation.constraints.Min;
+
 @RestController
 @RequestMapping({ "apiv1/obra", "apiv1/obra/" })
-@CrossOrigin(origins = { "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/", "http://localhost:4200", "http://localhost:8080" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
+@CrossOrigin(origins = { "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/", "http://localhost:4200", "http://localhost:8080", "http://localhost:4200/", "http://localhost:8080/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class ObraController {
 	
 	@Autowired
@@ -55,7 +55,10 @@ public class ObraController {
 	@GetMapping("")
 	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
 	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
-	public ResponseEntity<?> findAllObras(@RequestParam(name = "idObra", required = false) String idObraString,
+	public ResponseEntity<?> findAllObras(
+	  @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
+	  @RequestParam(name = "pageSize", defaultValue = "10") @Min(1) Integer pageSize,
+	  @RequestParam(name = "string", required = false, defaultValue = "") String string,
 	  @RequestParam(name = "nombre", required = false) String nombre,
 	  @RequestParam(name = "compositor", required = false) String compositor,
 	  @RequestParam(name = "arreglsita", required = false) String arreglista,
@@ -65,104 +68,29 @@ public class ObraController {
 		Map<String, Object> responseBody = new HashMap<>();
 		
 		try {
-			/**
-			 * Si el idObraString no es null se debe validar que sea un número válido
-			 */
-			if (idObraString != null) {
-				
-				Long idObra = Long.valueOf(idObraString);
-				
-				ObraDTO obra = obraService.jpqlfindByIdObra(idObra);
-				
-				if (obra != null) {
-					// responseBody.put("obra", obra);
-					// return new ResponseEntity<Map<String, Object>>(responseBody, null,
-					// HttpStatus.OK);
-					return new ResponseEntity<ObraDTO>(obra, null, HttpStatus.OK);
-					
-				}
-				responseBody.put("mensaje",
-				  "El ID: ".concat(idObraString.toString().concat(" no existe en la base de datos!.")));
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
-				
+			Page<ObraDTO> obrasDTO;
+			
+			if (string != null && !string.isEmpty() && !string.isBlank()) {
+				obrasDTO = obraService.jpqlfindByStringDTO(pageNumber, pageSize, string);
+				System.out.println("Se va a retornar obras");
+				return new ResponseEntity<Page<ObraDTO>>(obrasDTO, null, HttpStatus.OK);
 			} else {
-				/**
-				 * Si el idObraString es null, se evalua si algún parámetro esta presente y se
-				 * hace la busqueda
-				 */
-				
-				Set<ObraDTO> obrasUnidas = new TreeSet<>(Comparator.comparing(ObraDTO::getNombre));
-				int parametrosNoNulos = 0;
-				
-				if (nombre != null) {
-					parametrosNoNulos++;
-					obrasUnidas.addAll(obraService.jpqlfindByNombre(nombre));
+				obrasDTO = obraService.jpqlfindAllDTO(pageNumber, pageSize);
+				if (!obrasDTO.isEmpty() && obrasDTO.hasContent() && obrasDTO.getSize() > 0 && obrasDTO.getTotalElements() > 0) {
+					return new ResponseEntity<Page<ObraDTO>>(obrasDTO, null, HttpStatus.OK);
 				}
-				
-				if (compositor != null) {
-					parametrosNoNulos++;
-					obrasUnidas.addAll(obraService.jpqlfindByCompositor(compositor));
-				}
-				
-				if (arreglista != null) {
-					parametrosNoNulos++;
-					obrasUnidas.addAll(obraService.jpqlfindByArreglista(arreglista));
-				}
-				
-				if (letrista != null) {
-					parametrosNoNulos++;
-					obrasUnidas.addAll(obraService.jpqlfindByLetrista(letrista));
-					
-				}
-				
-				if (genero != null) {
-					parametrosNoNulos++;
-					obrasUnidas.addAll(obraService.jpqlfindByGenero(genero));
-				}
-				if (parametrosNoNulos >= 1) {
-					if (!obrasUnidas.isEmpty()) {
-						// responseBody.put("obrasUnidas", obrasUnidas);
-						// return new ResponseEntity<Map<String, Object>>(responseBody, null,
-						// HttpStatus.OK);
-						return new ResponseEntity<Set<ObraDTO>>(obrasUnidas, null, HttpStatus.OK);
-					}
-					responseBody.put("mensaje", "Sin datos encontrados con los parámetros ingresados");
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
-					
-				} else {
-					// Al final si ningún parámetro existe o es válido, se cargan todas las obras
-					// List<Obra> listaObras = obrasService.findAll();
-					obrasUnidas = obraService.jpqlfindAll();
-					if (obrasUnidas != null && obrasUnidas.size() > 0 && !obrasUnidas.isEmpty()) {
-						System.out.println("Se encontraron obras");
-						// responseBody.put("mensaje", "Obras encontradas");
-						// responseBody.put("obras", obrasUnidas);
-						// return new ResponseEntity<Map<String, Object>>(responseBody, null,
-						// HttpStatus.OK);
-						return new ResponseEntity<Set<ObraDTO>>(obrasUnidas, null, HttpStatus.OK);
-					}
-					// System.out.println("No hay obras");
-					responseBody.put("mensaje", "Sin datos encontrados en la base de datos");
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
-				}
-				
+				return new ResponseEntity<>(null, null, HttpStatus.NO_CONTENT);
 			}
 			
 		} catch (NumberFormatException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ingrese un ID válido");
 			responseBody.put("error",
 			  "NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "DataAccessException: "
 			  .concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {

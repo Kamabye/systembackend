@@ -17,6 +17,9 @@
 	<properties>
 		<java.version>17</java.version>
 	</properties>
+	<!-- Espeficica el tipo de empaquetado JAR, WAR, EXE, ZIP -->
+	<packaging>jar</packaging>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -123,7 +126,7 @@
 			<artifactId>pdfbox</artifactId>
 			<version>3.0.3</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
@@ -202,10 +205,38 @@
 					<source>1.8</source>
 					<target>1.8</target>
 					<verbose>true</verbose>
+
+					<!-- Nombre punto de entrada -->
+
+					<!--
+						<archive>
+						<manifest>
+							<mainClass>com.ejemplo.MiClasePrincipal</mainClass>
+						</manifest>
+					</archive>
+            		 -->
+
+
 				</configuration>
 			</plugin>
 
 		</plugins>
+
+		<!-- Nombre del archivo JAR-->
+		<!-- <finalName>mi-aplicacion-personalizada</finalName> -->
+
+
+		<!-- Excluir archivos en el empaquetado-->
+
+		<!--
+			 <resources>
+			<exclude>
+				<pattern>**/logback-test.xml</pattern>
+			</exclude>
+		</resources>
+		 -->
+
+
 	</build>
 
 </project>

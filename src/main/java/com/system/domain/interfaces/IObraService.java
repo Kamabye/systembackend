@@ -38,7 +38,7 @@ public interface IObraService {
 
 	List<Obra> findByGenero(String genero);
 	
-	Set<ObraDTO> jpqlfindAll();
+	Page<ObraDTO> jpqlfindAllDTO(int pageNumber, int pageSize);
 	
 	ObraDTO jpqlfindByIdObra(Long idObra);
 	
@@ -51,5 +51,9 @@ public interface IObraService {
 	Set<ObraDTO> jpqlfindByLetrista(String letrista);
 
 	Set<ObraDTO> jpqlfindByGenero(String genero);
+	
+	Page<ObraDTO> jpqlfindByString(int pageNumber, int pageSize, String string);
+	
+	Page<ObraDTO> jpqlfindByStringDTO(int pageNumber, int pageSize, String string);
 
 }
