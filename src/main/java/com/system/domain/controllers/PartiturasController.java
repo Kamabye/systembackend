@@ -257,8 +257,9 @@ public class PartiturasController {
 				Partitura partitura = partituraService.findById(idPartitura);
 				
 				byte[] vistaPrevia = pdfService.ponerMarcaAgua(inputStream);
-				partitura.setPartituraPDFFromInputStream(inputStream);
 				partitura.setVistaPreviaPDF(vistaPrevia);
+				partitura.setPartituraPDFFromInputStream(inputStream);
+				
 				
 				PartituraDTO partituraSave = partituraService.saveDTO(partitura);
 				
