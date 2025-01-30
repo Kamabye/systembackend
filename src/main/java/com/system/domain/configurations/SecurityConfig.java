@@ -33,7 +33,7 @@ public class SecurityConfig {
 		
 		http
 		  .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.disable())
-		    .contentSecurityPolicy(secPolicy -> secPolicy.policyDirectives("default-src 'self'; frame-ancestors https://system-i73z.onrender.com https://opticalemus.onrender.com http://localhost:4200 http://localhost:8080")))
+		    .contentSecurityPolicy(secPolicy -> secPolicy.policyDirectives("default-src 'self'; frame-ancestors https://system-i73z.onrender.com https://opticalemus.onrender.com https://kamabyeapp.onrender.com http://localhost:4200 http://localhost:8080")))
 		  
 		  // http.headers(headers -> headers.frameOptions(frameOptions ->
 		  // frameOptions.sameOrigin()))
