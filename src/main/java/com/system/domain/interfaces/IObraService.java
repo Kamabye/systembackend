@@ -11,6 +11,8 @@ import com.system.domain.models.postgresql.Obra;
 public interface IObraService {
 
 	Obra save(Obra obra);
+	
+	ObraDTO saveDTO(Obra obra);
 
 	List<Obra> saveAll(List<Obra> obras);
 

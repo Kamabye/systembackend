@@ -11,6 +11,7 @@ import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataAccessException;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -22,10 +23,12 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.system.domain.interfaces.IObraService;
@@ -89,8 +92,61 @@ public class PartiturasController {
 		
 	}
 	
-	@PostMapping("")
-	public ResponseEntity<?> uploadPartitura(
+	@PostMapping("{idObra}")
+	public ResponseEntity<?> savePartitura(
+			@RequestBody Partitura partitura,
+			@PathVariable(name = "idObra", required = true) String idObraString) {
+		Map<String, Object> responseBody = new HashMap<>();
+		
+		try {
+			Long idObra = Long.valueOf(idObraString);
+			
+			Obra obra = new Obra();
+			obra.setIdObra(idObra);
+			
+			partitura.setObra(obra);
+			
+			PartituraDTO partituraSave = partituraService.saveDTO(partitura);
+			
+			if (partituraSave != null) {
+				return new ResponseEntity<PartituraDTO>(partituraSave, null, HttpStatus.CREATED);
+			}
+			
+			responseBody.put("mensaje",
+			  "La Partitura :".concat(partitura.toString().concat(" no se pudo guardar en la base de datos!.")));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+			
+		} catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (MultipartException e) {
+			responseBody.put("mensaje", "Error al realizar la inserción en la base de datos MultipartException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (DataIntegrityViolationException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El Objeto : ".concat(partitura.getInstrumento().concat(" ya existe en la base de datos")));
+			responseBody.put("error", "DataIntegrityViolationException: "
+			  .concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (DataAccessException e) {
+			responseBody.put("mensaje", "Error al realizar la inserción en la base de datos DataAccessException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+		}
+		
+	}
+	
+	@PatchMapping("patch2")
+	public ResponseEntity<?> uploadPartitura2(
 	  // @RequestPart(name = "partituraPDF", required = false) MultipartFile
 	  // partituraPDF,
 	  @RequestParam(name = "partituraPDF", required = false) MultipartFile partituraPDF,
@@ -200,22 +256,24 @@ public class PartiturasController {
 				
 				Partitura partitura = partituraService.findById(idPartitura);
 				
-				byte[] vistaPrevia = pdfService.ponerMarcaAgua(partituraPDF);
+				byte[] vistaPrevia = pdfService.ponerMarcaAgua(inputStream);
 				partitura.setPartituraPDFFromInputStream(inputStream);
 				partitura.setVistaPreviaPDF(vistaPrevia);
 				
-				Partitura partituraSave = partituraService.save(partitura);
+				PartituraDTO partituraSave = partituraService.saveDTO(partitura);
 				
-				ByteArrayResource resource = new ByteArrayResource(partituraSave.getVistaPreviaPDF());
+				//
+				//ByteArrayResource resource = new ByteArrayResource(partituraSave.getVistaPreviaPDF());
 				
-				HttpHeaders headers = new HttpHeaders();
+				//HttpHeaders headers = new HttpHeaders();
 				
-				headers.setContentType(MediaType.APPLICATION_PDF);
-				headers.add("Content-Disposition",
-				  "inline; filename=" + partituraSave.getObra().getNombre() + "_" + partituraSave.getInstrumento() + ".pdf");
-				headers.setContentLength(resource.contentLength());
+				//headers.setContentType(MediaType.APPLICATION_PDF);
+				//headers.add("Content-Disposition","inline; filename=" + partituraSave.getObra().getNombre() + "_" + partituraSave.getInstrumento() + ".pdf");
+				//headers.setContentLength(resource.contentLength());
 				
-				return ResponseEntity.ok().headers(headers).body(resource);
+				//return ResponseEntity.ok().headers(headers).body(resource);
+				return new ResponseEntity<PartituraDTO>(partituraSave, null, HttpStatus.CREATED);
+				
 				
 			}
 			responseBody.put("mensaje", "Partitura inválida");
@@ -265,7 +323,6 @@ public class PartiturasController {
 	public ResponseEntity<?> findPartituraByIDURL(
 	  @PathVariable(name = "idPartitura", required = false) String idPartituraString) {
 		
-		System.out.println("Se ingresó a view Partotura");
 		Map<String, Object> responseBody = new HashMap<>();
 		try {
 			
@@ -278,6 +335,7 @@ public class PartiturasController {
 				temp = partituraService.findById(idPartitura);
 				
 				if (temp != null) {
+					
 					ByteArrayResource resource = new ByteArrayResource(temp.getVistaPreviaPDF());
 					
 					HttpHeaders headers = new HttpHeaders();
@@ -461,6 +519,58 @@ public class PartiturasController {
 					responseBody.put("mensaje", "La partitura : " + idPartitura + " ha sido eliminada con éxito");
 					responseBody.put("PartituraDTO", partituraDTO);
 					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+				}
+				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				
+			}
+			responseBody.put("mensaje", "El idPartitura debe ser ingresado");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+			
+		}
+		
+		catch (NumberFormatException e) {
+			// e.printStackTrace();
+			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (HibernateException e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos HibernateException");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (DataAccessException e) {
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
+			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
+			responseBody.put("error", e.getMessage().concat(" : "));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			
+		}
+	}
+	
+	@GetMapping("related/{idObra}")
+	public ResponseEntity<?> findPartiturasByIDObra(
+	  @PathVariable(name = "idObra", required = true) String idObraString) {
+		
+		Map<String, Object> responseBody = new HashMap<>();
+		try {
+			
+			if (idObraString != null) {
+				
+				Set<PartituraDTO> temp;
+				
+				Long idPartitura = Long.valueOf(idObraString);
+				
+				temp = partituraService.jpqlfindByIdObra(idPartitura);
+				
+				if (temp != null) {
+					
+					return new ResponseEntity<Set<PartituraDTO>>(temp, null, HttpStatus.OK);
 				}
 				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);

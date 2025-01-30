@@ -31,7 +31,7 @@ public interface ObraRepository extends JpaRepository<Obra, Long> {
 	Page<ObraDTO> jpqlfindAll(Pageable pageable);
 	
 	@Query("SELECT NEW com.system.domain.models.dto.ObraDTO(o.idObra, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio, o.embedAudio, o.embedVideo, o.createdAt, o.modifiedAt) FROM Obra o WHERE o.idObra = :idObra")
-	Optional<ObraDTO> jpqlfindByIdObra(@Param("id") Long id);
+	Optional<ObraDTO> jpqlfindByIdObra(@Param("idObra") Long idObra);
 	
 	@Query("SELECT NEW com.system.domain.models.dto.ObraDTO(o.idObra, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio) FROM Obra o WHERE o.nombre LIKE %:nombre% ORDER BY o.nombre ASC")
 	Set<ObraDTO> jpqlfindByNombreContaining(@Param("nombre") String nombre);

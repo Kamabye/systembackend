@@ -156,10 +156,10 @@ public class ObraController {
 		
 		try {
 			
-			Obra obraSave = obraService.save(obra);
+			ObraDTO obraSave = obraService.saveDTO(obra);
 			
 			if (obraSave != null) {
-				return new ResponseEntity<Obra>(obraSave, null, HttpStatus.CREATED);
+				return new ResponseEntity<ObraDTO>(obraSave, null, HttpStatus.CREATED);
 			}
 			
 			responseBody.put("mensaje",
@@ -431,21 +431,20 @@ public class ObraController {
 		try {
 			if (idObraString != null) {
 				Long idObra = Long.valueOf(idObraString);
+				System.out.println("IDObra a Borrar");
 				
 				ObraDTO obraDelete = obraService.jpqlfindByIdObra(idObra);
+				
+				//System.out.println("Se encontró la obra para borrarla");
 				if (obraDelete != null) {
 					
 					obraService.delete(idObra);
-					
-					// responseBody.put("mensaje", "La obra : " + idObra + " ha sido eliminada con
-					// éxito");
-					// responseBody.put("obraDTO", obraDelete);
-					// return new ResponseEntity<Map<String, Object>>(responseBody, null,
-					// HttpStatus.NO_CONTENT);
+
+					//System.out.println("Se borró la obra");
 					return new ResponseEntity<ObraDTO>(obraDelete, null, HttpStatus.OK);
 				}
 				responseBody.put("mensaje", "La obra : " + idObra + " no existe en la base de datos");
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			}
 			
 			responseBody.put("mensaje", "Parámetros inválidos nulos");
@@ -457,8 +456,7 @@ public class ObraController {
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			responseBody.put("error", "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
 			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");

@@ -123,17 +123,16 @@ public class PDFServiceImp implements IPDFService {
 	
 	@Override
 	public byte[] ponerMarcaAgua(InputStream inputStream) {
-		try (PDDocument documentoPDF = Loader.loadPDF(new RandomAccessReadBuffer(inputStream))) {
+		try (PDDocument originalPDF = Loader.loadPDF(new RandomAccessReadBuffer(inputStream))) {
 			
-			PDImageXObject image = PDImageXObject.createFromFileByContent(resourceService.getMarcaDeAguaFile(),
-			  documentoPDF);
-			System.out.println("Datos cargados");
+			PDImageXObject image = PDImageXObject.createFromFileByContent(resourceService.getMarcaDeAguaFile(),originalPDF);
+			System.out.println("PDF y Marca de agua cargados");
 			int numPage = 1;
-			for (PDPage page : documentoPDF.getPages()) {
+			for (PDPage page : originalPDF.getPages()) {
 				
 				System.out.println("Pagina cargada " + numPage);
 				
-				try (PDPageContentStream contentStream = new PDPageContentStream(documentoPDF, page,
+				try (PDPageContentStream contentStream = new PDPageContentStream(originalPDF, page,
 				  PDPageContentStream.AppendMode.APPEND, true, true)) {
 					
 					PDRectangle pageSize = page.getMediaBox();
@@ -158,7 +157,7 @@ public class PDFServiceImp implements IPDFService {
 			}
 			
 			try (ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream()) {
-				documentoPDF.save(byteArrayOutputStream);
+				originalPDF.save(byteArrayOutputStream);
 				System.out.println("Archivo sellado");
 				return byteArrayOutputStream.toByteArray();
 				

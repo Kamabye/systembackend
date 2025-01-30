@@ -71,8 +71,8 @@ public class Partitura extends Auditable implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	
-	public void setPartituraPDFFromInputStream(InputStream inputStream) throws IOException {
-		this.partituraPDF = ByteStreams.toByteArray(inputStream);
+	public void setPartituraPDFFromInputStream(InputStream FilePDF) throws IOException {
+		this.partituraPDF = ByteStreams.toByteArray(FilePDF);
 	}
 	
 	@PrePersist

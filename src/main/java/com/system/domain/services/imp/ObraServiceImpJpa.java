@@ -37,6 +37,26 @@ public class ObraServiceImpJpa implements IObraService {
 	
 	@Transactional
 	@Override
+	public ObraDTO saveDTO(Obra obra) {
+		
+		Obra obrasave = obraRepo.save(obra);
+		
+		return new ObraDTO(
+		  obrasave.getIdObra(),
+		  obrasave.getNombre(),
+		  obrasave.getCompositor(),
+		  obrasave.getArreglista(),
+		  obrasave.getLetrista(),
+		  obrasave.getGenero(),
+		  obrasave.getPrecio(),
+		  obrasave.getEmbedAudio(),
+		  obrasave.getEmbedVideo(),
+		  obrasave.getCreatedAt(),
+		  obrasave.getModifiedAt());
+	}
+	
+	@Transactional
+	@Override
 	public List<Obra> saveAll(List<Obra> obras) {
 		// TODO Auto-generated method stub
 		return null;
@@ -73,7 +93,6 @@ public class ObraServiceImpJpa implements IObraService {
 	@Override
 	public void delete(Long idObra) {
 		obraRepo.deleteById(idObra);
-		
 	}
 	
 	@Transactional(readOnly = true)
@@ -214,8 +233,7 @@ public class ObraServiceImpJpa implements IObraService {
 		    obra.getEmbedAudio(),
 		    obra.getEmbedVideo(),
 		    obra.getCreatedAt(),
-		    obra.getModifiedAt()
-		  		));
+		    obra.getModifiedAt()));
 	}
 	
 	@Transactional(readOnly = true)
@@ -236,7 +254,6 @@ public class ObraServiceImpJpa implements IObraService {
 		}
 		
 		return obrasDTO;
-		
 		
 	}
 	

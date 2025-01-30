@@ -14,6 +14,8 @@ public interface IPartituraService {
 	
 	Partitura save(Partitura partitura);
 	
+	PartituraDTO saveDTO(Partitura partitura);
+	
 	Partitura guardarConMarcaDeAgua(Partitura partitura);
 
 	List<Partitura> saveAll(List<Partitura> partituras);
@@ -45,5 +47,7 @@ public interface IPartituraService {
 	PartituraDTO jpqlfindById(Long idPartitura);
 
 	List<LobDTO> jpqlLobFindByIdObra(Long idObra);
+
+	
 
 }
