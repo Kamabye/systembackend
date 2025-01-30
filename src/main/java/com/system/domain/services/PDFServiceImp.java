@@ -122,10 +122,18 @@ public class PDFServiceImp implements IPDFService {
 	}
 	
 	@Override
-	public byte[] ponerMarcaAgua(InputStream inputStream) {
-		try (PDDocument originalPDF = Loader.loadPDF(new RandomAccessReadBuffer(inputStream))) {
+	public byte[] ponerMarcaAgua(InputStream pdfOriginal) {
+		try (
+		  PDDocument originalPDF = Loader.loadPDF(new RandomAccessReadBuffer(pdfOriginal));
+		  InputStream inputStreamMarcaDeAgua = resourceService.getMarcaDeAguaInputStream();
+		
+		) {
+			// BufferedImage marcaDeAgua = ImageIO.read(inputStreamMarcaDeAgua);
+			// PDImageXObject image =
+			// PDImageXObject.createFromFileByContent(resourceService.getMarcaDeAguaFile(),
+			// originalPDF);
+			PDImageXObject image2 = PDImageXObject.createFromByteArray(originalPDF, inputStreamMarcaDeAgua.readAllBytes(), "marcaDeAgua.png");
 			
-			PDImageXObject image = PDImageXObject.createFromFileByContent(resourceService.getMarcaDeAguaFile(),originalPDF);
 			System.out.println("PDF y Marca de agua cargados");
 			int numPage = 1;
 			for (PDPage page : originalPDF.getPages()) {
@@ -140,8 +148,11 @@ public class PDFServiceImp implements IPDFService {
 					float anchoPagina = pageSize.getWidth();
 					float altoPagina = pageSize.getHeight();
 					
-					float anchoImagen = image.getWidth();
-					float altoImagen = image.getHeight();
+					// float anchoImagen = image.getWidth();
+					// float altoImagen = image.getHeight();
+					
+					float anchoImagen = image2.getWidth();
+					float altoImagen = image2.getHeight();
 					
 					// Cuando la imagen es mayor que el PDF se sale del area
 					float centerX = (pageSize.getWidth() - anchoImagen) / 2;
@@ -149,7 +160,8 @@ public class PDFServiceImp implements IPDFService {
 					
 					// contentStream.drawImage(image, centerX, centerY, imageWidth, imageHeight);
 					// contentStream.drawImage(image, 0, 0, imageWidth, imageHeight);
-					contentStream.drawImage(image, 0, 0, anchoPagina, altoPagina);
+					// contentStream.drawImage(image, 0, 0, anchoPagina, altoPagina);
+					contentStream.drawImage(image2, 0, 0, anchoPagina, altoPagina);
 					
 					System.out.println("Pagina sellada " + numPage);
 					numPage++;
@@ -202,30 +214,30 @@ public class PDFServiceImp implements IPDFService {
 		try (PDDocument pdfFileDocumento = Loader.loadPDF(new RandomAccessReadBuffer(pdfFile.getInputStream()))) {
 			PDFRenderer pdfRenderer = new PDFRenderer(pdfFileDocumento);
 			int numberOfPages = pdfFileDocumento.getNumberOfPages();
-
+			
 // Obtener las dimensiones de cada página
-   BufferedImage firstPage = pdfRenderer.renderImage(0);
-   int width = firstPage.getWidth();
-   int height = firstPage.getHeight();
-
-   // Crear una imagen resultante con el tamaño total
-   BufferedImage result = new BufferedImage(width, height * numberOfPages, BufferedImage.TYPE_INT_RGB);
-   Graphics2D g2d = result.createGraphics();
-
-   for (int i = 0; i < numberOfPages; i++) {
-       BufferedImage pageImage = pdfRenderer.renderImage(i);
-       g2d.drawImage(pageImage, 0, i * height, null);
-   }
-
-   g2d.dispose();
-
-   // Convertir la imagen a bytes PNG
-   ByteArrayOutputStream baos = new ByteArrayOutputStream();
-   ImageIO.write(result, "png", baos);
-   return baos.toByteArray();
+			BufferedImage firstPage = pdfRenderer.renderImage(0);
+			int width = firstPage.getWidth();
+			int height = firstPage.getHeight();
+			
+			// Crear una imagen resultante con el tamaño total
+			BufferedImage result = new BufferedImage(width, height * numberOfPages, BufferedImage.TYPE_INT_RGB);
+			Graphics2D g2d = result.createGraphics();
+			
+			for (int i = 0; i < numberOfPages; i++) {
+				BufferedImage pageImage = pdfRenderer.renderImage(i);
+				g2d.drawImage(pageImage, 0, i * height, null);
+			}
+			
+			g2d.dispose();
+			
+			// Convertir la imagen a bytes PNG
+			ByteArrayOutputStream baos = new ByteArrayOutputStream();
+			ImageIO.write(result, "png", baos);
+			return baos.toByteArray();
 			
 		}
-
+		
 	}
 	
 }
