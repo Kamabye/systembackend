@@ -8,13 +8,10 @@ import java.util.Map;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,7 +38,7 @@ import jakarta.validation.constraints.Min;
 
 @RestController
 @RequestMapping({ "apiv1/obra", "apiv1/obra/" })
-@CrossOrigin(origins = { "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/", "https://kamabyeapp.onrender.com", "https://kamabyeapp.onrender.com/", "http://localhost:4200", "http://localhost:8080", "http://localhost:4200/", "http://localhost:8080/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
+@CrossOrigin(origins = { "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/", "https://kamabyeapp.onrender.com", "https://kamabyeapp.onrender.com/", "http://localhost:4200", "http://localhost:8080", "http://localhost:4200/", "http://localhost:8080/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS, RequestMethod.HEAD }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class ObraController {
 	
 	@Autowired
@@ -417,21 +414,22 @@ public class ObraController {
 			if (idObraString != null) {
 				Long idObra = Long.valueOf(idObraString);
 				
-				ObraDTO obra = obraService.jpqlfindByIdObra(idObra);
+				//ObraDTO obra = obraService.jpqlfindByIdObra(idObra);
 				
-				ByteArrayResource audio = new ByteArrayResource(obraService.jpqlfindAudio(idObra));
+				//ByteArrayResource audio = new ByteArrayResource(obraService.jpqlfindAudio(idObra));
+				byte[] arrayaudio = obraService.jpqlfindAudio(idObra);
 				
 				// Configura los encabezados de la respuesta
-				HttpHeaders headers = new HttpHeaders();
+				//HttpHeaders headers = new HttpHeaders();
 				
-				headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-				headers.setContentLength(audio.contentLength());
-				headers.setContentDispositionFormData("inline", obra.getNombre() + ".aac");
+				//headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
+				//headers.setContentLength(audio.contentLength());
+				//headers.setContentDispositionFormData("inline", obra.getNombre() + ".aac");
 				
 				// Devuelve la respuesta con el recurso y los encabezados
 				// return ResponseEntity.ok().headers(headers).body(resource);
 				
-				return new ResponseEntity<>(audio, headers, HttpStatus.OK);
+				return new ResponseEntity<>(arrayaudio, null, HttpStatus.OK);
 				
 			}
 			
