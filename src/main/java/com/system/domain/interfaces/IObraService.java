@@ -26,7 +26,7 @@ public interface IObraService {
 
 	void delete(Long idObra);
 	
-	Obra deletedReturn(Long idObra);
+	ObraDTO deletedReturn(Long idObra);
 
 	Obra findById(Long idObra);
 
@@ -57,5 +57,11 @@ public interface IObraService {
 	Page<ObraDTO> jpqlfindByString(int pageNumber, int pageSize, String string);
 	
 	Page<ObraDTO> jpqlfindByStringDTO(int pageNumber, int pageSize, String string);
+	
+	ObraDTO putDTO(Obra obra);
+
+	ObraDTO patchDTO(Obra obra);
+	
+	byte[] jpqlfindAudio(Long idObra);
 
 }

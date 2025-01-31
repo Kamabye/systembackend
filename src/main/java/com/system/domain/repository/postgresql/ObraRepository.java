@@ -48,26 +48,25 @@ public interface ObraRepository extends JpaRepository<Obra, Long> {
 	@Query("SELECT NEW com.system.domain.models.dto.ObraDTO(o.idObra, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio) FROM Obra o WHERE o.genero LIKE %:genero% ORDER BY o.nombre ASC")
 	Set<ObraDTO> jpqlfindByGeneroContaining(@Param("genero") String genero);
 	
-	@Query(
-			"SELECT DISTINCT o "
-			+ "FROM Obra o "
-			+ "WHERE LOWER(o.nombre) LIKE LOWER(CONCAT('%', :string, '%')) "
-			+ "OR LOWER(o.compositor) LIKE LOWER(CONCAT('%', :string, '%')) "
-			+ "OR LOWER(o.arreglista) LIKE LOWER(CONCAT('%', :string, '%')) "
-			+ "OR LOWER(o.letrista) LIKE LOWER(CONCAT('%', :string, '%')) "
-			+ "OR LOWER(o.genero) LIKE LOWER(CONCAT('%', :string, '%')) "
-			)
+	@Query("SELECT DISTINCT o "
+	  + "FROM Obra o "
+	  + "WHERE LOWER(o.nombre) LIKE LOWER(CONCAT('%', :string, '%')) "
+	  + "OR LOWER(o.compositor) LIKE LOWER(CONCAT('%', :string, '%')) "
+	  + "OR LOWER(o.arreglista) LIKE LOWER(CONCAT('%', :string, '%')) "
+	  + "OR LOWER(o.letrista) LIKE LOWER(CONCAT('%', :string, '%')) "
+	  + "OR LOWER(o.genero) LIKE LOWER(CONCAT('%', :string, '%')) ")
 	Page<Obra> jpqlfindByString(@Param("string") String string, Pageable pageable);
 	
-	@Query(
-			"SELECT DISTINCT new com.system.domain.models.dto.ObraDTO(o.idObra, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio, o.embedAudio, o.embedVideo, o.createdAt, o.modifiedAt) "
-			+ "FROM Obra o "
-			+ "WHERE LOWER(o.nombre) LIKE LOWER(CONCAT('%', :string, '%')) "
-			+ "OR LOWER(o.compositor) LIKE LOWER(CONCAT('%', :string, '%')) "
-			+ "OR LOWER(o.arreglista) LIKE LOWER(CONCAT('%', :string, '%')) "
-			+ "OR LOWER(o.letrista) LIKE LOWER(CONCAT('%', :string, '%')) "
-			+ "OR LOWER(o.genero) LIKE LOWER(CONCAT('%', :string, '%'))"
-			)
+	@Query("SELECT DISTINCT new com.system.domain.models.dto.ObraDTO(o.idObra, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio, o.embedAudio, o.embedVideo, o.createdAt, o.modifiedAt) "
+	  + "FROM Obra o "
+	  + "WHERE LOWER(o.nombre) LIKE LOWER(CONCAT('%', :string, '%')) "
+	  + "OR LOWER(o.compositor) LIKE LOWER(CONCAT('%', :string, '%')) "
+	  + "OR LOWER(o.arreglista) LIKE LOWER(CONCAT('%', :string, '%')) "
+	  + "OR LOWER(o.letrista) LIKE LOWER(CONCAT('%', :string, '%')) "
+	  + "OR LOWER(o.genero) LIKE LOWER(CONCAT('%', :string, '%'))")
 	Page<ObraDTO> jpqlfindByStringDTO(@Param("string") String string, Pageable pageable);
+	
+	@Query("SELECT o.audio FROM Obra o WHERE o.idObra = :idObra")
+	Optional<byte[]> jpqlfindAudio(@Param("idObra") Long idObra);
 	
 }

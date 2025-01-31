@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.system.domain.models.postgresql.Obra;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -53,6 +55,22 @@ public class ObraDTO {
 		this.embedVideo = embedVideo;
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
+		
+	}
+	
+	public ObraDTO(Obra obra) {
+		
+		this.idObra = obra.getIdObra();
+		this.nombre = obra.getNombre();
+		this.compositor = obra.getCompositor();
+		this.arreglista = obra.getArreglista();
+		this.letrista = obra.getLetrista();
+		this.genero = obra.getGenero();
+		this.precio = obra.getPrecio();
+		this.embedAudio = obra.getEmbedAudio();
+		this.embedVideo = obra.getEmbedVideo();
+		this.createdAt = obra.getCreatedAt();
+		this.modifiedAt = obra.getModifiedAt();
 		
 	}
 	

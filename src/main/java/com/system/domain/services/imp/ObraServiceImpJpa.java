@@ -40,19 +40,11 @@ public class ObraServiceImpJpa implements IObraService {
 	public ObraDTO saveDTO(Obra obra) {
 		
 		Obra obrasave = obraRepo.save(obra);
+		if (obrasave != null) {
+			return new ObraDTO(obrasave);
+		}
+		return null;
 		
-		return new ObraDTO(
-		  obrasave.getIdObra(),
-		  obrasave.getNombre(),
-		  obrasave.getCompositor(),
-		  obrasave.getArreglista(),
-		  obrasave.getLetrista(),
-		  obrasave.getGenero(),
-		  obrasave.getPrecio(),
-		  obrasave.getEmbedAudio(),
-		  obrasave.getEmbedVideo(),
-		  obrasave.getCreatedAt(),
-		  obrasave.getModifiedAt());
 	}
 	
 	@Transactional
@@ -163,7 +155,7 @@ public class ObraServiceImpJpa implements IObraService {
 		Optional<ObraDTO> optional = obraRepo.jpqlfindByIdObra(idObra);
 		if (!optional.isEmpty()) {
 			ObraDTO obraDTO = optional.get();
-			obraDTO.setPartituras(partituraService.jpqlfindByIdObra(idObra));
+			// obraDTO.setPartituras(partituraService.jpqlfindByIdObra(idObra));
 			return obraDTO;
 		}
 		return null;
@@ -205,7 +197,7 @@ public class ObraServiceImpJpa implements IObraService {
 	
 	@Transactional
 	@Override
-	public Obra deletedReturn(Long idObra) {
+	public ObraDTO deletedReturn(Long idObra) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -254,6 +246,89 @@ public class ObraServiceImpJpa implements IObraService {
 		}
 		
 		return obrasDTO;
+		
+	}
+	
+	@Transactional
+	@Override
+	public ObraDTO patchDTO(Obra obra) {
+		
+		Obra saveObra = this.findById(obra.getIdObra());
+		
+		if (saveObra != null) {
+			mergePatchFields(saveObra, obra);
+			
+			Obra patchObra = obraRepo.save(saveObra);
+			if (patchObra != null) {
+				return new ObraDTO(patchObra);
+			}
+			
+		}
+		return null;
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public ObraDTO putDTO(Obra obra) {
+		
+		Obra obrasave = obraRepo.save(obra);
+		if (obrasave != null) {
+			return new ObraDTO(obrasave);
+		}
+		return null;
+		
+	}
+	
+	@Transactional(readOnly = true)
+	@Override
+	public byte[] jpqlfindAudio(Long idObra) {
+		
+		Optional<byte[]> audio = obraRepo.jpqlfindAudio(idObra);
+		if (!audio.isEmpty()) {
+			return audio.get();
+		}
+		
+		return null;
+	}
+	
+	private void mergePatchFields(Obra existingObra, Obra obraPatch) {
+		
+		if (obraPatch.getNombre() != null && !obraPatch.getNombre().isBlank() && !obraPatch.getNombre().isEmpty() && !obraPatch.getNombre().equals(existingObra.getNombre())) {
+			existingObra.setNombre(obraPatch.getNombre());
+		}
+		if (obraPatch.getCompositor() != null && !obraPatch.getCompositor().isBlank() && !obraPatch.getCompositor().isEmpty() && !obraPatch.getCompositor().equals(existingObra.getCompositor())) {
+			existingObra.setCompositor(obraPatch.getCompositor());
+		}
+		if (obraPatch.getArreglista() != null && !obraPatch.getArreglista().isBlank() && !obraPatch.getArreglista().isEmpty() && !obraPatch.getArreglista().equals(existingObra.getArreglista())) {
+			existingObra.setArreglista(obraPatch.getArreglista());
+		}
+		if (obraPatch.getLetrista() != null && !obraPatch.getLetrista().isBlank() && !obraPatch.getLetrista().isEmpty() && !obraPatch.getLetrista().equals(existingObra.getLetrista())) {
+			existingObra.setLetrista(obraPatch.getLetrista());
+		}
+		if (obraPatch.getNombre() != null && !obraPatch.getNombre().isBlank() && !obraPatch.getNombre().isEmpty() && !obraPatch.getNombre().equals(existingObra.getNombre())) {
+			existingObra.setNombre(obraPatch.getNombre());
+		}
+		if (obraPatch.getNombre() != null && !obraPatch.getNombre().isBlank() && !obraPatch.getNombre().isEmpty() && !obraPatch.getNombre().equals(existingObra.getNombre())) {
+			existingObra.setNombre(obraPatch.getNombre());
+		}
+		if (obraPatch.getPrecio() != null && !obraPatch.getPrecio().equals(existingObra.getPrecio())) {
+			existingObra.setPrecio(obraPatch.getPrecio());
+		}
+		if (obraPatch.getIva() != null && !obraPatch.getIva().equals(existingObra.getIva())) {
+			existingObra.setIva(obraPatch.getIva());
+		}
+		if (obraPatch.getGenero() != null && !obraPatch.getGenero().isBlank() && !obraPatch.getGenero().isEmpty() && !obraPatch.getGenero().equals(existingObra.getGenero())) {
+			existingObra.setGenero(obraPatch.getGenero());
+		}
+		if (obraPatch.getEmbedAudio() != null && !obraPatch.getEmbedAudio().isBlank() && !obraPatch.getEmbedAudio().isEmpty() && !obraPatch.getEmbedAudio().equals(existingObra.getEmbedAudio())) {
+			existingObra.setEmbedAudio(obraPatch.getEmbedAudio());
+		}
+		if (obraPatch.getEmbedVideo() != null && !obraPatch.getEmbedVideo().isBlank() && !obraPatch.getEmbedVideo().isEmpty() && !obraPatch.getEmbedVideo().equals(existingObra.getEmbedVideo())) {
+			existingObra.setEmbedVideo(obraPatch.getEmbedVideo());
+		}
+		if (obraPatch.getIdUsuario() != null && !obraPatch.getIdUsuario().equals(existingObra.getIdUsuario())) {
+			existingObra.setIdUsuario(obraPatch.getIdUsuario());
+		}
 		
 	}
 	
