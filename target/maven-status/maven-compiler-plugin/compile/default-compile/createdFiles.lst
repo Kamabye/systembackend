@@ -14,6 +14,7 @@ com\system\domain\interfaces\IPartituraService.class
 com\system\domain\models\PayPal\TokenPayPalV2.class
 com\system\domain\configurations\DB1Config.class
 com\system\domain\configurations\DB4Config.class
+com\system\domain\configurations\DB5Config.class
 com\system\domain\configurations\SecurityConfig.class
 com\system\domain\services\MePaService.class
 com\system\domain\models\dto\PartituraDTO.class
