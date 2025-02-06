@@ -56,7 +56,6 @@ public class DB1Config {
 		return factory;
 	}
 	
-	@Primary
 	@Bean(name = "db1TransactionManager")
 	PlatformTransactionManager db1TransactionManager(
 	  @Qualifier("db1EntityManagerFactory") EntityManagerFactory entityManagerFactory) {

@@ -4,25 +4,25 @@
       "name": "spring.datasource.db1",
       "type": "javax.sql.DataSource",
       "sourceType": "com.system.domain.configurations.DB1Config",
-      "sourceMethod": "db1DataSource()"
+      "sourceMethod": "javax.sql.DataSource db1DataSource() "
     },
     {
       "name": "spring.datasource.db2",
       "type": "javax.sql.DataSource",
       "sourceType": "com.system.domain.configurations.DB2Config",
-      "sourceMethod": "db2DataSource()"
+      "sourceMethod": "javax.sql.DataSource db2DataSource() "
     },
     {
       "name": "spring.datasource.db3",
       "type": "javax.sql.DataSource",
       "sourceType": "com.system.domain.configurations.DB3Config",
-      "sourceMethod": "db3DataSource()"
+      "sourceMethod": "javax.sql.DataSource db3DataSource() "
     },
     {
-      "name": "spring.datasource.db4",
+      "name": "spring.datasource.db5",
       "type": "javax.sql.DataSource",
-      "sourceType": "com.system.domain.configurations.DB4Config",
-      "sourceMethod": "db4DataSource()"
+      "sourceType": "com.system.domain.configurations.DB5Config",
+      "sourceMethod": "javax.sql.DataSource db5DataSource() "
     }
   ],
   "properties": [
