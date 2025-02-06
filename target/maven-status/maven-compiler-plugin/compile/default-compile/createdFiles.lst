@@ -1,15 +1,19 @@
 com\system\domain\controllers\ObraController.class
 com\system\domain\models\PayPal\CaptureResponsePayPalV2.class
 com\system\domain\models\PayPal\PayPalV2.class
+com\system\domain\configurations\DBEnvConfig.class
 com\system\domain\controllers\PayPalController.class
 com\system\domain\configurations\UserDetailsConfig.class
-com\system\domain\configurations\JacksonConfig.class
 META-INF\spring-configuration-metadata.json
 com\system\domain\controllers\MercadoPagoController.class
 com\system\domain\interfaces\IObraService.class
 com\system\domain\services\ResourcesService.class
+com\system\domain\configurations\DB2Config.class
+com\system\domain\configurations\DB3Config.class
 com\system\domain\interfaces\IPartituraService.class
 com\system\domain\models\PayPal\TokenPayPalV2.class
+com\system\domain\configurations\DB1Config.class
+com\system\domain\configurations\DB4Config.class
 com\system\domain\configurations\SecurityConfig.class
 com\system\domain\services\MePaService.class
 com\system\domain\models\dto\PartituraDTO.class
@@ -32,7 +36,6 @@ com\system\domain\models\PayPal\ExperienceContextPayPalV2.class
 com\system\domain\controllers\ShopCartController.class
 com\system\domain\models\postgresql\Partitura$PartituraBuilder.class
 com\system\domain\models\PayPal\AddressPayPalV2.class
-com\system\domain\configurations\SupabaseSQLConfig.class
 com\system\domain\models\dto\ObraDTO.class
 com\system\domain\models\PayPal\ItemTotalPayPalV2.class
 com\system\domain\repository\postgresql\UserRepository.class
@@ -44,7 +47,6 @@ com\system\domain\controllers\AuthController.class
 com\system\domain\services\JwtService.class
 com\system\domain\repository\postgresql\PacienteRepository.class
 com\system\domain\services\imp\ConsultaServiceImpJpa.class
-com\system\domain\configurations\PostgreSQLConfig.class
 com\system\domain\models\PayPal\PurchaseUnitCapturePayPalV2.class
 com\system\domain\models\postgresql\Paciente.class
 com\system\domain\models\PayPal\AmountPayPalV2.class

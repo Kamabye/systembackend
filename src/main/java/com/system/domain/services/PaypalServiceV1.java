@@ -24,8 +24,16 @@ import com.system.domain.models.dto.ProductoDTOPayPal;
 
 @Service
 public class PaypalServiceV1 {
-	@Value("${website.url}")
-	private String websiteUrl;
+	
+	@Value("${paypal.mode}")
+	private String mode;
+	
+	@Value("${website.urldev}")
+	private String websitedevUrl;
+	
+	@Value("${website.urlprod}")
+	private String websiteprodUrl;
+	
 	
 	@Autowired
 	private APIContext apiContext;
@@ -87,6 +95,8 @@ public class PaypalServiceV1 {
 		
 		// Validar que las URL sean relativas o absolutas para desarrollo o produccion
 		RedirectUrls redirectUrls = new RedirectUrls();
+		
+		String websiteUrl = (mode.equals("sandbox")) ? websitedevUrl : websiteprodUrl;
 		redirectUrls.setCancelUrl(websiteUrl + "/apiv1/paypal/cancel");
 		redirectUrls.setReturnUrl(websiteUrl + "/apiv1/paypal/success");
 		
@@ -213,6 +223,7 @@ public class PaypalServiceV1 {
 		
 		// Validar que las URL sean relativas o absolutas para desarrollo o produccion
 		RedirectUrls redirectUrls = new RedirectUrls();
+		String websiteUrl = (mode.equals("sandbox")) ? websitedevUrl : websiteprodUrl;
 		redirectUrls.setCancelUrl(websiteUrl + "/apiv1/paypal/cancel");
 		redirectUrls.setReturnUrl(websiteUrl + "/apiv1/paypal/success");
 		

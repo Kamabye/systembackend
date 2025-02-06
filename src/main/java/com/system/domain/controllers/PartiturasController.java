@@ -1,5 +1,6 @@
 package com.system.domain.controllers;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -10,6 +11,7 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -94,8 +96,8 @@ public class PartiturasController {
 	
 	@PostMapping("{idObra}")
 	public ResponseEntity<?> savePartitura(
-			@RequestBody Partitura partitura,
-			@PathVariable(name = "idObra", required = true) String idObraString) {
+	  @RequestBody Partitura partitura,
+	  @PathVariable(name = "idObra", required = true) String idObraString) {
 		Map<String, Object> responseBody = new HashMap<>();
 		
 		try {
@@ -260,21 +262,22 @@ public class PartiturasController {
 				partitura.setVistaPreviaPDF(vistaPrevia);
 				partitura.setPartituraPDFFromInputStream(inputStream);
 				
-				
 				PartituraDTO partituraSave = partituraService.saveDTO(partitura);
 				
 				//
-				//ByteArrayResource resource = new ByteArrayResource(partituraSave.getVistaPreviaPDF());
+				// ByteArrayResource resource = new
+				// ByteArrayResource(partituraSave.getVistaPreviaPDF());
 				
-				//HttpHeaders headers = new HttpHeaders();
+				// HttpHeaders headers = new HttpHeaders();
 				
-				//headers.setContentType(MediaType.APPLICATION_PDF);
-				//headers.add("Content-Disposition","inline; filename=" + partituraSave.getObra().getNombre() + "_" + partituraSave.getInstrumento() + ".pdf");
-				//headers.setContentLength(resource.contentLength());
+				// headers.setContentType(MediaType.APPLICATION_PDF);
+				// headers.add("Content-Disposition","inline; filename=" +
+				// partituraSave.getObra().getNombre() + "_" + partituraSave.getInstrumento() +
+				// ".pdf");
+				// headers.setContentLength(resource.contentLength());
 				
-				//return ResponseEntity.ok().headers(headers).body(resource);
+				// return ResponseEntity.ok().headers(headers).body(resource);
 				return new ResponseEntity<PartituraDTO>(partituraSave, null, HttpStatus.CREATED);
-				
 				
 			}
 			responseBody.put("mensaje", "Partitura inválida");
@@ -337,7 +340,7 @@ public class PartiturasController {
 				
 				if (temp != null) {
 					
-					ByteArrayResource resource = new ByteArrayResource(temp.getVistaPreviaPDF());
+					InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(temp.getVistaPreviaPDF()));
 					
 					HttpHeaders headers = new HttpHeaders();
 					
@@ -345,13 +348,10 @@ public class PartiturasController {
 					headers.add("Content-Disposition",
 					  "inline; filename=" + temp.getObra().getNombre() + "_" + temp.getInstrumento() + ".pdf");
 					headers.setContentLength(resource.contentLength());
-					// headers.set("X-Frame-Options", "ALLOW-FROM http://localhost:4200"); // Set
-					// the X-Frame-Options header
-					
 					return ResponseEntity.ok().headers(headers).body(resource);
 				}
-				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				
+				return new ResponseEntity<Map<String, Object>>(null, null, HttpStatus.NO_CONTENT);
 				
 			}
 			responseBody.put("mensaje", "El idPartitura debe ser ingresado");

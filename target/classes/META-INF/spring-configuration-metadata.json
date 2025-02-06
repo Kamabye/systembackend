@@ -1,58 +1,35 @@
 {
   "groups": [
     {
-      "name": "postgresql.datasource",
-      "type": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties",
-      "sourceType": "com.system.domain.configurations.PostgreSQLConfig",
-      "sourceMethod": "postgreDataSourceProperties()"
-    },
-    {
-      "name": "postgresql.datasource",
+      "name": "spring.datasource.db1",
       "type": "javax.sql.DataSource",
-      "sourceType": "com.system.domain.configurations.PostgreSQLConfig",
-      "sourceMethod": "dataSource()"
+      "sourceType": "com.system.domain.configurations.DB1Config",
+      "sourceMethod": "db1DataSource()"
     },
     {
-      "name": "postgresql.datasource.xa",
-      "type": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$Xa",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties",
-      "sourceMethod": "getXa()"
-    },
-    {
-      "name": "supabase.datasource",
-      "type": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties",
-      "sourceType": "com.system.domain.configurations.SupabaseSQLConfig",
-      "sourceMethod": "supabaseDataSourceProperties()"
-    },
-    {
-      "name": "supabase.datasource",
+      "name": "spring.datasource.db2",
       "type": "javax.sql.DataSource",
-      "sourceType": "com.system.domain.configurations.SupabaseSQLConfig",
-      "sourceMethod": "dataSource()"
+      "sourceType": "com.system.domain.configurations.DB2Config",
+      "sourceMethod": "db2DataSource()"
     },
     {
-      "name": "supabase.datasource.xa",
-      "type": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$Xa",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties",
-      "sourceMethod": "getXa()"
+      "name": "spring.datasource.db3",
+      "type": "javax.sql.DataSource",
+      "sourceType": "com.system.domain.configurations.DB3Config",
+      "sourceMethod": "db3DataSource()"
+    },
+    {
+      "name": "spring.datasource.db4",
+      "type": "javax.sql.DataSource",
+      "sourceType": "com.system.domain.configurations.DB4Config",
+      "sourceMethod": "db4DataSource()"
     }
   ],
   "properties": [
     {
       "name": "postgresql.datasource.driver-class-name",
       "type": "java.lang.String",
-      "description": "A description for 'postgresql.datasource.driver-class-name'",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "postgresql.datasource.embedded-database-connection",
-      "type": "org.springframework.boot.jdbc.EmbeddedDatabaseConnection",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "postgresql.datasource.generate-unique-name",
-      "type": "java.lang.Boolean",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
+      "description": "A description for 'postgresql.datasource.driver-class-name'"
     },
     {
       "name": "postgresql.datasource.hikari.data-source-properties.preferQueryMode",
@@ -70,11 +47,6 @@
       "description": "A description for 'postgresql.datasource.jdbc-url'"
     },
     {
-      "name": "postgresql.datasource.jndi-name",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
       "name": "postgresql.datasource.maxActive",
       "type": "java.lang.String",
       "description": "A description for 'postgresql.datasource.maxActive'"
@@ -90,15 +62,9 @@
       "description": "A description for 'postgresql.datasource.minIdle'"
     },
     {
-      "name": "postgresql.datasource.name",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
       "name": "postgresql.datasource.password",
       "type": "java.lang.String",
-      "description": "A description for 'postgresql.datasource.password'",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
+      "description": "A description for 'postgresql.datasource.password'"
     },
     {
       "name": "postgresql.datasource.removeAbandoned",
@@ -106,85 +72,9 @@
       "description": "A description for 'postgresql.datasource.removeAbandoned'"
     },
     {
-      "name": "postgresql.datasource.type",
-      "type": "java.lang.Class<? extends javax.sql.DataSource>",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "postgresql.datasource.url",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
       "name": "postgresql.datasource.username",
       "type": "java.lang.String",
-      "description": "A description for 'postgresql.datasource.username'",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "postgresql.datasource.xa.data-source-class-name",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$Xa"
-    },
-    {
-      "name": "postgresql.datasource.xa.properties",
-      "type": "java.util.Map<java.lang.String,java.lang.String>",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$Xa"
-    },
-    {
-      "name": "supabase.datasource.driver-class-name",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "supabase.datasource.embedded-database-connection",
-      "type": "org.springframework.boot.jdbc.EmbeddedDatabaseConnection",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "supabase.datasource.generate-unique-name",
-      "type": "java.lang.Boolean",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "supabase.datasource.jndi-name",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "supabase.datasource.name",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "supabase.datasource.password",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "supabase.datasource.type",
-      "type": "java.lang.Class<? extends javax.sql.DataSource>",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "supabase.datasource.url",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "supabase.datasource.username",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties"
-    },
-    {
-      "name": "supabase.datasource.xa.data-source-class-name",
-      "type": "java.lang.String",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$Xa"
-    },
-    {
-      "name": "supabase.datasource.xa.properties",
-      "type": "java.util.Map<java.lang.String,java.lang.String>",
-      "sourceType": "org.springframework.boot.autoconfigure.jdbc.DataSourceProperties$Xa"
+      "description": "A description for 'postgresql.datasource.username'"
     }
   ],
   "hints": []

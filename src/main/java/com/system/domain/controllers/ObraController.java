@@ -1,5 +1,6 @@
 package com.system.domain.controllers;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -8,10 +9,13 @@ import java.util.Map;
 import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
 import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -412,28 +416,20 @@ public class ObraController {
 		try {
 			
 			if (idObraString != null) {
+				
 				Long idObra = Long.valueOf(idObraString);
 				
-				//ObraDTO obra = obraService.jpqlfindByIdObra(idObra);
+				InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(obraService.jpqlfindAudio(idObra)));
 				
-				//ByteArrayResource audio = new ByteArrayResource(obraService.jpqlfindAudio(idObra));
-				byte[] arrayaudio = obraService.jpqlfindAudio(idObra);
+				HttpHeaders headers = new HttpHeaders();
+				headers.setContentDispositionFormData("inline", "Audio.aac");
+				headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
 				
-				// Configura los encabezados de la respuesta
-				//HttpHeaders headers = new HttpHeaders();
-				
-				//headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-				//headers.setContentLength(audio.contentLength());
-				//headers.setContentDispositionFormData("inline", obra.getNombre() + ".aac");
-				
-				// Devuelve la respuesta con el recurso y los encabezados
-				// return ResponseEntity.ok().headers(headers).body(resource);
-				
-				return new ResponseEntity<>(arrayaudio, null, HttpStatus.OK);
+				return ResponseEntity.ok().headers(headers).body(resource);
 				
 			}
 			
-			responseBody.put("error", "idObra requerido");
+			responseBody.put("error", "idObra requeridooooooo!!!!!");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			responseBody.put("error",

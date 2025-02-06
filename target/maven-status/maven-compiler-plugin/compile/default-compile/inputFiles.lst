@@ -7,7 +7,6 @@ C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controllers\ObraContr
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\ShippingPayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\MePaConfig.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\imp\PartituraServiceImpJpa.java
-C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\JacksonConfig.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\dto\LobDTO.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\imp\ObraServiceImpJpa.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\imp\ShopCartImpJPA.java
@@ -33,6 +32,7 @@ C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\postgresql\Emb
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\postgresql\Usuario.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\filters\JwtAuthenticationFilter.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\interfaces\IPDFService.java
+C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\DB2Config.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\PurchaseUnitPayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\interfaces\DTOProyecciones\IPartituraDTO.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\CaptureResponsePayPalV2.java
@@ -43,6 +43,7 @@ C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controllers\RolContro
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\postgresql\Obra.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\ExperienceContextPayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\PaypalServiceV1.java
+C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\DB3Config.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\OrderResponsePayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\imp\UserServiceImpJpa.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\dto\PartituraDTO.java
@@ -51,7 +52,6 @@ C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controllers\UserContr
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\interfaces\IPacienteService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\ItemPayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\CapturesPayPalV2.java
-C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\SupabaseSQLConfig.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controllers\ShopCartController.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\dto\PayerPayPalDTO.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\SecurityConfig.java
@@ -63,8 +63,11 @@ C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controllers\PDFContro
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\AuthenticationByJwtService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\imp\ConsultaServiceImpJpa.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\services\imp\RolServiceImpJpa.java
+C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\DB4Config.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\interfaces\IObraService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\AddressPayPalV2.java
+C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\DB1Config.java
+C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\DBEnvConfig.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\BreakdownPayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\postgresql\Paciente.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controllers\KamabyeController.java
@@ -80,7 +83,6 @@ C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\UserDe
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\interfaces\IRolService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\repository\postgresql\ObraRepository.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\repository\postgresql\RolRepository.java
-C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\configurations\PostgreSQLConfig.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\AmountPayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\PayPal\PaymentSourcePayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\models\postgresql\Consulta.java
