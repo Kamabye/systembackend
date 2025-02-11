@@ -58,7 +58,7 @@ public class OpticaController {
 			
 			if (string != null && !string.isEmpty() && !string.isBlank()) {
 				
-				System.out.println("Búsqueda por string");
+				//System.out.println("Búsqueda por string");
 				
 				pageListaPacientes = pacienteService.findByString(pageNumber, pageSize, string);
 				
@@ -71,7 +71,7 @@ public class OpticaController {
 			
 			// listaUsuarios = userService.findAll();
 			// System.out.println("Busqueda paginada");
-			System.out.println("Búsqueda paginada sin String");
+			//System.out.println("Búsqueda paginada sin String");
 			pageListaPacientes = pacienteService.findAll(pageNumber, pageSize);
 			
 			// if (!listaUsuarios.isEmpty()) {

@@ -27,15 +27,28 @@ import jakarta.persistence.EntityManagerFactory;
 public class DB1Config {
 	
 	@Bean(name = "db1DataSource")
+	
 	@ConfigurationProperties(prefix = "spring.datasource.db1")
 	DataSource db1DataSource() {
 		return DataSourceBuilder.create().build();
 	}
 	
+	/*
+	 * @Bean
+	 * 
+	 * @ConfigurationProperties(prefix = "spring.datasource.db1") HikariConfig
+	 * db1HikariConfig() { return new HikariConfig(); }
+	 * 
+	 * @Bean(name = "db1DataSourceHikari") DataSource db1DataSourceHikari(
+	 * HikariConfig db1HikariConfig) { return new HikariDataSource(db1HikariConfig);
+	 * }
+	 */
+	
 	@Bean(name = "db1EntityManagerFactory")
 	LocalContainerEntityManagerFactoryBean db1EntityManagerFactory(
 	  EntityManagerFactoryBuilder builder,
-	  @Qualifier("db1DataSource") DataSource dataSource) {
+	  @Qualifier("db1DataSource") DataSource dataSource // OR db1DataSource
+	) {
 		
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
 		factory = builder.dataSource(dataSource).packages("com.system.domain.models.postgresql")
@@ -44,7 +57,7 @@ public class DB1Config {
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		// vendorAdapter.setDatabasePlatform("org.hibernate.dialect.MySQL8Dialect"); //
 		// Opcional, se puede configurar en application.properties
-		// vendorAdapter.setShowSql(true); // Opcional
+		// vendorAdapter.setShowSql(true);
 		factory.setJpaVendorAdapter(vendorAdapter);
 		
 		// Properties jpaProperties = new Properties();
