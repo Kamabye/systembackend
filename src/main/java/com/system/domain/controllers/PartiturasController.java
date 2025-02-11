@@ -347,7 +347,7 @@ public class PartiturasController {
 					headers.setContentType(MediaType.APPLICATION_PDF);
 					headers.add("Content-Disposition",
 					  "inline; filename=" + temp.getObra().getNombre() + "_" + temp.getInstrumento() + ".pdf");
-					headers.setContentLength(resource.contentLength());
+					headers.setContentLength(temp.getVistaPreviaPDF().length);
 					return ResponseEntity.ok().headers(headers).body(resource);
 				}
 				
