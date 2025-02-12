@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
-import org.springframework.web.multipart.MultipartException;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.system.domain.interfaces.IUserService;
@@ -45,8 +44,8 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 	
-	@PreAuthorize("hasAnyRole('Administrador','USERS_Administrador') OR #idUsuario == authentication.principal.idUsuario")
-	//@PostAuthorize(value = "")
+	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador') OR #idUsuario == authentication.principal.idUsuario")
+	// @PostAuthorize(value = "")
 	@GetMapping("")
 	
 	public ResponseEntity<?> users(@RequestParam(defaultValue = "0") int pageNumber,
@@ -68,24 +67,18 @@ public class UserController {
 				
 			}
 			
-			responseBody.put("mensaje", "No se encontraron resultados");
+			responseBody.put("error", "No se encontraron resultados");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			
 		} catch (EmptyResultDataAccessException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "No se encontraron resultados.");
-			responseBody.put("error", "EmptyResultDataAccessException: "
-			  .concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
-			responseBody.put("error",
-			  "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
@@ -93,7 +86,7 @@ public class UserController {
 		}
 	}
 	
-	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
+	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','USERS_Administrador', 'ROLE_Editor', 'ROLE_Lector')")
 	@GetMapping("{idUsuario}")
 	public ResponseEntity<?> findUsuario(@PathVariable(name = "idUsuario", required = false) String idUsuarioString) {
 		Map<String, Object> responseBody = new HashMap<>();
@@ -119,19 +112,14 @@ public class UserController {
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 			
 		} catch (NumberFormatException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ingrese un ID válido");
-			responseBody.put("error", "NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
+			responseBody.put("error",
+			  "NumberFormatException: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
-			responseBody.put("error",
-			  "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
@@ -139,7 +127,7 @@ public class UserController {
 		}
 	}
 	
-	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
+	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','USERS_Administrador', 'ROLE_Editor', 'ROLE_Lector')")
 	@PostMapping("")
 	public ResponseEntity<?> saveUser(@RequestBody Usuario usuario) {
 		
@@ -154,38 +142,23 @@ public class UserController {
 				return new ResponseEntity<Usuario>(userSave, null, HttpStatus.OK);
 				
 			}
-			responseBody.put("mensaje",
+			responseBody.put("error",
 			  "El Objeto :".concat(usuario.toString().concat(" no se pudo guardar en la base de datos!.")));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			
-		} catch (
-		
-		MultipartException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Error el multipartFile");
-			responseBody.put("error",
-			  "MultipartException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (NumberFormatException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ingrese un ID válido");
-			responseBody.put("error", "NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
+			responseBody.put("error",
+			  "NumberFormatException: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataIntegrityViolationException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "El Objeto: ".concat(usuario.getEmail().concat(" ya existe en la base de datos")));
 			responseBody.put("error", "DataIntegrityViolationException: "
 			  .concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
-			responseBody.put("error",
-			  "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
@@ -193,7 +166,7 @@ public class UserController {
 		}
 	}
 	
-	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
+	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','ROLE_Administrador', 'ROLE_Editor', 'ROLE_Lector')")
 	@PutMapping("")
 	public ResponseEntity<?> updateUser(@RequestBody Usuario usuario) {
 		Map<String, Object> responseBody = new HashMap<>();
@@ -221,19 +194,14 @@ public class UserController {
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			
 		} catch (NumberFormatException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ingrese un ID válido");
-			responseBody.put("error", "NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
+			responseBody.put("error",
+			  "NumberFormatException: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
-			responseBody.put("error",
-			  "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
@@ -241,7 +209,7 @@ public class UserController {
 		}
 	}
 	
-	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
+	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','ROLE_Administrador', 'ROLE_Editor', 'ROLE_Lector')")
 	@PutMapping("{idUsuario}")
 	public ResponseEntity<?> uploadImage(
 	  @PathVariable(name = "idUsuario", required = true) String idUsuarioString,
@@ -287,34 +255,25 @@ public class UserController {
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 			
 		} catch (NumberFormatException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ingrese un ID válido");
-			responseBody.put("error", "NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
+			responseBody.put("error",
+			  "NumberFormatException: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (DataAccessException e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
-			responseBody.put("error",
-			  "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (HttpMessageNotWritableException e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "HttpMessageNotWritableException: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		
-		finally {
+		} finally {
 			
 		}
 	}
 	
-	@PreAuthorize("hasAnyRole('Administrador','USERS_Administrador')")
+	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador')")
 	@DeleteMapping("{idUsuario}")
 	public ResponseEntity<?> deleteUsuarioByPath(
 	  @PathVariable(name = "idUsuario", required = true) String idUsuarioString) {
@@ -331,25 +290,18 @@ public class UserController {
 			responseBody.put("mensaje", "El ID: " + idUsuario + " no existe en la base de datos");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 		} catch (NumberFormatException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ingrese un ID válido");
-			responseBody.put("error", "NumberFormatException: ".concat(e.getMessage().concat(" : ").concat(e.getMessage())));
+			responseBody.put("error",
+			  "NumberFormatException: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (EmptyResultDataAccessException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "El ID : " + idUsuarioString + " no existe en la base de datos");
-			responseBody.put("error", "EmptyResultDataAccessException: "
-			  .concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
-			responseBody.put("error",
-			  "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
@@ -376,20 +328,14 @@ public class UserController {
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 			
 		} catch (DataIntegrityViolationException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "El Objeto: ".concat(usuario.getEmail().concat(" ya existe en la base de datos")));
 			responseBody.put("error", "DataIntegrityViolationException: "
 			  .concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
-			responseBody.put("error",
-			  "DataAccessException: ".concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Ha ocurrido un error.");
 			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
