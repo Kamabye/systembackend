@@ -23,7 +23,11 @@ public class AuthenticationByJwtService {
 		
 		if(authentication.isAuthenticated()) {
 			//System.out.println("JwtService.authenticate : " + authentication.toString());
+			//return jwtService.generateToken(username);
+			
+			//Se usa el UserDetails para obtener los authorities
 			return jwtService.generateToken((UserDetails) authentication.getPrincipal());
+			
 		}
 		//System.out.println("No autenticado");
 		return null;

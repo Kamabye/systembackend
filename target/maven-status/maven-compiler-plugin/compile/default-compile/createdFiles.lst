@@ -66,6 +66,7 @@ com\system\domain\controllers\UserController.class
 com\system\domain\services\imp\PacienteServiceImpJpa.class
 com\system\domain\controllers\RolController.class
 com\system\domain\filters\XFrameFilter.class
+com\system\domain\models\postgresql\Token.class
 com\system\domain\models\PayPal\CapturesPayPalV2.class
 com\system\domain\repository\postgresql\CartItemRepository.class
 com\system\domain\interfaces\IRolService.class
@@ -89,6 +90,7 @@ com\system\domain\configurations\PaypalConfig.class
 com\system\domain\controllers\PartiturasController.class
 com\system\domain\controllers\OpticaController.class
 com\system\domain\userdetails\UserDetailsImp.class
+com\system\domain\repository\postgresql\TokenRepository.class
 com\system\domain\services\imp\ObraServiceImpJpa.class
 com\system\domain\services\imp\ShopCartImpJPA.class
 com\system\domain\models\PayPal\PaymentSourcePayPalV2.class

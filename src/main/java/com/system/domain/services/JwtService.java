@@ -1,33 +1,40 @@
 package com.system.domain.services;
 
 import java.security.Key;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.function.Function;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import com.system.domain.models.postgresql.Token;
+import com.system.domain.repository.postgresql.TokenRepository;
+
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
-import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import io.jsonwebtoken.security.SignatureException;
 
 @Service
 public class JwtService {
+	
+	@Autowired
+	private TokenRepository tokenRepository;
 	// @Value("${jwt.secretkey}")
 	// private String secretKey;
 	
-	private static String SECRET_KEY;
-	private static Long EXPIRATION_TIME;
+	private final String SECRET_KEY;
+	// private final Long EXPIRATION_TIME;
 	
 	// @Value("${jwt.expiration}")
 	// private Long expiration;
@@ -35,48 +42,79 @@ public class JwtService {
 	// private static final String SECRET_KEY =
 	// "462D4A614E645267556B586E3272357538782F413F4428472B4B625065536856";
 	
-	@Value("${jwt.secretkey}")
-	public void setSecretKeyStatic(String secretKey) {
-		JwtService.SECRET_KEY = secretKey;
+	/*
+	 * @Value("${jwt.secretkey}") public void setSecretKeyStatic(String secretKey) {
+	 * JwtService.SECRET_KEY = secretKey; }
+	 * 
+	 * @Value("${jwt.expiration}") public void setSecretKeyStatic(Long expiration) {
+	 * JwtService.EXPIRATION_TIME = expiration; }
+	 */
+	
+	public JwtService(
+	  @Value("${jwt.secretkey}") String secretKey,
+	  @Value("${jwt.expirationtime}") Long expirationTime) {
+		this.SECRET_KEY = secretKey;
+		// this.EXPIRATION_TIME = expirationTime;
 	}
 	
-	@Value("${jwt.expiration}")
-	public void setSecretKeyStatic(Long expiration) {
-		JwtService.EXPIRATION_TIME = expiration;
+	public String generateToken(UserDetails userDetails) throws ExpiredJwtException {
+		return createToken(new HashMap<>(), userDetails.getUsername(), userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
 	}
 	
-	public String generateToken(UserDetails userDetails) {
-		return createToken(new HashMap<>(), userDetails);
-	}
-	
-	public String generateToken(String username) {
-		return createToken(new HashMap<>(), username);
-	}
-	
-	private String createToken(Map<String, Object> extraClaims, UserDetails userDetails) {
-		Date now = new Date();
-		Date expirationDate = new Date(now.getTime() + EXPIRATION_TIME);
+	private String createToken(Map<String, Object> extraClaims, String username, String[] authorities) {
 		
-		String[] roles = userDetails.getAuthorities().stream()
-    .map(GrantedAuthority::getAuthority) // Obtiene el nombre del rol (String)
-    .toArray(String[]::new); // Convierte a un arreglo de String
-		return Jwts.builder()
+		String existingToken = getExistingToken(username);
+		
+		if (existingToken != null && isTokenValid(existingToken)) {
+			// System.out.println("Hay token almacenados válidos");
+			return existingToken;
+		}
+		
+		// System.out.println("No hay token almacenados válidos");
+		LocalDateTime nowLocalDateTime = LocalDateTime.now();
+		LocalDateTime expLocalDateTime = nowLocalDateTime.plusDays(1);
+		//LocalDateTime expLocalDateTime = nowLocalDateTime.plusMinutes(1);
+		// LocalDateTime expirationTime = LocalDateTime.now().plusWeeks(1);
+		Date now = Date.from(nowLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
+		// Date expirationDate = new Date(now.getTime() + EXPIRATION_TIME);
+		Date expirationDate = Date.from(expLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
+		
+//Guardar el token en la base de datos
+		Token tokenEntity = new Token();
+		
+		if (authorities != null && authorities.length > 0) {
+			String token = Jwts.builder()
+			  .setClaims(extraClaims)
+			  .setSubject(username)
+			  // .claim("authorities",userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
+			  .claim("authorities", authorities)
+			  .setIssuedAt(now)
+			  .setExpiration(expirationDate)
+			  .signWith(getSingInKey(), SignatureAlgorithm.HS256)
+			  .compact();
+			
+			tokenEntity.setUsername(username);
+			tokenEntity.setToken(token);
+			tokenEntity.setExpirationDate(expLocalDateTime);
+			tokenRepository.save(tokenEntity);
+			
+			return token;
+		}
+		String token = Jwts.builder()
 		  .setClaims(extraClaims)
-		  .setSubject(userDetails.getUsername())
-		  //.claim("authorities",userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
-		  .claim("authorities",roles)
+		  .setSubject(username)
 		  .setIssuedAt(now)
 		  .setExpiration(expirationDate)
 		  .signWith(getSingInKey(), SignatureAlgorithm.HS256)
 		  .compact();
-	}
-	
-	private String createToken(Map<String, Object> extraClaims, String username) {
-		Date now = new Date();
-		Date expirationDate = new Date(now.getTime() + EXPIRATION_TIME);
-		return Jwts.builder().setClaims(extraClaims).setSubject(username)
-		  .setIssuedAt(new Date(System.currentTimeMillis())).setExpiration(expirationDate)
-		  .signWith(getSingInKey(), SignatureAlgorithm.HS256).compact();
+		
+		tokenEntity.setUsername(username);
+		tokenEntity.setToken(token);
+		tokenEntity.setExpirationDate(expLocalDateTime);
+		tokenRepository.save(tokenEntity);
+		
+		return token;
+		
 	}
 	
 	public String extractUsername(String token) {
@@ -94,7 +132,11 @@ public class JwtService {
 	}
 	
 	private Claims extractAllClaims(String token) {
-		return Jwts.parserBuilder().setSigningKey(getSingInKey()).build().parseClaimsJws(token).getBody();
+		return Jwts.parserBuilder()
+		  .setSigningKey(getSingInKey())
+		  .build()
+		  .parseClaimsJws(token)
+		  .getBody();
 	}
 	
 	private Key getSingInKey() {
@@ -102,31 +144,31 @@ public class JwtService {
 		return Keys.hmacShaKeyFor(keyBites);
 	}
 	
-	public boolean isTokenValid(String token) {
+	private Date extractExpiration(String token) {
+		return extractClaim(token, Claims::getExpiration);
+	}
+	
+	public Boolean isTokenExpired(String token) {
+		return extractExpiration(token).before(new Date());
+	}
+	
+	public Boolean isTokenValid(String token) {
 		
 		try {
 			Jwts.parserBuilder().setSigningKey(getSingInKey()).build().parseClaimsJws(token);
 			return true;
-		} catch (SignatureException ex) {
-			System.out.println("Firma JWT inválida");
-		} catch (MalformedJwtException ex) {
-			System.out.println("Token JWT inválido");
-		} catch (ExpiredJwtException ex) {
-			System.out.println("Token JWT expirado");
-		} catch (UnsupportedJwtException ex) {
-			System.out.println("Token JWT no soportado");
-		} catch (IllegalArgumentException ex) {
-			System.out.println("Cadena JWT vacía");
+		} catch (Exception e) {
 		}
 		return false;
 	}
 	
-	private boolean isTokenExpired(String token) {
-		return extractExpiration(token).before(new Date());
-	}
-	
-	private Date extractExpiration(String token) {
-		return extractClaim(token, Claims::getExpiration);
+	private String getExistingToken(String username) {
+		Optional<String> optional = tokenRepository.findLastTokenByUsername(username);
+		
+		if (optional.isPresent()) {
+			return optional.get();
+		}
+		return null; // Cambia esto según tu implementación
 	}
 	
 }

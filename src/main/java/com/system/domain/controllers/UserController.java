@@ -14,12 +14,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotWritableException;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.system.domain.interfaces.IUserService;
@@ -44,7 +40,7 @@ public class UserController {
 	@Autowired
 	private IUserService userService;
 	
-	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador') OR #idUsuario == authentication.principal.idUsuario")
+	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador')")
 	// @PostAuthorize(value = "")
 	@GetMapping("")
 	
@@ -86,7 +82,7 @@ public class UserController {
 		}
 	}
 	
-	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','USERS_Administrador', 'ROLE_Editor', 'ROLE_Lector')")
+	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','ROLE_Administrador', 'ROLE_Editor', 'ROLE_Lector')")
 	@GetMapping("{idUsuario}")
 	public ResponseEntity<?> findUsuario(@PathVariable(name = "idUsuario", required = false) String idUsuarioString) {
 		Map<String, Object> responseBody = new HashMap<>();
@@ -127,7 +123,7 @@ public class UserController {
 		}
 	}
 	
-	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','USERS_Administrador', 'ROLE_Editor', 'ROLE_Lector')")
+	@PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector','ROLE_Administrador', 'ROLE_Editor', 'ROLE_Lector')")
 	@PostMapping("")
 	public ResponseEntity<?> saveUser(@RequestBody Usuario usuario) {
 		
@@ -310,6 +306,7 @@ public class UserController {
 		
 	}
 	
+	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador')")
 	@PostMapping("initialized")
 	public ResponseEntity<?> initializedUser(@RequestBody Usuario usuario) {
 		
@@ -341,17 +338,6 @@ public class UserController {
 		} finally {
 			
 		}
-	}
-	
-	@ExceptionHandler({ AccessDeniedException.class })
-	public ResponseEntity<String> handleAccessDeniedException() {
-		return new ResponseEntity<>("Acceso Denegado: El usuario no tiene los permisos para este recurso", HttpStatus.UNAUTHORIZED);
-	}
-	
-	@ExceptionHandler(HttpMediaTypeNotSupportedException.class)
-	public ResponseEntity<String> handleHttpMediaTypeNotSupportedException(HttpMediaTypeNotSupportedException ex, WebRequest request) {
-		String message = "Content-Type not supported: " + ex.getContentType();
-		return new ResponseEntity<>(message, HttpStatus.UNSUPPORTED_MEDIA_TYPE);
 	}
 	
 }

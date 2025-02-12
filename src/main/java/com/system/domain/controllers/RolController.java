@@ -33,7 +33,7 @@ public class RolController {
 	@Autowired
 	private IRolService rolService;
 	
-	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador') OR #idUsuario == authentication.principal.idUsuario")
+	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador')")
 	@GetMapping("")
 	public ResponseEntity<?> roles() {
 		Map<String, Object> responseBody = new HashMap<>();
@@ -67,7 +67,7 @@ public class RolController {
 		}
 	}
 	
-	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador') OR #idUsuario == authentication.principal.idUsuario")
+	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador')")
 	@GetMapping("{idRol}")
 	public ResponseEntity<?> findRol(@PathVariable(name = "idRol", required = false) String idRolString) {
 		Map<String, Object> responseBody = new HashMap<>();
@@ -109,7 +109,7 @@ public class RolController {
 		}
 	}
 	
-	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador') OR #idUsuario == authentication.principal.idUsuario")
+	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador')")
 	@PostMapping("")
 	public ResponseEntity<?> saveRol(@RequestBody Rol rol) {
 		Map<String, Object> responseBody = new HashMap<>();
@@ -154,43 +154,7 @@ public class RolController {
 		}
 	}
 	
-	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador') OR #idUsuario == authentication.principal.idUsuario")
-	@DeleteMapping("{idRol}")
-	public ResponseEntity<?> deleteRolByIDUrl(@PathVariable(name = "idRol", required = true) String idRolString) {
-		Map<String, Object> responseBody = new HashMap<>();
-		try {
-			Long idRol = Long.valueOf(idRolString);
-			
-			Rol rolDeleted = rolService.deleteReturn(idRol);
-			
-			if (rolDeleted != null) {
-				return new ResponseEntity<Rol>(rolDeleted, null, HttpStatus.OK);
-			}
-			
-			responseBody.put("mensaje", "El ID: " + idRol + " no existe en la base de datos");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
-		} catch (NumberFormatException e) {
-			responseBody.put("error",
-			  "NumberFormatException: ".concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
-		} catch (EmptyResultDataAccessException e) {
-			responseBody.put("error", "DataAccessException: "
-			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (DataAccessException e) {
-			responseBody.put("error", "DataAccessException: "
-			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			responseBody.put("error", "Exception: ".concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} finally {
-			
-		}
-		
-	}
-	
-	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador') OR #idUsuario == authentication.principal.idUsuario")
+	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador')")
 	@PutMapping("{idRol}")
 	public ResponseEntity<?> updateRol(@PathVariable(name = "idRol", required = true) String idRolString,
 	  @RequestBody Rol rol) {
@@ -245,6 +209,42 @@ public class RolController {
 		} finally {
 			
 		}
+	}
+	
+	@PreAuthorize("hasAnyRole('Administrador','ROLE_Administrador')")
+	@DeleteMapping("{idRol}")
+	public ResponseEntity<?> deleteRolByIDUrl(@PathVariable(name = "idRol", required = true) String idRolString) {
+		Map<String, Object> responseBody = new HashMap<>();
+		try {
+			Long idRol = Long.valueOf(idRolString);
+			
+			Rol rolDeleted = rolService.deleteReturn(idRol);
+			
+			if (rolDeleted != null) {
+				return new ResponseEntity<Rol>(rolDeleted, null, HttpStatus.OK);
+			}
+			
+			responseBody.put("mensaje", "El ID: " + idRol + " no existe en la base de datos");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+		} catch (NumberFormatException e) {
+			responseBody.put("error",
+			  "NumberFormatException: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
+		} catch (EmptyResultDataAccessException e) {
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (DataAccessException e) {
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+		} finally {
+			
+		}
+		
 	}
 	
 }
