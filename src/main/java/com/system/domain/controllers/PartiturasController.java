@@ -461,38 +461,26 @@ public class PartiturasController {
 				if (partituraDTO != null) {
 					
 					partituraService.delete(idPartitura);
-					
-					responseBody.put("mensaje", "La partitura : " + idPartitura + " ha sido eliminada con éxito");
-					responseBody.put("PartituraDTO", partituraDTO);
-					return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
+					return new ResponseEntity<PartituraDTO>(partituraDTO, null, HttpStatus.OK);
 				}
-				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
-				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
 				
 			}
-			responseBody.put("mensaje", "El idPartitura debe ser ingresado");
+			responseBody.put("error", "idPartitura requerido");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 			
 		}
 		
 		catch (NumberFormatException e) {
-			// e.printStackTrace();
-			responseBody.put("mensaje", "El ID no es válido NumberFormatException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
+			responseBody.put("error",
+			  "NumberFormatException: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
-		} catch (HibernateException e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos HibernateException");
-			responseBody.put("error", e.getMessage().concat(" : "));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
-			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			e.printStackTrace();
-			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
-			responseBody.put("error", e.getMessage().concat(" : "));
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
 			

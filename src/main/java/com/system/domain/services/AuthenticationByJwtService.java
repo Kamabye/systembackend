@@ -22,10 +22,10 @@ public class AuthenticationByJwtService {
 				.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 		
 		if(authentication.isAuthenticated()) {
-			System.out.println("JwtService.authenticate : " + authentication.toString());
+			//System.out.println("JwtService.authenticate : " + authentication.toString());
 			return jwtService.generateToken((UserDetails) authentication.getPrincipal());
 		}
-		System.out.println("No autenticado");
+		//System.out.println("No autenticado");
 		return null;
 	}
 }

@@ -340,7 +340,8 @@ public class ObraController {
 	}
 	
 	@DeleteMapping("{idObra}")
-	public ResponseEntity<?> deleteObraByIDUrl(@PathVariable(name = "idObra", required = true) String idObraString) {
+	public ResponseEntity<?> deleteObraByIDUrl(
+			@PathVariable(name = "idObra", required = true) String idObraString) {
 		Map<String, Object> responseBody = new HashMap<>();
 		try {
 			if (idObraString != null) {

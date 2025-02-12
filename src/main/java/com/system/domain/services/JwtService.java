@@ -5,7 +5,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
@@ -57,12 +56,15 @@ public class JwtService {
 	private String createToken(Map<String, Object> extraClaims, UserDetails userDetails) {
 		Date now = new Date();
 		Date expirationDate = new Date(now.getTime() + EXPIRATION_TIME);
+		
+		String[] roles = userDetails.getAuthorities().stream()
+    .map(GrantedAuthority::getAuthority) // Obtiene el nombre del rol (String)
+    .toArray(String[]::new); // Convierte a un arreglo de String
 		return Jwts.builder()
 		  .setClaims(extraClaims)
 		  .setSubject(userDetails.getUsername())
-		  .claim("authorities",
-		    userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-		      .collect(Collectors.joining(",")))
+		  //.claim("authorities",userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
+		  .claim("authorities",roles)
 		  .setIssuedAt(now)
 		  .setExpiration(expirationDate)
 		  .signWith(getSingInKey(), SignatureAlgorithm.HS256)

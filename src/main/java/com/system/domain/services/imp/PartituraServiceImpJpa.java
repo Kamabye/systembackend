@@ -73,11 +73,10 @@ public class PartituraServiceImpJpa implements IPartituraService {
 		return null;
 	}
 
-	@Transactional(readOnly = true)
+	@Transactional
 	@Override
 	public void delete(Long idPartitura) {
 		partituraRepo.deleteById(idPartitura);
-
 	}
 
 	@Transactional(readOnly = true)

@@ -24,54 +24,48 @@ import com.system.domain.services.AuthenticationByJwtService;
 @RequestMapping({ "apiv1/auth", "apiv1/auth/" })
 @CrossOrigin(origins = { "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/", "https://kamabyeapp.onrender.com", "https://kamabyeapp.onrender.com/", "http://localhost:4200", "http://localhost:8080", "http://localhost:4200/", "http://localhost:8080/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class AuthController {
-
+	
 	@Autowired
 	AuthenticationByJwtService authService;
-
+	
 	@PostMapping("")
 	public ResponseEntity<?> auth(@RequestParam(name = "username", required = true) String username,
-			@RequestParam(name = "password", required = true) String password) {
-		Map<String, Object> response = new HashMap<>();
+	  @RequestParam(name = "password", required = true) String password) {
+		Map<String, Object> responseBody = new HashMap<>();
 		try {
 			if (username != null && password != null) {
-
+				
 				String token = authService.authenticate(username, password);
-
+				
 				if (token != null) {
 					HttpHeaders headers = new HttpHeaders();
 					headers.setContentType(MediaType.TEXT_PLAIN);
-
+					
 					return new ResponseEntity<String>(token, headers, HttpStatus.OK);
 				}
-
-				response.put("mensaje", "No se pudo generar el JWT");
-				return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.INTERNAL_SERVER_ERROR);
+				
+				responseBody.put("error", "No se pudo generar el JWT");
+				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 			}
-			response.put("mensaje", "Credenciales inválidas");
-			return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.INTERNAL_SERVER_ERROR);
-
+			responseBody.put("error", "Credenciales inválidas");
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
+			
 		} catch (DataAccessException e) {
-			// e.printStackTrace();
-			response.put("mensaje", "Ha ocurrido un error.");
-			response.put("error", "DataAccessException: "
-					.concat(e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage())));
-			return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.INTERNAL_SERVER_ERROR);
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (BadCredentialsException e) {
-			response.put("mensaje", "Credenciales incorrectas BadCredentialsException");
-			response.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.NOT_FOUND);
+			responseBody.put("error", "BadCredentialsException: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (AuthenticationException e) {
-			e.printStackTrace();
-			response.put("mensaje", "Error en  la authtenticacion AuthenticationException");
-			response.put("error", e.getMessage().concat(" : ").concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.NOT_FOUND);
+			responseBody.put("error", "AuthenticationException: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
-			response.put("mensaje", "Error al realizar la consulta en la base de datos");
-			response.put("error", "Exception: ".concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(response, null, HttpStatus.INTERNAL_SERVER_ERROR);
+			responseBody.put("error", "Exception: ".concat(e.getMessage()));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} finally {
-
+			
 		}
-
+		
 	}
 }
