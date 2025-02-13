@@ -35,7 +35,7 @@ public class PDFServiceImp implements IPDFService {
 	
 	private static final int BUFFER_MAX_MULTIPARTFILE = 8192;
 	
-	private static final int PDF_SIZE_MAX = 2 * 1024 * 1024;// 2MB para archivos pdf
+	private static final int PDF_SIZE_MAX = 10 * 1024 * 1024;// 2MB para archivos pdf
 	private static final int AUDIO_SIZE_MAX = 10 * 1024 * 1024;// 2MB para archivos audio
 	
 	private static final List<String> EXTENSIONES_PDF_PERMITIDAS = Arrays.asList("pdf", "PDF");

@@ -1,4 +1,4 @@
 -------------------------------------------------------------------------------
 Test set: com.domain.system.SystemApplicationTests
 -------------------------------------------------------------------------------
-Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 29.141 s - in com.domain.system.SystemApplicationTests
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 50.588 s - in com.domain.system.SystemApplicationTests

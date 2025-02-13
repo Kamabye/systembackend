@@ -280,7 +280,7 @@ public class PartiturasController {
 				return new ResponseEntity<PartituraDTO>(partituraSave, null, HttpStatus.CREATED);
 				
 			}
-			responseBody.put("mensaje", "Partitura inválida");
+			responseBody.put("error", "Partitura inválida");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 			
 		} catch (NumberFormatException e) {
