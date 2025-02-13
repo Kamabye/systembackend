@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.system.domain.models.postgresql.Token;
 import com.system.domain.repository.postgresql.TokenRepository;
@@ -60,6 +61,7 @@ public class JwtService {
 	public String generateToken(UserDetails userDetails) throws ExpiredJwtException {
 		return createToken(new HashMap<>(), userDetails.getUsername(), userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
 	}
+	
 	
 	private String createToken(Map<String, Object> extraClaims, String username, String[] authorities) {
 		

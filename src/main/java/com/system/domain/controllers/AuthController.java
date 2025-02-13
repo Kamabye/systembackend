@@ -58,6 +58,7 @@ public class AuthController {
 			responseBody.put("error", "BadCredentialsException: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (AuthenticationException e) {
+			e.printStackTrace();
 			responseBody.put("error", "AuthenticationException: ".concat(e.getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {

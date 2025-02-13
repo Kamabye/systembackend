@@ -34,7 +34,7 @@ import jakarta.validation.constraints.Min;
 
 @RestController
 @RequestMapping({ "apiv1/optica", "apiv1/optica/" })
-@CrossOrigin(origins = { "http://localhost:8080", "http://localhost:4200", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
+@CrossOrigin(origins = { "https://kamabyeapp.onrender.com", "https://kamabyeapp.onrender.com/", "http://localhost:8080", "http://localhost:8080/", "http://localhost:4200", "http://localhost:4200/", "https://system-i73z.onrender.com", "https://system-i73z.onrender.com/", "https://opticalemus.onrender.com", "https://opticalemus.onrender.com/" }, methods = { RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.PATCH, RequestMethod.DELETE, RequestMethod.TRACE, RequestMethod.OPTIONS }, allowedHeaders = { "Authorization", "Content-Type" }, exposedHeaders = {})
 public class OpticaController {
 	
 	@Autowired
