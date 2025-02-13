@@ -11,9 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.system.domain.models.postgresql.Rol;
 import com.system.domain.models.postgresql.Usuario;
 
+import lombok.Data;
+
 //@Data permite que al retornar cualquier objeto UserDetailsImo, también se pueda acceder al atributo usuario
 //Validar si es necesario este acceso
-//@Data
+@Data
 public class UserDetailsImp implements UserDetails {
 	
 	private Usuario usuario;

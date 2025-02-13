@@ -12,12 +12,11 @@ import java.util.function.Function;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import com.system.domain.models.postgresql.Token;
 import com.system.domain.repository.postgresql.TokenRepository;
+import com.system.domain.userdetails.UserDetailsImp;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.ExpiredJwtException;
@@ -58,14 +57,16 @@ public class JwtService {
 		// this.EXPIRATION_TIME = expirationTime;
 	}
 	
-	public String generateToken(UserDetails userDetails) throws ExpiredJwtException {
-		return createToken(new HashMap<>(), userDetails.getUsername(), userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
+	public String generateToken(UserDetailsImp userDetails) throws ExpiredJwtException {
+		// return createToken(new HashMap<>(), userDetails.getUsername(),
+		// userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
+		return createToken(new HashMap<>(), userDetails, userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
 	}
 	
-	
-	private String createToken(Map<String, Object> extraClaims, String username, String[] authorities) {
+	private String createToken(Map<String, Object> extraClaims, UserDetailsImp userDetails, String[] authorities) {
 		
-		String existingToken = getExistingToken(username);
+		// String existingToken = getExistingToken(username);
+		String existingToken = getExistingToken(userDetails.getUsuario().getIdUsuario());
 		
 		if (existingToken != null && isTokenValid(existingToken)) {
 			// System.out.println("Hay token almacenados válidos");
@@ -75,7 +76,7 @@ public class JwtService {
 		// System.out.println("No hay token almacenados válidos");
 		LocalDateTime nowLocalDateTime = LocalDateTime.now();
 		LocalDateTime expLocalDateTime = nowLocalDateTime.plusDays(1);
-		//LocalDateTime expLocalDateTime = nowLocalDateTime.plusMinutes(1);
+		// LocalDateTime expLocalDateTime = nowLocalDateTime.plusMinutes(1);
 		// LocalDateTime expirationTime = LocalDateTime.now().plusWeeks(1);
 		Date now = Date.from(nowLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
 		// Date expirationDate = new Date(now.getTime() + EXPIRATION_TIME);
@@ -87,7 +88,7 @@ public class JwtService {
 		if (authorities != null && authorities.length > 0) {
 			String token = Jwts.builder()
 			  .setClaims(extraClaims)
-			  .setSubject(username)
+			  .setSubject(userDetails.getUsername())
 			  // .claim("authorities",userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.joining(",")))
 			  .claim("authorities", authorities)
 			  .setIssuedAt(now)
@@ -95,7 +96,9 @@ public class JwtService {
 			  .signWith(getSingInKey(), SignatureAlgorithm.HS256)
 			  .compact();
 			
-			tokenEntity.setUsername(username);
+			// tokenEntity.setUsername(username);
+			//System.out.println(userDetails.getUsuario().getIdUsuario());
+			tokenEntity.setIdUsuario(userDetails.getUsuario().getIdUsuario());
 			tokenEntity.setToken(token);
 			tokenEntity.setExpirationDate(expLocalDateTime);
 			tokenRepository.save(tokenEntity);
@@ -104,13 +107,15 @@ public class JwtService {
 		}
 		String token = Jwts.builder()
 		  .setClaims(extraClaims)
-		  .setSubject(username)
+		  .setSubject(userDetails.getUsername())
 		  .setIssuedAt(now)
 		  .setExpiration(expirationDate)
 		  .signWith(getSingInKey(), SignatureAlgorithm.HS256)
 		  .compact();
 		
-		tokenEntity.setUsername(username);
+		//System.out.println(userDetails.getUsuario().getIdUsuario());
+		// tokenEntity.setUsername(userDetails.getUsername());
+		tokenEntity.setIdUsuario(userDetails.getUsuario().getIdUsuario());
 		tokenEntity.setToken(token);
 		tokenEntity.setExpirationDate(expLocalDateTime);
 		tokenRepository.save(tokenEntity);
@@ -164,8 +169,10 @@ public class JwtService {
 		return false;
 	}
 	
-	private String getExistingToken(String username) {
-		Optional<String> optional = tokenRepository.findLastTokenByUsername(username);
+	private String getExistingToken(Long idUsuario) {
+		// Optional<String> optional =
+		// tokenRepository.findLastTokenByUsername(username);
+		Optional<String> optional = tokenRepository.findLastTokenByidUsuario(idUsuario);
 		
 		if (optional.isPresent()) {
 			return optional.get();

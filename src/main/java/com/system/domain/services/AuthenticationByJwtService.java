@@ -4,8 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
+
+import com.system.domain.userdetails.UserDetailsImp;
 
 @Service
 public class AuthenticationByJwtService {
@@ -15,6 +17,9 @@ public class AuthenticationByJwtService {
 
 	@Autowired
 	private JwtService jwtService;
+	
+	@Autowired
+	private UserDetailsService userDetailsService;
 
 	public String authenticate(String username, String password) {
 		
@@ -22,11 +27,12 @@ public class AuthenticationByJwtService {
 				.authenticate(new UsernamePasswordAuthenticationToken(username, password));
 		
 		if(authentication.isAuthenticated()) {
-			//System.out.println("JwtService.authenticate : " + authentication.toString());
-			//return jwtService.generateToken(username);
 			
-			//Se usa el UserDetails para obtener los authorities
-			return jwtService.generateToken((UserDetails) authentication.getPrincipal());
+			UserDetailsImp usuario = (UserDetailsImp) userDetailsService.loadUserByUsername(username);
+			
+			//System.out.println(usuario.toString());
+			
+			return jwtService.generateToken(usuario);
 			
 		}
 		//System.out.println("No autenticado");
