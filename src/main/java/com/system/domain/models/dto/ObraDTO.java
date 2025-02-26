@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // Genera un constructor sin parámetros
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
 @AllArgsConstructor // Crea un constructor que solicita todos los parámetros de la clase que no son
-// FINAL
 public class ObraDTO {
 	
 	private Long idObra;
@@ -31,6 +30,8 @@ public class ObraDTO {
 	
 	private BigDecimal precio;
 	
+	private BigDecimal iva;
+	
 	private String embedAudio;
 	
 	private String embedVideo;
@@ -41,8 +42,7 @@ public class ObraDTO {
 	
 	private Set<PartituraDTO> partituras;
 	
-	public ObraDTO(Long idObra, String nombre, String compositor, String arreglista, String letrista, String genero,
-	  BigDecimal precio, String embedAudio, String embedVideo, LocalDateTime createdAt, LocalDateTime modifiedAt) {
+	public ObraDTO(Long idObra, String nombre, String compositor, String arreglista, String letrista, String genero, BigDecimal precio, BigDecimal iva, String embedAudio, String embedVideo, LocalDateTime createdAt, LocalDateTime modifiedAt) {
 		
 		this.idObra = idObra;
 		this.nombre = nombre;
@@ -51,6 +51,7 @@ public class ObraDTO {
 		this.letrista = letrista;
 		this.genero = genero;
 		this.precio = precio;
+		this.iva = iva;
 		this.embedAudio = embedAudio;
 		this.embedVideo = embedVideo;
 		this.createdAt = createdAt;
@@ -67,6 +68,7 @@ public class ObraDTO {
 		this.letrista = obra.getLetrista();
 		this.genero = obra.getGenero();
 		this.precio = obra.getPrecio();
+		this.iva = obra.getIva();
 		this.embedAudio = obra.getEmbedAudio();
 		this.embedVideo = obra.getEmbedVideo();
 		this.createdAt = obra.getCreatedAt();

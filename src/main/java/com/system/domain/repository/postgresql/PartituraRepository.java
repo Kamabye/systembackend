@@ -9,9 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.system.domain.models.dto.LobDTO;
 import com.system.domain.models.dto.ObraDTO;
 import com.system.domain.models.dto.PartituraDTO;
+import com.system.domain.models.postgresql.Obra;
 import com.system.domain.models.postgresql.Partitura;
 
 @Repository
@@ -26,7 +26,7 @@ public interface PartituraRepository extends JpaRepository<Partitura, Long> {
 	 * @param idObra
 	 * @return
 	 */
-	List<Partitura> findByObraIdObra(Long idObra);
+	Set<Partitura> findByObra(Obra obra);
 
 	@Query("SELECT new com.system.domain.models.dto.PartituraDTO(p.idPartitura, p.instrumento) FROM Partitura p")
 	List<PartituraDTO> jpqlfindAll();
@@ -36,9 +36,6 @@ public interface PartituraRepository extends JpaRepository<Partitura, Long> {
 
 	@Query("SELECT new com.system.domain.models.dto.PartituraDTO(p.idPartitura, p.instrumento) FROM Partitura p WHERE p.obra.idObra = :idObra ORDER BY p.instrumento ASC")
 	Set<PartituraDTO> jpqlfindByIdObra(@Param("idObra") Long idObra);
-	
-	@Query("SELECT new com.system.domain.models.dto.LobDTO(p.partituraPDF) FROM Partitura p WHERE p.obra.idObra = :idObra ORDER BY p.instrumento ASC")
-	List<LobDTO> jpqlLobfindByIdObra(@Param("idObra") Long idObra);
 
 	@Query("SELECT DISTINCT p.instrumento FROM Partitura p WHERE p.obra.idObra = :idObra ORDER BY p.instrumento ASC")
 	Set<String> jpqlfindInstrumentos(@Param("idObra") Long idObra);

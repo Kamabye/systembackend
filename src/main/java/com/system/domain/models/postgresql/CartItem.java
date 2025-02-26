@@ -25,6 +25,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor // Genera un constructor sin parámetros
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
 @AllArgsConstructor // Genera un cosntructor para cada parámetro finales o no nulos
+
+//@JsonIdentityInfo(scope = CartItem.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "idUsuario") //Utilizado para referencias cíclicas
 public class CartItem {
 	
 	@Id

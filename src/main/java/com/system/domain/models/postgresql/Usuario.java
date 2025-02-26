@@ -1,18 +1,16 @@
 package com.system.domain.models.postgresql;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.system.domain.models.Auditable;
 
-import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -21,7 +19,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
-import jakarta.persistence.Lob;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
@@ -36,13 +33,12 @@ import lombok.ToString;
 @Table(name = "Usuarios")
 @Data
 @EqualsAndHashCode(exclude = "roles", callSuper = true)
-@ToString(exclude = "roles")
+@ToString(exclude = { "roles" })
 //@Builder
 @NoArgsConstructor // Genera un constructor sin parámetros
 //@RequiredArgsConstructor //Genera un constructor por cada parámetro de uso especial final o no nulo
 @AllArgsConstructor // Genera un cosntructor para cada parámetro finales o no nulos
-//@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
-//@JsonIgnoreProperties({ "imagen" })
+@JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" }) // Ignora propiedades del Proxy Hibernate durante la serializacion
 @JsonIdentityInfo(scope = Usuario.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "idUsuario")
 public class Usuario extends Auditable implements Serializable {
 	
@@ -93,12 +89,6 @@ public class Usuario extends Auditable implements Serializable {
 	// @Column(columnDefinition = "BYTEA")
 	// private byte[] imagenBytea;
 	
-	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-	@Lob
-	@Basic(fetch = FetchType.LAZY)
-	@Column
-	private Blob imagen;
-	
 	@Column(nullable = false)
 	private Boolean estatus;
 	
@@ -129,9 +119,10 @@ public class Usuario extends Auditable implements Serializable {
 	
 	// @EqualsAndHashCode.Exclude
 	// @ToString.Exclude
-		//@JsonManagedReference
+	// @JsonManagedReference
 	// @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	// @JsonIgnoreProperties("usuarios")
+	// @JsonIgnore
 	private Set<Rol> roles = new HashSet<>();
 	
 	public void addRole(Rol rol) {
@@ -166,9 +157,5 @@ public class Usuario extends Auditable implements Serializable {
 	private void onCreate() {
 		estatus = false;
 		estatusBloqueo = false;
-		
-		LocalDateTime fecha = LocalDateTime.now();
-		setCreatedAt(fecha);
-		setModifiedAt(fecha);
 	}
 }

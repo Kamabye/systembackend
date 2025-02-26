@@ -1,9 +1,9 @@
 package com.system.domain.models.postgresql;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
-import java.time.temporal.ChronoUnit;
+import java.time.Period;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,7 +20,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -62,7 +64,7 @@ public class Paciente extends Auditable implements Serializable {
 	@Column
 	// @Temporal(TemporalType.DATE)
 	// @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
-	private OffsetDateTime fechaNacimiento;
+	private LocalDate fechaNacimiento;
 	@Column
 	private String sexo;
 	@Column
@@ -83,6 +85,10 @@ public class Paciente extends Auditable implements Serializable {
 // @OrderBy("column ASC")
 	private Set<Consulta> consultas = new HashSet<>();
 	
+	private OffsetDateTime fechaCreacion;
+	
+	private OffsetDateTime fechaModificacion;
+	
 	public void agregarConsulta(Consulta consulta) {
 		if (this.consultas == null) {
 			this.consultas = new HashSet<Consulta>();
@@ -97,29 +103,32 @@ public class Paciente extends Auditable implements Serializable {
 		
 	}
 	
-	// @Transient
+	@Transient
 	public Integer getEdadCalculada() {
-		OffsetDateTime fechaActual = OffsetDateTime.now();
-		if (fechaNacimiento != null) {
-			return (int) fechaNacimiento.until(fechaActual, ChronoUnit.YEARS);
+		LocalDate fechaActual = LocalDate.now();
+		if (this.fechaNacimiento != null) {
+			Period periodo = Period.between(this.fechaNacimiento, fechaActual);
+			int anios = periodo.getYears();
+			return anios;
 		}
-		return 0;
+		return this.edad;
 		
-	}
-	
-	public OffsetDateTime restarAnios(Integer anios) {
-		return OffsetDateTime.now().minusYears(anios);
 	}
 	
 	@PrePersist
 	private void onCreate() {
-		LocalDateTime fecha = LocalDateTime.now();
-		setCreatedAt(fecha);
-		setModifiedAt(fecha);
+		OffsetDateTime fechaActual = OffsetDateTime.now();
+		setFechaCreacion(fechaActual);
+		setFechaModificacion(fechaActual);
 		
 		if (this.edad != null && this.edad > 0) {
-			setFechaNacimiento(this.restarAnios(edad));
+			setFechaNacimiento(LocalDate.now().minusYears(this.edad));
 		}
+	}
+	
+	@PreUpdate
+	private void onUpdate() {
+		setFechaModificacion(OffsetDateTime.now()); // Se actualiza updatedAt cuando la entidad se actualiza
 	}
 	
 }

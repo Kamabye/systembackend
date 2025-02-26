@@ -1,6 +1,5 @@
 package com.system.domain.controllers;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -11,7 +10,6 @@ import java.util.Set;
 import org.hibernate.HibernateException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -41,6 +39,7 @@ import com.system.domain.models.dto.ObraDTO;
 import com.system.domain.models.dto.PartituraDTO;
 import com.system.domain.models.postgresql.Obra;
 import com.system.domain.models.postgresql.Partitura;
+import com.system.domain.models.postgresql.PartituraBlob;
 
 @RestController
 @RequestMapping({ "apiv1/partitura", "apiv1/partitura/" })
@@ -191,8 +190,8 @@ public class PartiturasController {
 							if (vistaPrevia.length > 0) {
 								Partitura partitura = new Partitura();
 								partitura.setInstrumento(instrumento);
-								partitura.setPartituraPDFFromInputStream(partituraPDF.getInputStream());
-								partitura.setVistaPreviaPDF(vistaPrevia);
+								// partitura.setPartituraPDFFromInputStream(partituraPDF.getInputStream());
+								// partitura.setVistaPreviaPDF(vistaPrevia);
 								partitura.setObra(obra);
 								partituraService.save(partitura);
 								
@@ -231,10 +230,6 @@ public class PartiturasController {
 			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos DataAccessException");
 			responseBody.put("error", e.getMessage().concat(" : ").concat(e.getMostSpecificCause().getMessage()));
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (IOException e) {
-			responseBody.put("mensaje", "Error en la lectura del archivo PDF");
-			responseBody.put("error", e.getMessage().concat(" : "));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (Exception e) {
 			e.printStackTrace();
 			responseBody.put("mensaje", "Error al realizar la consulta en la base de datos Exception");
@@ -257,27 +252,18 @@ public class PartiturasController {
 				Long idPartitura = Long.valueOf(idPartituraString);
 				
 				Partitura partitura = partituraService.findById(idPartitura);
+				PartituraBlob partituraBlob = new PartituraBlob();
 				
 				byte[] vistaPrevia = pdfService.ponerMarcaAgua(inputStream);
-				partitura.setVistaPreviaPDF(vistaPrevia);
-				partitura.setPartituraPDFFromInputStream(inputStream);
+				// partitura.setVistaPreviaPDF(vistaPrevia);
+				// partitura.setPartituraPDFFromInputStream(inputStream);
+				partituraBlob.setPartituraPDFFromInputStream(inputStream);
+				partituraBlob.setVistaPreviaPDF(vistaPrevia);
+				partituraBlob.setPartitura(partitura);
 				
-				PartituraDTO partituraSave = partituraService.saveDTO(partitura);
+				partituraService.saveBlob(partituraBlob);
 				
-				//
-				// ByteArrayResource resource = new
-				// ByteArrayResource(partituraSave.getVistaPreviaPDF());
-				
-				// HttpHeaders headers = new HttpHeaders();
-				
-				// headers.setContentType(MediaType.APPLICATION_PDF);
-				// headers.add("Content-Disposition","inline; filename=" +
-				// partituraSave.getObra().getNombre() + "_" + partituraSave.getInstrumento() +
-				// ".pdf");
-				// headers.setContentLength(resource.contentLength());
-				
-				// return ResponseEntity.ok().headers(headers).body(resource);
-				return new ResponseEntity<PartituraDTO>(partituraSave, null, HttpStatus.CREATED);
+				return new ResponseEntity<Partitura>(partitura, null, HttpStatus.CREATED);
 				
 			}
 			responseBody.put("error", "Partitura inválida");
@@ -326,6 +312,7 @@ public class PartiturasController {
 	@GetMapping("view/{idPartitura}")
 	public ResponseEntity<?> findPartituraByIDURL(
 	  @PathVariable(name = "idPartitura", required = false) String idPartituraString) {
+		System.out.println("Entramos a view Partitura");
 		
 		Map<String, Object> responseBody = new HashMap<>();
 		try {
@@ -336,25 +323,24 @@ public class PartiturasController {
 				
 				Long idPartitura = Long.valueOf(idPartituraString);
 				
-				temp = partituraService.findById(idPartitura);
+				Partitura partitura = partituraService.findById(idPartitura);
 				
-				if (temp != null) {
-					
-					InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(temp.getVistaPreviaPDF()));
+				byte[] vistaPrevia = partituraService.getVistaPrevia(idPartitura);
+				
+				if(vistaPrevia != null) {
 					
 					HttpHeaders headers = new HttpHeaders();
 					
-					headers.setContentType(MediaType.APPLICATION_PDF);
-					headers.add("Content-Disposition",
-					  "inline; filename=" + temp.getObra().getNombre() + "_" + temp.getInstrumento() + ".pdf");
-					headers.setContentLength(temp.getVistaPreviaPDF().length);
-					return ResponseEntity.ok().headers(headers).body(resource);
+					headers.setContentType(MediaType.APPLICATION_PDF);					
+					headers.add("Content-Disposition", "inline; filename=" + partitura.getObra().getNombre() + "_" + partitura.getInstrumento() + ".pdf");
+					
+					return ResponseEntity.ok().headers(headers).body(vistaPrevia);
 				}
 				
 				return new ResponseEntity<Map<String, Object>>(null, null, HttpStatus.NO_CONTENT);
 				
 			}
-			responseBody.put("mensaje", "El idPartitura debe ser ingresado");
+			responseBody.put("error", "El idPartitura debe ser ingresado");
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 			
 		}
@@ -395,7 +381,8 @@ public class PartiturasController {
 				
 				Obra obra = obraService.findById(idObra);
 				
-				List<LobDTO> partituras = partituraService.jpqlLobFindByIdObra(idObra);
+				// List<LobDTO> partituras = partituraService.jpqlLobFindByIdObra(idObra);
+				List<LobDTO> partituras = null;
 				
 				if (partituras != null) {
 					ByteArrayResource resource = new ByteArrayResource(pdfService.unirPDF(partituras));
@@ -551,17 +538,19 @@ public class PartiturasController {
 			
 			if (idObraString != null) {
 				
-				Set<PartituraDTO> temp;
+				Set<Partitura> temp;
 				
-				Long idPartitura = Long.valueOf(idObraString);
+				Long idObra = Long.valueOf(idObraString);
 				
-				temp = partituraService.jpqlfindByIdObra(idPartitura);
+				Obra obra = obraService.findById(idObra);
+				
+				temp = partituraService.findByObra(obra);
 				
 				if (temp != null) {
 					
-					return new ResponseEntity<Set<PartituraDTO>>(temp, null, HttpStatus.OK);
+					return new ResponseEntity<Set<Partitura>>(temp, null, HttpStatus.OK);
 				}
-				responseBody.put("mensaje", "El ID: " + idPartitura + " no existe en la base de datos");
+				responseBody.put("mensaje", "El ID: " + idObra + " no existe en la base de datos");
 				return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NOT_FOUND);
 				
 			}

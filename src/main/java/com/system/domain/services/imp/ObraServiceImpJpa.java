@@ -222,6 +222,7 @@ public class ObraServiceImpJpa implements IObraService {
 		    obra.getLetrista(),
 		    obra.getGenero(),
 		    obra.getPrecio(),
+		    obra.getIva(),
 		    obra.getEmbedAudio(),
 		    obra.getEmbedVideo(),
 		    obra.getCreatedAt(),
@@ -277,18 +278,6 @@ public class ObraServiceImpJpa implements IObraService {
 		}
 		return null;
 		
-	}
-	
-	@Transactional(readOnly = true)
-	@Override
-	public byte[] jpqlfindAudio(Long idObra) {
-		
-		Optional<byte[]> audio = obraRepo.jpqlfindAudio(idObra);
-		if (!audio.isEmpty()) {
-			return audio.get();
-		}
-		
-		return null;
 	}
 	
 	private void mergePatchFields(Obra existingObra, Obra obraPatch) {

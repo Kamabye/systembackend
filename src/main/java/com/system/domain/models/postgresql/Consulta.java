@@ -2,7 +2,7 @@ package com.system.domain.models.postgresql;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -18,7 +18,9 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
+import jakarta.persistence.PreUpdate;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -119,7 +121,11 @@ public class Consulta extends Auditable implements Serializable {
 	@JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
 	private Paciente paciente;
 	
-	// @Transient
+	private OffsetDateTime fechaCreacion;
+	
+	private OffsetDateTime fechaModificacion;
+	
+	@Transient
 	public String getAVDerSnellen() {
 		String snellen = "";
 		switch (AVDer) {
@@ -160,7 +166,7 @@ public class Consulta extends Auditable implements Serializable {
 		return snellen;
 	}
 	
-	// @Transient
+	@Transient
 	public String getAVIzqSnellen() {
 		String snellen = "";
 		switch (AVIzq) {
@@ -203,10 +209,15 @@ public class Consulta extends Auditable implements Serializable {
 	
 	@PrePersist
 	private void onCreate() {
-		LocalDateTime fecha = LocalDateTime.now();
-		setCreatedAt(fecha);
-		setModifiedAt(fecha);
+		OffsetDateTime fechaActual = OffsetDateTime.now();
+		setFechaCreacion(fechaActual);
+		setFechaModificacion(fechaActual);
 		
+	}
+	
+	@PreUpdate
+	private void onUpdate() {
+		setFechaModificacion(OffsetDateTime.now()); // Se actualiza updatedAt cuando la entidad se actualiza
 	}
 	
 }

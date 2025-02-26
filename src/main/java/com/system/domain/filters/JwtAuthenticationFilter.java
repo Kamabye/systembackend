@@ -36,12 +36,12 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 		
 		if (antPathMatcher.match("/apiv1/auth", request.getServletPath())) {
 			
-			System.out.println("Solicitud por apiv1/auth");
+			//System.out.println("Solicitud por apiv1/auth");
 			filterChain.doFilter(request, response);
 			return;
 		}
 		
-		System.out.println("Solicitud que no es apiv1/auth");
+		//System.out.println("Solicitud que no es apiv1/auth");
 		final String authHeader = request.getHeader("Authorization");
 		
 		if (authHeader != null && StringUtils.hasText(authHeader) && authHeader.startsWith("Bearer ")) {
@@ -71,8 +71,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 				return;
 			}
 		}
-		
-		System.out.println("No hay Barer en la peticion");
+		else {
+			System.out.println("No hay Barer en la peticion");
+		}
 		
 		filterChain.doFilter(request, response);
 		

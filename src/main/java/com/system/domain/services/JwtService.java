@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.system.domain.models.postgresql.Token;
 import com.system.domain.repository.postgresql.TokenRepository;
@@ -57,6 +58,7 @@ public class JwtService {
 		// this.EXPIRATION_TIME = expirationTime;
 	}
 	
+	@Transactional
 	public String generateToken(UserDetailsImp userDetails) throws ExpiredJwtException {
 		// return createToken(new HashMap<>(), userDetails.getUsername(),
 		// userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toArray(String[]::new));
@@ -74,10 +76,15 @@ public class JwtService {
 		}
 		
 		// System.out.println("No hay token almacenados válidos");
+		// DateTimeFormatter formatter =
+		// DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSSSS");
 		LocalDateTime nowLocalDateTime = LocalDateTime.now();
-		LocalDateTime expLocalDateTime = nowLocalDateTime.plusDays(1);
+		// String formatted = nowLocalDateTime.format(formatter);
+		// LocalDateTime nowLocalDateTimeFormatted = LocalDateTime.parse(formatted,
+		// formatter);
+		// LocalDateTime expLocalDateTime = nowLocalDateTime.plusDays(1);
 		// LocalDateTime expLocalDateTime = nowLocalDateTime.plusMinutes(1);
-		// LocalDateTime expirationTime = LocalDateTime.now().plusWeeks(1);
+		LocalDateTime expLocalDateTime = nowLocalDateTime.plusWeeks(1);
 		Date now = Date.from(nowLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
 		// Date expirationDate = new Date(now.getTime() + EXPIRATION_TIME);
 		Date expirationDate = Date.from(expLocalDateTime.atZone(ZoneId.systemDefault()).toInstant());
@@ -97,7 +104,7 @@ public class JwtService {
 			  .compact();
 			
 			// tokenEntity.setUsername(username);
-			//System.out.println(userDetails.getUsuario().getIdUsuario());
+			// System.out.println(userDetails.getUsuario().getIdUsuario());
 			tokenEntity.setIdUsuario(userDetails.getUsuario().getIdUsuario());
 			tokenEntity.setToken(token);
 			tokenEntity.setExpirationDate(expLocalDateTime);
@@ -113,7 +120,7 @@ public class JwtService {
 		  .signWith(getSingInKey(), SignatureAlgorithm.HS256)
 		  .compact();
 		
-		//System.out.println(userDetails.getUsuario().getIdUsuario());
+		// System.out.println(userDetails.getUsuario().getIdUsuario());
 		// tokenEntity.setUsername(userDetails.getUsername());
 		tokenEntity.setIdUsuario(userDetails.getUsuario().getIdUsuario());
 		tokenEntity.setToken(token);

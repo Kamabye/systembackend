@@ -344,11 +344,6 @@ public class UserServiceImpJpa implements IUserService {
 			usuarioPrevio.setDateOfBirth(usuario.getDateOfBirth());
 		}
 		
-		if (usuario.getImagen() != null) {
-			
-			usuarioPrevio.setImagen(usuario.getImagen());
-		}
-		
 		if (!usuario.getRoles().isEmpty()) {
 			// usuarioPrevio.getRoles().clear();
 			
@@ -369,7 +364,6 @@ public class UserServiceImpJpa implements IUserService {
 	public Usuario uploadImage(Long IdUsuario, Blob image) {
 		Usuario usuarioTemp = userRepo.findById(IdUsuario).get();
 		
-		usuarioTemp.setImagen(image);
 		return userRepo.save(usuarioTemp);
 	}
 	

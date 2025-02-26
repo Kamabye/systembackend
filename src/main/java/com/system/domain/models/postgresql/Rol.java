@@ -4,10 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.system.domain.models.Auditable;
 
 import jakarta.persistence.Column;
@@ -40,27 +37,27 @@ import lombok.ToString;
 //@JsonIdentityInfo(scope = Rol.class, generator = ObjectIdGenerators.PropertyGenerator.class, property = "idRol")
 //@JsonIgnoreProperties("usuarios")
 public class Rol extends Auditable implements Serializable {
-
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY) // GenerationType.IDENTITY AutoIncrement MYSQL MariaDB
 	// @Column(name = "idRol", updatable = false, nullable = false)
 	@Column(updatable = false, nullable = false)
 	private Long idRol;
-
+	
 	@Column(unique = true)
 	private String rol;
-
+	
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(name = "UsuariosRoles", joinColumns = @JoinColumn(name = "idRol", nullable = false, referencedColumnName = "idRol"), inverseJoinColumns = @JoinColumn(name = "idUsuario", nullable = false, referencedColumnName = "idUsuario"), uniqueConstraints = {
-			@UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
+	  @UniqueConstraint(columnNames = { "idUsuario", "idRol" }) })
 	// @ManyToMany(mappedBy = "roles")
 	// @EqualsAndHashCode.Exclude
 	// @ToString.Exclude
-	//@JsonBackReference
+	// @JsonBackReference
 	@JsonIgnore
-	//@JsonIgnoreProperties("roles")
+	// @JsonIgnoreProperties("roles")
 	private Set<Usuario> usuarios = new HashSet<>();
-
+	
 	private static final long serialVersionUID = 1L;
-
+	
 }

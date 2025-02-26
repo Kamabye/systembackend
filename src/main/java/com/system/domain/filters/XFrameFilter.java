@@ -16,6 +16,8 @@ public class XFrameFilter extends OncePerRequestFilter {
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
 	  throws ServletException, IOException {
+		
+		//System.out.println("XFrameFilter");
 		response.setHeader("X-FRAME-OPTIONS", "ALLOW-FROM http://localhost:4200");
 		response.setHeader("X-FRAME-OPTIONS", "ALLOW-FROM http://localhost:8081");
 		response.setHeader("X-FRAME-OPTIONS", "ALLOW-FROM https://system-i73z.onrender.com");

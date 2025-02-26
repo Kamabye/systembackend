@@ -1,5 +1,6 @@
 package com.system.domain.services.imp;
 
+import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,10 +43,9 @@ public class PacienteServiceImpJpa implements IPacienteService {
 		// pacienteRepo.findAll(PageRequest.of(pageNumber, pageSize, Sort.by(order3)));
 		
 		Sort sort = Sort.by(
-				Sort.Order.asc("nombres"),
-				Sort.Order.asc("segundoApellido"),
-				Sort.Order.asc("primerApellido")
-		  );
+		  Sort.Order.asc("nombres"),
+		  Sort.Order.asc("segundoApellido"),
+		  Sort.Order.asc("primerApellido"));
 		
 		Page<Paciente> pagePacientes = pacienteRepo.findAll(PageRequest.of(pageNumber, pageSize, sort));
 		
@@ -69,10 +69,9 @@ public class PacienteServiceImpJpa implements IPacienteService {
 	public Page<Paciente> findByString(int pageNumber, int pageSize, String string) {
 		
 		Sort sort = Sort.by(
-				Sort.Order.asc("nombres"),
-				Sort.Order.asc("primerApellido"),
-				Sort.Order.asc("segundoApellido")
-		  );
+		  Sort.Order.asc("nombres"),
+		  Sort.Order.asc("primerApellido"),
+		  Sort.Order.asc("segundoApellido"));
 		
 		return pacienteRepo.findByNombresContainingIgnoreCaseOrPrimerApellidoContainingIgnoreCaseOrSegundoApellidoContainingIgnoreCaseOrderByNombresAsc(string, string, string, PageRequest.of(pageNumber, pageSize, sort));
 	}
@@ -187,7 +186,7 @@ public class PacienteServiceImpJpa implements IPacienteService {
 		
 		if (pacientePatch.getFechaNacimiento() != null) {
 			
-			if (pacientePatch.getFechaNacimiento().isBefore(OffsetDateTime.now()) && !pacientePatch.getFechaNacimiento().equals(existingPaciente.getFechaNacimiento())) {
+			if (pacientePatch.getFechaNacimiento().isBefore(LocalDate.now()) && !pacientePatch.getFechaNacimiento().equals(existingPaciente.getFechaNacimiento())) {
 				existingPaciente.setFechaNacimiento(pacientePatch.getFechaNacimiento());
 			}
 		}
@@ -203,13 +202,6 @@ public class PacienteServiceImpJpa implements IPacienteService {
 			
 			if (pacientePatch.getFechaModificacion().isBefore(OffsetDateTime.now()) && !pacientePatch.getFechaModificacion().equals(existingPaciente.getFechaModificacion())) {
 				existingPaciente.setFechaModificacion(pacientePatch.getFechaModificacion());
-			}
-		}
-		
-		if (pacientePatch.getFechaNacimiento() != null) {
-			
-			if (pacientePatch.getFechaNacimiento().isBefore(OffsetDateTime.now()) && !pacientePatch.getFechaNacimiento().equals(existingPaciente.getFechaNacimiento())) {
-				existingPaciente.setFechaNacimiento(pacientePatch.getFechaNacimiento());
 			}
 		}
 		

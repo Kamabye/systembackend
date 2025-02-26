@@ -11,20 +11,25 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.system.domain.interfaces.IPartituraService;
-import com.system.domain.models.dto.LobDTO;
 import com.system.domain.models.dto.ObraDTO;
 import com.system.domain.models.dto.PartituraDTO;
+import com.system.domain.models.postgresql.Obra;
 import com.system.domain.models.postgresql.Partitura;
+import com.system.domain.models.postgresql.PartituraBlob;
+import com.system.domain.repository.postgresql.PartituraBlobRepository;
 import com.system.domain.repository.postgresql.PartituraRepository;
 
 @Service
 //@Transactional
 @Primary
 public class PartituraServiceImpJpa implements IPartituraService {
-
+	
 	@Autowired
 	private PartituraRepository partituraRepo;
-
+	
+	@Autowired
+	private PartituraBlobRepository partituraBlobRepo;
+	
 	@Transactional
 	@Override
 	public Partitura save(Partitura partitura) {
@@ -39,46 +44,48 @@ public class PartituraServiceImpJpa implements IPartituraService {
 		
 		return new PartituraDTO(partituraSave.getIdPartitura(), partituraSave.getInstrumento());
 	}
-
+	
+	
+	//No mantiene bloqueos de escritura
 	@Transactional(readOnly = true)
 	@Override
 	public List<Partitura> saveAll(List<Partitura> partituras) {
 		return partituraRepo.saveAll(partituras);
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<Partitura> findAll() {
 		return partituraRepo.findAll();
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public Page<Partitura> findAllPage(Integer page, Integer size) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<Partitura> findByExample(Partitura partitura) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public Page<Partitura> findByExampleWithPage(Partitura partitura, Integer page, Integer size) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Transactional
 	@Override
 	public void delete(Long idPartitura) {
 		partituraRepo.deleteById(idPartitura);
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public Partitura findById(Long idPartitura) {
@@ -88,33 +95,33 @@ public class PartituraServiceImpJpa implements IPartituraService {
 		}
 		return null;
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<Partitura> findByInstrumento(String instrumento) {
 		return partituraRepo.findByInstrumentoContainingOrderByInstrumentoAsc(instrumento);
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public List<PartituraDTO> jpqlFindAll() {
 		return partituraRepo.jpqlfindAll();
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public Set<PartituraDTO> jpqlfindByIdObra(Long idObra) {
 		return partituraRepo.jpqlfindByIdObra(idObra);
-
+		
 	}
-
+	
 	@Transactional
 	@Override
 	public Partitura guardarConMarcaDeAgua(Partitura partitura) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public ObraDTO jpqlfindObraByIdObra(Long idObra) {
@@ -126,37 +133,59 @@ public class PartituraServiceImpJpa implements IPartituraService {
 		}
 		return null;
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public Set<String> jpqlfindInstrumentos(Long idObra) {
-
+		
 		Set<String> instrumentos = partituraRepo.jpqlfindInstrumentos(idObra);
 		if (!instrumentos.isEmpty()) {
 			return instrumentos;
 		}
 		return null;
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
 	public PartituraDTO jpqlfindById(Long idPartitura) {
-
+		
 		Optional<PartituraDTO> partitura = partituraRepo.jpqlfindById(idPartitura);
 		if (!partitura.isEmpty()) {
 			return partitura.get();
 		}
 		return null;
 	}
-
+	
 	@Transactional(readOnly = true)
 	@Override
-	public List<LobDTO> jpqlLobFindByIdObra(Long idObra) {
-		List<LobDTO> partituras = partituraRepo.jpqlLobfindByIdObra(idObra);
-		if (!partituras.isEmpty()) {
-			return partituras;
+	public Set<Partitura> findByObra(Obra obra) {
+		return partituraRepo.findByObra(obra);
+	}
+	
+	@Transactional
+	@Override
+	public PartituraBlob saveBlob(PartituraBlob partituraBlob) {
+		return partituraBlobRepo.save(partituraBlob);
+	}
+	
+	
+	@Transactional(readOnly = true)
+	@Override
+	public byte[] getVistaPrevia(Long idPartitura) {
+		
+		Optional<byte[]> optional = partituraBlobRepo.getVistaPrevia(idPartitura);
+		
+		if (optional.isPresent()) {
+			return optional.get();
 		}
 		return null;
 	}
 
+	@Transactional(readOnly = true)
+	@Override
+	public PartituraBlob getLastPartituraBlob(Long idPartitura) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

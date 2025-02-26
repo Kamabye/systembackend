@@ -1,21 +1,14 @@
 package com.system.domain.controllers;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.tomcat.util.http.fileupload.impl.FileSizeLimitExceededException;
-import org.apache.tomcat.util.http.fileupload.impl.InvalidContentTypeException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,8 +23,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartException;
-import org.springframework.web.multipart.MultipartFile;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.system.domain.interfaces.IObraService;
@@ -77,6 +68,10 @@ public class ObraController {
 				}
 				return new ResponseEntity<>(null, null, HttpStatus.NO_CONTENT);
 			}
+		} catch (EmptyResultDataAccessException e) {
+			responseBody.put("error", "DataAccessException: "
+			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
+			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
 		} catch (DataAccessException e) {
 			responseBody.put("error", "DataAccessException: "
 			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
@@ -289,59 +284,9 @@ public class ObraController {
 		
 	}
 	
-	@PatchMapping("/upload/{idObra}")
-	// @PreAuthorize("hasAnyRole('Administrador', 'Editor', 'Lector',
-	// 'USERS_Administrador', 'USERS_Editor', 'USERS_Lector')")
-	public ResponseEntity<?> saveObra(
-	  @PathVariable(name = "idObra", required = true) String idObraString,
-	  @RequestParam MultipartFile audioFile) {
-		Map<String, Object> responseBody = new HashMap<>();
-		// MultiValueMap<String, String> responseHeaders = new LinkedMultiValueMap<>();
-		
-		try (InputStream inputStream = audioFile.getInputStream()) {
-			
-			Long idObra = Long.valueOf(idObraString);
-			
-			Obra obra = obraService.findById(idObra);
-			
-			obra.setAudioFromInputStream(inputStream);
-			
-			Obra obrasave = obraService.save(obra);
-			
-			return new ResponseEntity<Obra>(obrasave, null, HttpStatus.OK);
-			
-		} catch (NumberFormatException e) {
-			responseBody.put("error",
-			  "NumberFormatException: ".concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
-		} catch (MultipartException e) {
-			responseBody.put("error", "MultipartException: "
-			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (FileSizeLimitExceededException e) {
-			responseBody.put("error", "FileSizeLimitExceededException".concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (DataAccessException e) {
-			responseBody.put("error", "DataAccessException: "
-			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (InvalidContentTypeException e) {
-			responseBody.put("error", "InvalidContentTypeException: ".concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (IOException e) {
-			responseBody.put("error", "IOException: ".concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			responseBody.put("error", "Exception: ".concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} finally {
-			
-		}
-	}
-	
 	@DeleteMapping("{idObra}")
 	public ResponseEntity<?> deleteObraByIDUrl(
-			@PathVariable(name = "idObra", required = true) String idObraString) {
+	  @PathVariable(name = "idObra", required = true) String idObraString) {
 		Map<String, Object> responseBody = new HashMap<>();
 		try {
 			if (idObraString != null) {
@@ -393,46 +338,6 @@ public class ObraController {
 				return new ResponseEntity<ObraDTO>(obraDelete, null, HttpStatus.OK);
 			}
 			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.NO_CONTENT);
-		} catch (NumberFormatException e) {
-			responseBody.put("error",
-			  "NumberFormatException: ".concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
-		} catch (DataAccessException e) {
-			responseBody.put("error", "DataAccessException: "
-			  .concat(e.getMostSpecificCause().getMessage().concat(" : ").concat(e.getMessage())));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} catch (Exception e) {
-			responseBody.put("error", "Exception: ".concat(e.getMessage()));
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.INTERNAL_SERVER_ERROR);
-		} finally {
-			
-		}
-		
-	}
-	
-	@GetMapping("play/{idObra}")
-	public ResponseEntity<?> playObra(@PathVariable(name = "idObra", required = true) String idObraString) {
-		
-		Map<String, Object> responseBody = new HashMap<>();
-		try {
-			
-			if (idObraString != null) {
-				
-				Long idObra = Long.valueOf(idObraString);
-				
-				InputStreamResource resource = new InputStreamResource(new ByteArrayInputStream(obraService.jpqlfindAudio(idObra)));
-				
-				HttpHeaders headers = new HttpHeaders();
-				headers.setContentDispositionFormData("inline", "Audio.aac");
-				headers.setContentType(MediaType.APPLICATION_OCTET_STREAM);
-				
-				return ResponseEntity.ok().headers(headers).body(resource);
-				
-				
-			}
-			
-			responseBody.put("error", "idObra requeridooooooo!!!!!");
-			return new ResponseEntity<Map<String, Object>>(responseBody, null, HttpStatus.BAD_REQUEST);
 		} catch (NumberFormatException e) {
 			responseBody.put("error",
 			  "NumberFormatException: ".concat(e.getMessage()));
