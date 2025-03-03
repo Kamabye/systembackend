@@ -9,10 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.system.domain.models.dto.ObraDTO;
-import com.system.domain.models.dto.PartituraDTO;
-import com.system.domain.models.postgresql.Obra;
-import com.system.domain.models.postgresql.Partitura;
+import com.system.domain.model.dto.ObraDTO;
+import com.system.domain.model.dto.PartituraDTO;
+import com.system.domain.model.postgresql.Obra;
+import com.system.domain.model.postgresql.Partitura;
 
 @Repository
 public interface PartituraRepository extends JpaRepository<Partitura, Long> {
@@ -28,19 +28,19 @@ public interface PartituraRepository extends JpaRepository<Partitura, Long> {
 	 */
 	Set<Partitura> findByObra(Obra obra);
 
-	@Query("SELECT new com.system.domain.models.dto.PartituraDTO(p.idPartitura, p.instrumento) FROM Partitura p")
+	@Query("SELECT new com.system.domain.model.dto.PartituraDTO(p.idPartitura, p.instrumento) FROM Partitura p")
 	List<PartituraDTO> jpqlfindAll();
 
-	@Query("SELECT NEW com.system.domain.models.dto.ObraDTO(o.idObra, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio) FROM Obra o WHERE o.idObra = :idObra ORDER BY o.nombre ASC")
+	@Query("SELECT NEW com.system.domain.model.dto.ObraDTO(o.idObra, o.nombre, o.compositor, o.arreglista, o.letrista, o.genero, o.precio) FROM Obra o WHERE o.idObra = :idObra ORDER BY o.nombre ASC")
 	Optional<ObraDTO> jpqlfindObraByIdObra(@Param("idObra") Long idObra);
 
-	@Query("SELECT new com.system.domain.models.dto.PartituraDTO(p.idPartitura, p.instrumento) FROM Partitura p WHERE p.obra.idObra = :idObra ORDER BY p.instrumento ASC")
+	@Query("SELECT new com.system.domain.model.dto.PartituraDTO(p.idPartitura, p.instrumento) FROM Partitura p WHERE p.obra.idObra = :idObra ORDER BY p.instrumento ASC")
 	Set<PartituraDTO> jpqlfindByIdObra(@Param("idObra") Long idObra);
 
 	@Query("SELECT DISTINCT p.instrumento FROM Partitura p WHERE p.obra.idObra = :idObra ORDER BY p.instrumento ASC")
 	Set<String> jpqlfindInstrumentos(@Param("idObra") Long idObra);
 
-	@Query("SELECT new com.system.domain.models.dto.PartituraDTO(p.idPartitura, p.instrumento) FROM Partitura p WHERE p.idPartitura = :idPartitura")
+	@Query("SELECT new com.system.domain.model.dto.PartituraDTO(p.idPartitura, p.instrumento) FROM Partitura p WHERE p.idPartitura = :idPartitura")
 	Optional<PartituraDTO> jpqlfindById(@Param("idPartitura") Long idPartitura);
 
 }

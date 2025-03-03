@@ -10,9 +10,9 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import com.system.domain.interfaces.DTOProyecciones.IUsuarioDTO;
-import com.system.domain.models.dto.UsuarioDTO;
-import com.system.domain.models.postgresql.Usuario;
+import com.system.domain.model.dto.UsuarioDTO;
+import com.system.domain.model.postgresql.Usuario;
+import com.system.domain.service.interfaces.DTOProyecciones.IUsuarioDTO;
 
 @Repository
 public interface UserRepository extends JpaRepository<Usuario, Long> {
@@ -65,13 +65,13 @@ public interface UserRepository extends JpaRepository<Usuario, Long> {
 	@Query("SELECT u FROM Usuario u")
 	Page<Usuario> jpqlObtenerUsuarios(Pageable pageable);
 	
-	@Query("SELECT new com.system.domain.models.dto.UsuarioDTO( u ) FROM Usuario u")
+	@Query("SELECT new com.system.domain.model.dto.UsuarioDTO( u ) FROM Usuario u")
 	Page<UsuarioDTO> jpqlfindAllUsuariosDTOPageable(Pageable pageable);
 
-	@Query("SELECT new com.system.domain.models.dto.UsuarioDTO(u.id, u.nombres) FROM Usuario u")
+	@Query("SELECT new com.system.domain.model.dto.UsuarioDTO(u.id, u.nombres) FROM Usuario u")
 	List<UsuarioDTO> jpqlObtenerUsuariosDTO();
 
-	@Query("SELECT new com.system.domain.models.dto.UsuarioDTO(u.id, u.nombres) FROM Usuario u WHERE u.nombres = :nombres")
+	@Query("SELECT new com.system.domain.model.dto.UsuarioDTO(u.id, u.nombres) FROM Usuario u WHERE u.nombres = :nombres")
 	List<UsuarioDTO> jpqlBuscarUsuariosPorNombres(@Param("nombres") String nombres);
 
 	@Query("SELECT u FROM Usuario u WHERE u.nombres = :nombres")
