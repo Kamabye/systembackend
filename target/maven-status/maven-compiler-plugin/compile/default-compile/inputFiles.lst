@@ -75,12 +75,12 @@ C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\dto\PaymentPayP
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\PayPal\OrderResponsePayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\PayPal\ItemPayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\PayPal\PaymentsPayPalV2.java
-C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controller\app\KamabyeController.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\service\OrdenCompraService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\PayPal\CapturesPayPalV2.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\dto\LobDTO.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\Auditable.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\PayPal\ExperienceContextPayPalV2.java
+C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controller\app\RootController.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\config\JpaAuditingConfig.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\dto\PayerPayPalDTO.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\PayPal\ItemTotalPayPalV2.java
@@ -88,6 +88,7 @@ C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\PayPal\NamePayP
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\service\interfaces\IPartituraService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\service\interfaces\IPacienteService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\config\PaypalConfig.java
+C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\controller\app\GlobalExceptionHandler.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\dto\ObraDTO.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\service\interfaces\IUserService.java
 C:\ProyectosSpring\kamabye\src\main\java\com\system\domain\model\PayPal\ShippingPayPalV2.java

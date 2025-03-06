@@ -10,6 +10,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,9 +25,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.system.domain.model.postgresql.CartItem;
-import com.system.domain.model.postgresql.Usuario;
+import com.system.domain.model.userdetails.UserDetailsImp;
 import com.system.domain.service.interfaces.IShopCartService;
-import com.system.domain.service.interfaces.IUserService;
 
 import jakarta.validation.constraints.Min;
 
@@ -37,7 +39,7 @@ public class ShopCartController {
 	private IShopCartService shopCartService;
 	
 	@Autowired
-	private IUserService userService;
+	private UserDetailsService userDetailsService;
 	
 	Map<String, Object> responseBody = new HashMap<>();
 	
@@ -76,22 +78,22 @@ public class ShopCartController {
 		}
 	}
 	
-	@GetMapping("{idUsuario}")
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/user")
 	public ResponseEntity<?> shopCartUsuario(
 	  @RequestParam(name = "pageNumber", defaultValue = "0") Integer pageNumber,
-	  @RequestParam(name = "pageSize", defaultValue = "10") @Min(1) Integer pageSize,
-	  @PathVariable(name = "idUsuario", required = true) String idUsuarioString) {
+	  @RequestParam(name = "pageSize", defaultValue = "10") @Min(1) Integer pageSize) {
 		
 //		Map<String, Object> responseBody = new HashMap<>();
 		Page<CartItem> listaCartItems;
 		
 		try {
 			
-			Long idUsuario = Long.valueOf(idUsuarioString);
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			
-			Usuario usuario = userService.findByIdUsuario(idUsuario);
+			UserDetailsImp usuario = (UserDetailsImp) userDetailsService.loadUserByUsername(authentication.getName());
 			
-			listaCartItems = shopCartService.shopCartByUser(usuario, pageNumber, pageSize);
+			listaCartItems = shopCartService.shopCartByUser(usuario.getUsuario(), pageNumber, pageSize);
 			
 			if (!listaCartItems.isEmpty()) {
 				
