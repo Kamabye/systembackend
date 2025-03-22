@@ -31,6 +31,8 @@ public interface CartItemRepository extends JpaRepository<CartItem, CartItemID> 
 	 */
 	CartItem findByUsuarioAndProducto(Usuario usuario, Obra producto);
 	
+	Long countByUsuario(Usuario usuario);
+	
 	void deleteByUsuario(Usuario usuario);
 	
 	// Retornar todos los cartitem como cartitemdto

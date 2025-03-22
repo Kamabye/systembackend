@@ -16,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -183,18 +182,20 @@ public class ShopCartController {
 		
 	}
 	
-	@GetMapping("/count/{idUsuario}")
-	public ResponseEntity<?> shopCartUsuarioCount(
-	  @PathVariable(name = "idUsuario", required = true) String idUsuarioString) {
+	@PreAuthorize("isAuthenticated()")
+	@GetMapping("/user/count")
+	public ResponseEntity<?> shopCartUsuarioCount() {
 		
 //		Map<String, Object> responseBody = new HashMap<>();
 		Long count;
 		
 		try {
 			
-			Long idUsuario = Long.valueOf(idUsuarioString);
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 			
-			count = shopCartService.shopCartCountByUser(idUsuario);
+			UserDetailsImp usuario = (UserDetailsImp) userDetailsService.loadUserByUsername(authentication.getName());
+			
+			count = shopCartService.shopCartCountByUser(usuario.getUsuario());
 			
 			if (count > 0) {
 				return new ResponseEntity<Long>(count, null, HttpStatus.OK);

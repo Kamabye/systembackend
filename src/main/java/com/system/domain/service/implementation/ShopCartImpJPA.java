@@ -58,13 +58,6 @@ public class ShopCartImpJPA implements IShopCartService {
 		return shopCartRepo.findByUsuarioAndProducto(usuario, obra);
 	}
 	
-	@Transactional(readOnly = true)
-	@Override
-	public Integer countItemsUsuario(Usuario usuario) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-	
 	@Transactional
 	@Override
 	public CartItem agregarItem(CartItem cartItem) {
@@ -119,8 +112,14 @@ public class ShopCartImpJPA implements IShopCartService {
 	}
 	
 	@Override
-	public Long shopCartCountByUser(Long idUsuario) {
+	public Long shopCartCountByIDUser(Long idUsuario) {
 		return shopCartRepo.countCartItemByUser(idUsuario);
+	}
+	
+	@Override
+	public Long shopCartCountByUser(Usuario usuario) {
+		
+		return shopCartRepo.countByUsuario(usuario);
 	}
 	
 }

@@ -21,8 +21,6 @@ public interface IShopCartService {
 	
 	CartItem cartItemByUsuarioAndProducto(Usuario usuario, Obra obra);
 	
-	Integer countItemsUsuario(Usuario usuario);
-	
 	CartItem agregarItem(CartItem cartItem);
 	
 	void agregarProducto(Usuario usuario, Obra producto, Integer cantidad);
@@ -33,6 +31,8 @@ public interface IShopCartService {
 	
 	BigDecimal totalShopCartUsuario(Usuario usuario);
 	
-	Long shopCartCountByUser(Long idUsuario);
+	Long shopCartCountByIDUser(Long idUsuario);
+	
+	Long shopCartCountByUser(Usuario usuario);
 	
 }
