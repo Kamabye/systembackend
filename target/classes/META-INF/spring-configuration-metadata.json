@@ -4,33 +4,84 @@
       "name": "spring.datasource.db1",
       "type": "javax.sql.DataSource",
       "sourceType": "com.system.domain.config.DB1Config",
-      "sourceMethod": "javax.sql.DataSource db1DataSource() "
+      "sourceMethod": "db1DataSource()"
     },
     {
       "name": "spring.datasource.db2",
       "type": "javax.sql.DataSource",
       "sourceType": "com.system.domain.config.DB2Config",
-      "sourceMethod": "javax.sql.DataSource db2DataSource() "
+      "sourceMethod": "db2DataSource()"
     },
     {
       "name": "spring.datasource.db3",
       "type": "javax.sql.DataSource",
       "sourceType": "com.system.domain.config.DB3Config",
-      "sourceMethod": "javax.sql.DataSource db3DataSource() "
+      "sourceMethod": "db3DataSource()"
     },
     {
       "name": "spring.datasource.db4",
       "type": "javax.sql.DataSource",
       "sourceType": "com.system.domain.config.DB4Config",
-      "sourceMethod": "javax.sql.DataSource db4DataSource() "
+      "sourceMethod": "db4DataSource()"
     },
     {
       "name": "spring.datasource.db5",
       "type": "javax.sql.DataSource",
       "sourceType": "com.system.domain.config.DB5Config",
-      "sourceMethod": "javax.sql.DataSource db5DataSource() "
+      "sourceMethod": "db5DataSource()"
     }
   ],
-  "properties": [],
+  "properties": [
+    {
+      "name": "postgresql.datasource.driver-class-name",
+      "type": "java.lang.String",
+      "description": "A description for 'postgresql.datasource.driver-class-name'"
+    },
+    {
+      "name": "postgresql.datasource.hikari.data-source-properties.preferQueryMode",
+      "type": "java.lang.String",
+      "description": "A description for 'postgresql.datasource.hikari.data-source-properties.preferQueryMode'"
+    },
+    {
+      "name": "postgresql.datasource.initialSize",
+      "type": "java.lang.String",
+      "description": "A description for 'postgresql.datasource.initialSize'"
+    },
+    {
+      "name": "postgresql.datasource.jdbc-url",
+      "type": "java.lang.String",
+      "description": "A description for 'postgresql.datasource.jdbc-url'"
+    },
+    {
+      "name": "postgresql.datasource.maxActive",
+      "type": "java.lang.String",
+      "description": "A description for 'postgresql.datasource.maxActive'"
+    },
+    {
+      "name": "postgresql.datasource.maxIdle",
+      "type": "java.lang.String",
+      "description": "A description for 'postgresql.datasource.maxIdle'"
+    },
+    {
+      "name": "postgresql.datasource.minIdle",
+      "type": "java.lang.String",
+      "description": "A description for 'postgresql.datasource.minIdle'"
+    },
+    {
+      "name": "postgresql.datasource.password",
+      "type": "java.lang.String",
+      "description": "A description for 'postgresql.datasource.password'"
+    },
+    {
+      "name": "postgresql.datasource.removeAbandoned",
+      "type": "java.lang.String",
+      "description": "A description for 'postgresql.datasource.removeAbandoned'"
+    },
+    {
+      "name": "postgresql.datasource.username",
+      "type": "java.lang.String",
+      "description": "A description for 'postgresql.datasource.username'"
+    }
+  ],
   "hints": []
 }
